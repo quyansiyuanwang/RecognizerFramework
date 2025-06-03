@@ -1,0 +1,120 @@
+{
+  "begin": "OpenQQ",
+  "jobs": {
+    "OpenQQ": {
+      "type": "Image",
+      "description": "Open QQ application",
+      "image": { "path": "images/qq.png", "confidence": 0.8 },
+      "action": {
+        "type": "LClick",
+        "position": {
+          "type": "absolute",
+          "x": 100,
+          "y": 200
+        }
+      },
+      "region": {
+        "x": 100,
+        "y": 200,
+        "width": 50,
+        "height": 50
+      },
+      "next": "FindChat",
+      "delay": {
+        "pre": 0,
+        "cur": 50,
+        "post": 1000
+      }
+    },
+    "FindChat": {
+      "type": "OCR",
+      "description": "Find chat input box with specific user",
+      "needs": ["OpenQQ"],
+      "confidence": 0.9,
+      "action": {
+        "type": "LClick",
+        "position": {
+          "type": "relative",
+          "x": 0,
+          "y": 0
+        }
+      },
+      "region": {
+        "x": 150,
+        "y": 250,
+        "width": 200,
+        "height": 50
+      },
+      "next": "ClickInputBox",
+      "delay": {
+        "pre": 0,
+        "cur": 50,
+        "post": 500
+      }
+    },
+    "ClickInputBox": {
+      "type": "Image",
+      "description": "Click on the input box",
+      "needs": ["FindChat"],
+      "image": { "path": "images/send.png", "confidence": 0.85 },
+      "action": {
+        "type": "LClick",
+        "position": {
+          "type": "Relative",
+          "x": -300,
+          "y": -40
+        }
+      },
+      "next": "SendMessage",
+      "delay": {
+        "pre": 0,
+        "cur": 50,
+        "post": 500
+      },
+      "ret": "position"
+    },
+    "InputMessage": {
+      "type": "Input",
+      "description": "Input a message",
+      "needs": ["FindChat"],
+      "action": {
+        "type": "TextInput",
+        "text": "Hello, this is a test message!"
+      },
+      "next": "SendMessage",
+      "delay": {
+        "pre": 0,
+        "cur": 50,
+        "post": 500
+      }
+    },
+    "SendMessage": {
+      "type": "Image",
+      "description": "Click the send button to send the message",
+      "needs": ["ClickInputBox"],
+      "image": {
+        "path": "images/send_button.png",
+        "confidence": 0.9
+      },
+      "action": {
+        "type": "LClick",
+        "position": {
+          "type": "Relative",
+          "x": 0,
+          "y": 0
+        }
+      },
+      "region": {
+        "x": 400,
+        "y": 300,
+        "width": 50,
+        "height": 50
+      },
+      "delay": {
+        "pre": 0,
+        "cur": 50,
+        "post": 500
+      }
+    }
+  }
+}
