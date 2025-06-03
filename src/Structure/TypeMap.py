@@ -1,14 +1,17 @@
-from typing import Any, Callable, Dict, Optional, Type
+from typing import Any, Callable, Dict, Optional, Type, TypeVar
+
+T = TypeVar("T", bound=type)
 
 
 class TypeMap:
     type_map: Dict[str, Type[Any]] = {}
 
     @staticmethod
-    def register(key: str) -> Callable[[Type[Any]], Type[Any]]:
-        def decorator(value: Type[Any]) -> Type[Any]:
-            TypeMap.type_map[key] = value
-            return value
+    def register(key: str) -> Callable[[T], T]:
+
+        def decorator(cls: T) -> T:
+            TypeMap.type_map[key] = cls
+            return cls
 
         return decorator
 

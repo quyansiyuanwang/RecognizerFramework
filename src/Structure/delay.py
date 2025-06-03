@@ -1,3 +1,5 @@
+from typing import Any
+
 from ..Typehints import DelayDict
 from .TypeMap import TypeMap
 
@@ -8,6 +10,9 @@ class Delay:
         self.pre = kwargs.get("pre", 0)
         self.cur = kwargs.get("cur", 0)
         self.post = kwargs.get("post", 0)
+
+    def __getitem__(self, key: str) -> Any:
+        return getattr(self, key, None)
 
     def __repr__(self, indent: int = 0) -> str:
         string = "<Delay(\n"

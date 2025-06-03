@@ -1,4 +1,5 @@
-from typing import Any, Optional
+from typing import Any
+
 from ..Typehints import ActionDict
 from .TypeMap import TypeMap
 
@@ -14,12 +15,8 @@ class Action:
                 value = tp(value)
             setattr(self, key, value)
 
-    def __getattr__(self, item: str) -> Optional[Any]:
-        if item in self._kwargs:
-            return self._kwargs.get(item)
-        raise AttributeError(
-            f"'{self.__class__.__name__}' object has no attribute '{item}'"
-        )
+    def __getitem__(self, key: str) -> Any:
+        return getattr(self, key, None)
 
     def __repr__(self, indent: int = 0) -> str:
         string: str = "<Action(\n"

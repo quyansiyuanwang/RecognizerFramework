@@ -7,4 +7,4 @@ from ..executor import Executor, Job, JobExecutor
 class InputExecutor(Executor):
     def execute(self, job: Job) -> Any:
         # Simulate input processing
-        return f"Processed input: {job.description}"
+        return f"Processed input: {job['description']}"

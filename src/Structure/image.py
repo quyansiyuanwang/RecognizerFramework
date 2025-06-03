@@ -1,3 +1,5 @@
+from typing import Any
+
 from ..Typehints import ImageDict
 from .TypeMap import TypeMap
 
@@ -7,6 +9,9 @@ class Image:
     def __init__(self, kwargs: ImageDict):
         self.path: str = kwargs["path"]
         self.confidence: float = kwargs["confidence"]
+
+    def __getitem__(self, key: str) -> Any:
+        return getattr(self, key, None)
 
     def __repr__(self, indent: int = 0) -> str:
         string = "<Image(\n"

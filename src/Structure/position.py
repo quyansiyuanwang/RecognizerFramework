@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Any, Literal
 
 from ..Typehints import PositionDict
 from .TypeMap import TypeMap
@@ -10,6 +10,9 @@ class Position:
         self.type: Literal["absolute", "relative"] = kwargs.get("type", "absolute")
         self.x: int = kwargs.get("x", 0)
         self.y: int = kwargs.get("y", 0)
+
+    def __getitem__(self, key: str) -> Any:
+        return getattr(self, key, None)
 
     def __repr__(self, indent: int = 0) -> str:
         string: str = "<Position(\n"

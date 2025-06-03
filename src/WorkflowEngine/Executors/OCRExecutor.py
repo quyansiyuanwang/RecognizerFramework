@@ -7,4 +7,4 @@ from ..executor import Executor, Job, JobExecutor
 class OCRExecutor(Executor):
     def execute(self, job: Job) -> Any:
         # Simulate OCR processing
-        return f"Processed OCR: {job.description}"
+        return f"Processed OCR: {job['description']}"

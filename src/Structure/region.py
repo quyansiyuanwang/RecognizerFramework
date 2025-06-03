@@ -1,3 +1,5 @@
+from typing import Any
+
 from ..Typehints import RegionDict
 from .TypeMap import TypeMap
 
@@ -9,6 +11,9 @@ class Region:
         self.y: int = kwargs.get("y", 0)
         self.width: int = kwargs.get("width", 0)
         self.height: int = kwargs.get("height", 0)
+
+    def __getitem__(self, key: str) -> Any:
+        return getattr(self, key, None)
 
     def __repr__(self, indent: int = 0) -> str:
         string: str = "<Region(\n"

@@ -52,12 +52,12 @@ class JobExecutor:
         return decorator
 
     def __call__(self):
-        if self.job.type in self.executors:
-            executor_class = self.executors[self.job.type]
+        if self.job["type"] in self.executors:
+            executor_class = self.executors[self.job["type"]]
             executor_instance = executor_class()
             return executor_instance.execute(self.job)
         else:
-            assert False, f"Unknown job type: {self.job.type}"
+            assert False, f"Unknown job type: {self.job['type']}"
 
 
 class ExecutorManager:
