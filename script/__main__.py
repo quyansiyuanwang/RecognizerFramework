@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 import subprocess
@@ -74,11 +75,20 @@ def display_help():
     )
 
 
-def main():
-    display_help()
-    load_scripts()
-    load_workflows()
+def arg_parser():
+    parser = argparse.ArgumentParser(
+        description="Run scripts or workflows from the script directory."
+    )
+    parser.add_argument(
+        "name",
+        nargs="?",
+        help="Name of the script or workflow to run. Use 'script:<name>' or 'workflow:<name>' for explicit selection.",
+        default=None,
+    )
+    return parser.parse_args()
 
+
+def display_found_items():
     print(end=f"{Color.CYAN}")
     print("--" * 20)
     print(f"Scripts found:{Color.WHITE}")
@@ -96,9 +106,23 @@ def main():
     print(end=f"{Color.CYAN}")
     print(f"--" * 20, end=f"{Color.RESET}\n")
 
+
+def operate() -> str:
+    display_help()
+    display_found_items()
+
     name = input(
         f"{Color.YELLOW}Enter the workflow or script name to run: {Color.RESET}"
     ).strip()
+    return name
+
+
+def main():
+    args = arg_parser()
+    name: str = args.name
+    if not name:
+        name = operate()
+
     if not name:
         print(f"{Color.YELLOW}[WRN]Exiting...{Color.RESET}")
         return
@@ -120,4 +144,6 @@ def main():
 
 
 if __name__ == "__main__":
+    load_scripts()
+    load_workflows()
     main()
