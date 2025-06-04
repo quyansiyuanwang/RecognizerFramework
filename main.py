@@ -1,15 +1,12 @@
-from typing import List
+from typing import Any
 
 from src.WorkflowEngine import ExecutorManager, WorkflowManager
 
 
 def main() -> None:
     manager = WorkflowManager("workflow/example.json")
-    # for name, job in manager.items():
-    #     print(f"{name}: {job}")
-
-    exe = ExecutorManager(workflow=manager)
-    results: List[str] = exe.run()
+    exe = ExecutorManager[Any](workflow=manager)
+    results = exe.run()
     for result in results:
         print(result)
 

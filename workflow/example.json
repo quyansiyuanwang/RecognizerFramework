@@ -65,7 +65,7 @@
           "y": -40
         }
       },
-      "next": "SendMessage",
+      "next": "InputMessage",
       "delay": {
         "pre": 0,
         "cur": 50,
@@ -87,6 +87,30 @@
         "cur": 50,
         "post": 500
       }
+    },
+    "Useless": {
+      "type": "Input",
+      "description": "This job is not used in the workflow",
+      "action": {
+        "type": "LClick",
+        "position": {
+          "type": "Relative",
+          "x": 0,
+          "y": 0
+        }
+      },
+      "region": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      },
+      "delay": {
+        "pre": 0,
+        "cur": 50,
+        "post": 500
+      },
+      "repeat": 3
     },
     "SendMessage": {
       "type": "Image",

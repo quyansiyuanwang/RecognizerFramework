@@ -7,8 +7,11 @@ from ..executor import Executor, Job, JobExecutor
 
 @JobExecutor.register("Image")
 class ImageExecutor(Executor):
-    def execute(self, job: Job) -> Any:
-        image_path: str = job["image"]["path"]
+    def __init__(self, job: Job) -> None:
+        self.job: Job = job
+
+    def execute(self, *args: Any, **kwargs: Any) -> Any:
+        image_path: str = self.job["image"]["path"]
         if not image_path:
             raise ValueError("Image path is required for ImageExecutor.")
 
@@ -19,4 +22,4 @@ class ImageExecutor(Executor):
 
         # Here you can add any image processing logic you need
         # For demonstration, we will just return the shape of the image
-        return f"Processed Image: {job['description']}, Shape: {image.shape}"
+        return f"Processed Image: {self.job['description']}, Shape: {image.shape}"

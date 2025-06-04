@@ -1,4 +1,5 @@
 import json
+from collections.abc import Generator
 from functools import cached_property
 from typing import Dict, Iterable, Optional, Self, Tuple
 
@@ -8,7 +9,7 @@ from ..Typehints import JobDict, WorkflowDict
 
 class WorkflowManager:
     def __init__(self, path: str) -> None:
-        self.path = path
+        self.path: str = path
         self.__current_job: Optional[str] = None
 
     @cached_property
@@ -24,6 +25,12 @@ class WorkflowManager:
 
     def items(self) -> Iterable[Tuple[str, Job]]:
         return ((name, Job(job)) for name, job in self.workflow["jobs"].items())
+
+    def get_flow_pairs(self) -> Generator[Tuple[str, Job], None, None]:
+        for name in self:
+            job: Job = Job(self.workflow["jobs"][name])
+            yield name, job
+        return None
 
     def __iter__(self) -> Self:
         self.__current_job = self.workflow["begin"]
