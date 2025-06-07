@@ -1,246 +1,14 @@
-[WRN|DBG] - 2025-06-08 05:45:36...270240 - Current try: 1 for job 'EnterDelay'(<Limit(
+[WRN][DBG] - 2025-06-08 05:51:56.656274 - Current try: 1 for job 'EnterDelay'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF|DBG] - 2025-06-08 05:45:37...271545 - Directing to next job: 'ClickUnfired' after job 'EnterDelay'
-[INF|DBG] - 2025-06-08 05:45:37...272520 - Job 'EnterDelay' Execute success
-[WRN|DBG] - 2025-06-08 05:45:37...273463 - Current try: 1 for job 'ClickUnfired'(<Limit(
-    maxCount=5
-)>)
-[ERR|DBG] - 2025-06-08 05:45:37...362809 - Error in job 'ClickUnfired': Execution error in job '<Job(
-    type=ROI,
-    description=点击未点火好友,
-    image=<Image(
-        path=images/sky_fire/unfired--2-3.png,
-        confidence=0.93
-    )>,
-    action=<Action(
-        type=LClick,
-        position=<Position(
-            type=Relative
-        )>
-    )>,
-    region=<Region(
-        x=130,
-        y=290,
-        width=1390,
-        height=830
-    )>,
-    next=<Next(
-        success=CheckEnter,
-        failure=NextPage
-    )>,
-    delay=<Delay(
-        pre=0,
-        cur=50,
-        post=0
-    )>,
-    limits=<Limit(
-        maxCount=5
-    )>,
-    name=ClickUnfired
-)>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF|DBG] - 2025-06-08 05:45:37...364529 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR|DBG] - 2025-06-08 05:45:37...365383 - Job 'ClickUnfired' Execute failure
-[WRN|DBG] - 2025-06-08 05:45:37...366297 - Current try: 1 for job 'NextPage'(<Limit(
-    maxCount=-1,
-    maxFailure=-1,
-    maxSuccess=-1
-)>)
-[INF|DBG] - 2025-06-08 05:45:38...545370 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF|DBG] - 2025-06-08 05:45:38...546373 - Job 'NextPage' Execute success
-[WRN|DBG] - 2025-06-08 05:45:38...547022 - Current try: 2 for job 'ClickUnfired'(<Limit(
-    maxCount=5
-)>)
-[ERR|DBG] - 2025-06-08 05:45:38...619756 - Error in job 'ClickUnfired': Execution error in job '<Job(
-    type=ROI,
-    description=点击未点火好友,
-    image=<Image(
-        path=images/sky_fire/unfired--2-3.png,
-        confidence=0.93
-    )>,
-    action=<Action(
-        type=LClick,
-        position=<Position(
-            type=Relative
-        )>
-    )>,
-    region=<Region(
-        x=130,
-        y=290,
-        width=1390,
-        height=830
-    )>,
-    next=<Next(
-        success=CheckEnter,
-        failure=NextPage
-    )>,
-    delay=<Delay(
-        pre=0,
-        cur=50,
-        post=0
-    )>,
-    limits=<Limit(
-        maxCount=5
-    )>,
-    name=ClickUnfired
-)>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF|DBG] - 2025-06-08 05:45:38...621365 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR|DBG] - 2025-06-08 05:45:38...621858 - Job 'ClickUnfired' Execute failure
-[WRN|DBG] - 2025-06-08 05:45:38...622338 - Current try: 2 for job 'NextPage'(<Limit(
-    maxCount=-1,
-    maxFailure=-1,
-    maxSuccess=-1
-)>)
-[INF|DBG] - 2025-06-08 05:45:39...674128 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF|DBG] - 2025-06-08 05:45:39...674744 - Job 'NextPage' Execute success
-[WRN|DBG] - 2025-06-08 05:45:39...675312 - Current try: 3 for job 'ClickUnfired'(<Limit(
-    maxCount=5
-)>)
-[ERR|DBG] - 2025-06-08 05:45:39...756421 - Error in job 'ClickUnfired': Execution error in job '<Job(
-    type=ROI,
-    description=点击未点火好友,
-    image=<Image(
-        path=images/sky_fire/unfired--2-3.png,
-        confidence=0.93
-    )>,
-    action=<Action(
-        type=LClick,
-        position=<Position(
-            type=Relative
-        )>
-    )>,
-    region=<Region(
-        x=130,
-        y=290,
-        width=1390,
-        height=830
-    )>,
-    next=<Next(
-        success=CheckEnter,
-        failure=NextPage
-    )>,
-    delay=<Delay(
-        pre=0,
-        cur=50,
-        post=0
-    )>,
-    limits=<Limit(
-        maxCount=5
-    )>,
-    name=ClickUnfired
-)>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF|DBG] - 2025-06-08 05:45:39...758266 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR|DBG] - 2025-06-08 05:45:39...758917 - Job 'ClickUnfired' Execute failure
-[WRN|DBG] - 2025-06-08 05:45:39...759693 - Current try: 3 for job 'NextPage'(<Limit(
-    maxCount=-1,
-    maxFailure=-1,
-    maxSuccess=-1
-)>)
-[INF|DBG] - 2025-06-08 05:45:40...812217 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF|DBG] - 2025-06-08 05:45:40...812928 - Job 'NextPage' Execute success
-[WRN|DBG] - 2025-06-08 05:45:40...813516 - Current try: 4 for job 'ClickUnfired'(<Limit(
-    maxCount=5
-)>)
-[ERR|DBG] - 2025-06-08 05:45:40...895999 - Error in job 'ClickUnfired': Execution error in job '<Job(
-    type=ROI,
-    description=点击未点火好友,
-    image=<Image(
-        path=images/sky_fire/unfired--2-3.png,
-        confidence=0.93
-    )>,
-    action=<Action(
-        type=LClick,
-        position=<Position(
-            type=Relative
-        )>
-    )>,
-    region=<Region(
-        x=130,
-        y=290,
-        width=1390,
-        height=830
-    )>,
-    next=<Next(
-        success=CheckEnter,
-        failure=NextPage
-    )>,
-    delay=<Delay(
-        pre=0,
-        cur=50,
-        post=0
-    )>,
-    limits=<Limit(
-        maxCount=5
-    )>,
-    name=ClickUnfired
-)>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF|DBG] - 2025-06-08 05:45:40...898368 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR|DBG] - 2025-06-08 05:45:40...899274 - Job 'ClickUnfired' Execute failure
-[WRN|DBG] - 2025-06-08 05:45:40...900102 - Current try: 4 for job 'NextPage'(<Limit(
-    maxCount=-1,
-    maxFailure=-1,
-    maxSuccess=-1
-)>)
-[INF|DBG] - 2025-06-08 05:45:41...952716 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF|DBG] - 2025-06-08 05:45:41...953346 - Job 'NextPage' Execute success
-[WRN|DBG] - 2025-06-08 05:45:41...954039 - Current try: 5 for job 'ClickUnfired'(<Limit(
-    maxCount=5
-)>)
-[ERR|DBG] - 2025-06-08 05:45:42...033832 - Error in job 'ClickUnfired': Execution error in job '<Job(
-    type=ROI,
-    description=点击未点火好友,
-    image=<Image(
-        path=images/sky_fire/unfired--2-3.png,
-        confidence=0.93
-    )>,
-    action=<Action(
-        type=LClick,
-        position=<Position(
-            type=Relative
-        )>
-    )>,
-    region=<Region(
-        x=130,
-        y=290,
-        width=1390,
-        height=830
-    )>,
-    next=<Next(
-        success=CheckEnter,
-        failure=NextPage
-    )>,
-    delay=<Delay(
-        pre=0,
-        cur=50,
-        post=0
-    )>,
-    limits=<Limit(
-        maxCount=5
-    )>,
-    name=ClickUnfired
-)>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF|DBG] - 2025-06-08 05:45:42...036085 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR|DBG] - 2025-06-08 05:45:42...036750 - Job 'ClickUnfired' Execute failure
-[WRN|DBG] - 2025-06-08 05:45:42...037585 - Current try: 5 for job 'NextPage'(<Limit(
-    maxCount=-1,
-    maxFailure=-1,
-    maxSuccess=-1
-)>)
-[INF|DBG] - 2025-06-08 05:45:43...090487 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF|DBG] - 2025-06-08 05:45:43...091282 - Job 'NextPage' Execute success
-[WRN|DBG] - 2025-06-08 05:47:22.220840 - Current try: 1 for job 'EnterDelay'(<Limit(
-    maxCount=-1,
-    maxFailure=-1,
-    maxSuccess=-1
-)>)
-[INF|DBG] - 2025-06-08 05:47:23.222170 - Directing to next job: 'ClickUnfired' after job 'EnterDelay'
-[INF|DBG] - 2025-06-08 05:47:23.222863 - Job 'EnterDelay' Execute success
-[WRN|DBG] - 2025-06-08 05:47:23.223399 - Current try: 1 for job 'ClickUnfired'(<Limit(
+[INF][DBG] - 2025-06-08 05:51:57.657553 - Directing to next job: 'ClickUnfired' after job 'EnterDelay'
+[INF][DBG] - 2025-06-08 05:51:57.658196 - Job 'EnterDelay' Execute success
+[WRN][DBG] - 2025-06-08 05:51:57.658676 - Current try: 1 for job 'ClickUnfired'(<Limit(
     maxFailure=10
 )>)
-[ERR|DBG] - 2025-06-08 05:47:23.304851 - Error in job 'ClickUnfired': Execution error in job '<Job(
+[ERR][DBG] - 2025-06-08 05:51:57.740635 - Error in job 'ClickUnfired': Execution error in job '<Job(
     type=ROI,
     description=点击未点火好友,
     image=<Image(
@@ -273,19 +41,19 @@
     )>,
     name=ClickUnfired
 )>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF|DBG] - 2025-06-08 05:47:23.306448 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR|DBG] - 2025-06-08 05:47:23.306930 - Job 'ClickUnfired' Execute failure
-[WRN|DBG] - 2025-06-08 05:47:23.307380 - Current try: 1 for job 'NextPage'(<Limit(
+[INF][DBG] - 2025-06-08 05:51:57.742169 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:51:57.742681 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:51:57.743262 - Current try: 1 for job 'NextPage'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF|DBG] - 2025-06-08 05:47:24.467385 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF|DBG] - 2025-06-08 05:47:24.468157 - Job 'NextPage' Execute success
-[WRN|DBG] - 2025-06-08 05:47:24.468797 - Current try: 2 for job 'ClickUnfired'(<Limit(
+[INF][DBG] - 2025-06-08 05:51:58.912826 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:51:58.913462 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:51:58.914104 - Current try: 2 for job 'ClickUnfired'(<Limit(
     maxFailure=10
 )>)
-[ERR|DBG] - 2025-06-08 05:47:24.541057 - Error in job 'ClickUnfired': Execution error in job '<Job(
+[ERR][DBG] - 2025-06-08 05:51:58.988776 - Error in job 'ClickUnfired': Execution error in job '<Job(
     type=ROI,
     description=点击未点火好友,
     image=<Image(
@@ -318,19 +86,19 @@
     )>,
     name=ClickUnfired
 )>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF|DBG] - 2025-06-08 05:47:24.542795 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR|DBG] - 2025-06-08 05:47:24.543328 - Job 'ClickUnfired' Execute failure
-[WRN|DBG] - 2025-06-08 05:47:24.543756 - Current try: 2 for job 'NextPage'(<Limit(
+[INF][DBG] - 2025-06-08 05:51:58.990725 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:51:58.991470 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:51:58.992396 - Current try: 2 for job 'NextPage'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF|DBG] - 2025-06-08 05:47:25.595655 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF|DBG] - 2025-06-08 05:47:25.596384 - Job 'NextPage' Execute success
-[WRN|DBG] - 2025-06-08 05:47:25.597012 - Current try: 3 for job 'ClickUnfired'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:00.044718 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:52:00.045388 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:52:00.045962 - Current try: 3 for job 'ClickUnfired'(<Limit(
     maxFailure=10
 )>)
-[ERR|DBG] - 2025-06-08 05:47:25.664542 - Error in job 'ClickUnfired': Execution error in job '<Job(
+[ERR][DBG] - 2025-06-08 05:52:00.118575 - Error in job 'ClickUnfired': Execution error in job '<Job(
     type=ROI,
     description=点击未点火好友,
     image=<Image(
@@ -363,19 +131,19 @@
     )>,
     name=ClickUnfired
 )>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF|DBG] - 2025-06-08 05:47:25.666428 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR|DBG] - 2025-06-08 05:47:25.666966 - Job 'ClickUnfired' Execute failure
-[WRN|DBG] - 2025-06-08 05:47:25.667423 - Current try: 3 for job 'NextPage'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:00.120356 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:52:00.120983 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:52:00.121651 - Current try: 3 for job 'NextPage'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF|DBG] - 2025-06-08 05:47:26.719318 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF|DBG] - 2025-06-08 05:47:26.720036 - Job 'NextPage' Execute success
-[WRN|DBG] - 2025-06-08 05:47:26.720672 - Current try: 4 for job 'ClickUnfired'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:01.173673 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:52:01.174387 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:52:01.174965 - Current try: 4 for job 'ClickUnfired'(<Limit(
     maxFailure=10
 )>)
-[ERR|DBG] - 2025-06-08 05:47:26.790262 - Error in job 'ClickUnfired': Execution error in job '<Job(
+[ERR][DBG] - 2025-06-08 05:52:01.246909 - Error in job 'ClickUnfired': Execution error in job '<Job(
     type=ROI,
     description=点击未点火好友,
     image=<Image(
@@ -408,19 +176,19 @@
     )>,
     name=ClickUnfired
 )>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF|DBG] - 2025-06-08 05:47:26.791953 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR|DBG] - 2025-06-08 05:47:26.792421 - Job 'ClickUnfired' Execute failure
-[WRN|DBG] - 2025-06-08 05:47:26.792910 - Current try: 4 for job 'NextPage'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:01.248723 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:52:01.249294 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:52:01.250162 - Current try: 4 for job 'NextPage'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF|DBG] - 2025-06-08 05:47:27.845093 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF|DBG] - 2025-06-08 05:47:27.845775 - Job 'NextPage' Execute success
-[WRN|DBG] - 2025-06-08 05:47:27.846374 - Current try: 5 for job 'ClickUnfired'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:02.302768 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:52:02.303581 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:52:02.304414 - Current try: 5 for job 'ClickUnfired'(<Limit(
     maxFailure=10
 )>)
-[ERR|DBG] - 2025-06-08 05:47:27.916524 - Error in job 'ClickUnfired': Execution error in job '<Job(
+[ERR][DBG] - 2025-06-08 05:52:02.371143 - Error in job 'ClickUnfired': Execution error in job '<Job(
     type=ROI,
     description=点击未点火好友,
     image=<Image(
@@ -453,19 +221,19 @@
     )>,
     name=ClickUnfired
 )>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF|DBG] - 2025-06-08 05:47:27.918129 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR|DBG] - 2025-06-08 05:47:27.918663 - Job 'ClickUnfired' Execute failure
-[WRN|DBG] - 2025-06-08 05:47:27.919242 - Current try: 5 for job 'NextPage'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:02.372985 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:52:02.373666 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:52:02.374290 - Current try: 5 for job 'NextPage'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF|DBG] - 2025-06-08 05:47:28.971580 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF|DBG] - 2025-06-08 05:47:28.972419 - Job 'NextPage' Execute success
-[WRN|DBG] - 2025-06-08 05:47:28.972999 - Current try: 6 for job 'ClickUnfired'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:03.428709 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:52:03.429626 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:52:03.430584 - Current try: 6 for job 'ClickUnfired'(<Limit(
     maxFailure=10
 )>)
-[ERR|DBG] - 2025-06-08 05:47:29.042830 - Error in job 'ClickUnfired': Execution error in job '<Job(
+[ERR][DBG] - 2025-06-08 05:52:03.533292 - Error in job 'ClickUnfired': Execution error in job '<Job(
     type=ROI,
     description=点击未点火好友,
     image=<Image(
@@ -498,19 +266,19 @@
     )>,
     name=ClickUnfired
 )>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF|DBG] - 2025-06-08 05:47:29.044443 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR|DBG] - 2025-06-08 05:47:29.044902 - Job 'ClickUnfired' Execute failure
-[WRN|DBG] - 2025-06-08 05:47:29.045371 - Current try: 6 for job 'NextPage'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:03.535637 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:52:03.536448 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:52:03.537310 - Current try: 6 for job 'NextPage'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF|DBG] - 2025-06-08 05:47:30.097888 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF|DBG] - 2025-06-08 05:47:30.098609 - Job 'NextPage' Execute success
-[WRN|DBG] - 2025-06-08 05:47:30.099188 - Current try: 7 for job 'ClickUnfired'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:04.590179 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:52:04.590970 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:52:04.591622 - Current try: 7 for job 'ClickUnfired'(<Limit(
     maxFailure=10
 )>)
-[ERR|DBG] - 2025-06-08 05:47:30.163950 - Error in job 'ClickUnfired': Execution error in job '<Job(
+[ERR][DBG] - 2025-06-08 05:52:04.682383 - Error in job 'ClickUnfired': Execution error in job '<Job(
     type=ROI,
     description=点击未点火好友,
     image=<Image(
@@ -543,19 +311,19 @@
     )>,
     name=ClickUnfired
 )>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF|DBG] - 2025-06-08 05:47:30.165745 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR|DBG] - 2025-06-08 05:47:30.166169 - Job 'ClickUnfired' Execute failure
-[WRN|DBG] - 2025-06-08 05:47:30.166595 - Current try: 7 for job 'NextPage'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:04.684791 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:52:04.685441 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:52:04.686072 - Current try: 7 for job 'NextPage'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF|DBG] - 2025-06-08 05:47:31.218460 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF|DBG] - 2025-06-08 05:47:31.219252 - Job 'NextPage' Execute success
-[WRN|DBG] - 2025-06-08 05:47:31.219918 - Current try: 8 for job 'ClickUnfired'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:05.738821 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:52:05.739885 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:52:05.740682 - Current try: 8 for job 'ClickUnfired'(<Limit(
     maxFailure=10
 )>)
-[ERR|DBG] - 2025-06-08 05:47:31.290207 - Error in job 'ClickUnfired': Execution error in job '<Job(
+[ERR][DBG] - 2025-06-08 05:52:05.825779 - Error in job 'ClickUnfired': Execution error in job '<Job(
     type=ROI,
     description=点击未点火好友,
     image=<Image(
@@ -588,19 +356,19 @@
     )>,
     name=ClickUnfired
 )>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF|DBG] - 2025-06-08 05:47:31.291887 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR|DBG] - 2025-06-08 05:47:31.292429 - Job 'ClickUnfired' Execute failure
-[WRN|DBG] - 2025-06-08 05:47:31.293050 - Current try: 8 for job 'NextPage'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:05.828021 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:52:05.828886 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:52:05.829578 - Current try: 8 for job 'NextPage'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF|DBG] - 2025-06-08 05:47:32.345815 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF|DBG] - 2025-06-08 05:47:32.346431 - Job 'NextPage' Execute success
-[WRN|DBG] - 2025-06-08 05:47:32.347045 - Current try: 9 for job 'ClickUnfired'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:06.882501 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:52:06.883285 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:52:06.884100 - Current try: 9 for job 'ClickUnfired'(<Limit(
     maxFailure=10
 )>)
-[ERR|DBG] - 2025-06-08 05:47:32.413050 - Error in job 'ClickUnfired': Execution error in job '<Job(
+[ERR][DBG] - 2025-06-08 05:52:06.976679 - Error in job 'ClickUnfired': Execution error in job '<Job(
     type=ROI,
     description=点击未点火好友,
     image=<Image(
@@ -633,19 +401,19 @@
     )>,
     name=ClickUnfired
 )>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF|DBG] - 2025-06-08 05:47:32.414623 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR|DBG] - 2025-06-08 05:47:32.415093 - Job 'ClickUnfired' Execute failure
-[WRN|DBG] - 2025-06-08 05:47:32.415541 - Current try: 9 for job 'NextPage'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:06.978845 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:52:06.979669 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:52:06.980435 - Current try: 9 for job 'NextPage'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF|DBG] - 2025-06-08 05:47:33.467135 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF|DBG] - 2025-06-08 05:47:33.467852 - Job 'NextPage' Execute success
-[WRN|DBG] - 2025-06-08 05:47:33.468406 - Current try: 10 for job 'ClickUnfired'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:08.033731 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:52:08.034841 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:52:08.035856 - Current try: 10 for job 'ClickUnfired'(<Limit(
     maxFailure=10
 )>)
-[ERR|DBG] - 2025-06-08 05:47:33.539260 - Error in job 'ClickUnfired': Execution error in job '<Job(
+[ERR][DBG] - 2025-06-08 05:52:08.125603 - Error in job 'ClickUnfired': Execution error in job '<Job(
     type=ROI,
     description=点击未点火好友,
     image=<Image(
@@ -678,26 +446,26 @@
     )>,
     name=ClickUnfired
 )>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF|DBG] - 2025-06-08 05:47:33.540959 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR|DBG] - 2025-06-08 05:47:33.541574 - Job 'ClickUnfired' Execute failure
-[WRN|DBG] - 2025-06-08 05:47:33.542187 - Current try: 10 for job 'NextPage'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:08.127809 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:52:08.128528 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:52:08.129269 - Current try: 10 for job 'NextPage'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF|DBG] - 2025-06-08 05:47:34.594323 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF|DBG] - 2025-06-08 05:47:34.595031 - Job 'NextPage' Execute success
-[WRN][DBG] - 2025-06-08 05:50:15.495125 - Current try: 1 for job 'EnterDelay'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:09.182370 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:52:09.183444 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:52:16.307418 - Current try: 1 for job 'EnterDelay'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF][DBG] - 2025-06-08 05:50:16.496129 - Directing to next job: 'ClickUnfired' after job 'EnterDelay'
-[INF][DBG] - 2025-06-08 05:50:16.496703 - Job 'EnterDelay' Execute success
-[WRN][DBG] - 2025-06-08 05:50:16.497241 - Current try: 1 for job 'ClickUnfired'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:17.309099 - Directing to next job: 'ClickUnfired' after job 'EnterDelay'
+[INF][DBG] - 2025-06-08 05:52:17.309722 - Job 'EnterDelay' Execute success
+[WRN][DBG] - 2025-06-08 05:52:17.310329 - Current try: 1 for job 'ClickUnfired'(<Limit(
     maxFailure=10
 )>)
-[ERR][DBG] - 2025-06-08 05:50:16.582123 - Error in job 'ClickUnfired': Execution error in job '<Job(
+[ERR][DBG] - 2025-06-08 05:52:17.395648 - Error in job 'ClickUnfired': Execution error in job '<Job(
     type=ROI,
     description=点击未点火好友,
     image=<Image(
@@ -730,19 +498,19 @@
     )>,
     name=ClickUnfired
 )>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF][DBG] - 2025-06-08 05:50:16.583828 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR][DBG] - 2025-06-08 05:50:16.584306 - Job 'ClickUnfired' Execute failure
-[WRN][DBG] - 2025-06-08 05:50:16.584780 - Current try: 1 for job 'NextPage'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:17.397380 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:52:17.397873 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:52:17.398454 - Current try: 1 for job 'NextPage'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF][DBG] - 2025-06-08 05:50:17.741565 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF][DBG] - 2025-06-08 05:50:17.742237 - Job 'NextPage' Execute success
-[WRN][DBG] - 2025-06-08 05:50:17.742877 - Current try: 2 for job 'ClickUnfired'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:18.561000 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:52:18.561668 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:52:18.562184 - Current try: 2 for job 'ClickUnfired'(<Limit(
     maxFailure=10
 )>)
-[ERR][DBG] - 2025-06-08 05:50:17.809790 - Error in job 'ClickUnfired': Execution error in job '<Job(
+[ERR][DBG] - 2025-06-08 05:52:18.630294 - Error in job 'ClickUnfired': Execution error in job '<Job(
     type=ROI,
     description=点击未点火好友,
     image=<Image(
@@ -775,19 +543,19 @@
     )>,
     name=ClickUnfired
 )>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF][DBG] - 2025-06-08 05:50:17.811760 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR][DBG] - 2025-06-08 05:50:17.812435 - Job 'ClickUnfired' Execute failure
-[WRN][DBG] - 2025-06-08 05:50:17.812892 - Current try: 2 for job 'NextPage'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:18.632040 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:52:18.632614 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:52:18.633169 - Current try: 2 for job 'NextPage'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF][DBG] - 2025-06-08 05:50:18.864296 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF][DBG] - 2025-06-08 05:50:18.865013 - Job 'NextPage' Execute success
-[WRN][DBG] - 2025-06-08 05:50:18.865585 - Current try: 3 for job 'ClickUnfired'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:19.685445 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:52:19.686212 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:52:19.686782 - Current try: 3 for job 'ClickUnfired'(<Limit(
     maxFailure=10
 )>)
-[ERR][DBG] - 2025-06-08 05:50:18.934988 - Error in job 'ClickUnfired': Execution error in job '<Job(
+[ERR][DBG] - 2025-06-08 05:52:19.758441 - Error in job 'ClickUnfired': Execution error in job '<Job(
     type=ROI,
     description=点击未点火好友,
     image=<Image(
@@ -820,19 +588,19 @@
     )>,
     name=ClickUnfired
 )>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF][DBG] - 2025-06-08 05:50:18.936615 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR][DBG] - 2025-06-08 05:50:18.937023 - Job 'ClickUnfired' Execute failure
-[WRN][DBG] - 2025-06-08 05:50:18.937522 - Current try: 3 for job 'NextPage'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:19.760291 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:52:19.760941 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:52:19.761535 - Current try: 3 for job 'NextPage'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF][DBG] - 2025-06-08 05:50:19.989553 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF][DBG] - 2025-06-08 05:50:19.990438 - Job 'NextPage' Execute success
-[WRN][DBG] - 2025-06-08 05:50:19.991135 - Current try: 4 for job 'ClickUnfired'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:20.813804 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:52:20.814585 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:52:20.815275 - Current try: 4 for job 'ClickUnfired'(<Limit(
     maxFailure=10
 )>)
-[ERR][DBG] - 2025-06-08 05:50:20.062909 - Error in job 'ClickUnfired': Execution error in job '<Job(
+[ERR][DBG] - 2025-06-08 05:52:20.885063 - Error in job 'ClickUnfired': Execution error in job '<Job(
     type=ROI,
     description=点击未点火好友,
     image=<Image(
@@ -865,19 +633,19 @@
     )>,
     name=ClickUnfired
 )>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF][DBG] - 2025-06-08 05:50:20.064873 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR][DBG] - 2025-06-08 05:50:20.065448 - Job 'ClickUnfired' Execute failure
-[WRN][DBG] - 2025-06-08 05:50:20.065955 - Current try: 4 for job 'NextPage'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:20.887009 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:52:20.887612 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:52:20.888119 - Current try: 4 for job 'NextPage'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF][DBG] - 2025-06-08 05:50:21.119282 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF][DBG] - 2025-06-08 05:50:21.120514 - Job 'NextPage' Execute success
-[WRN][DBG] - 2025-06-08 05:50:21.121555 - Current try: 5 for job 'ClickUnfired'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:21.940235 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:52:21.940976 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:52:21.941582 - Current try: 5 for job 'ClickUnfired'(<Limit(
     maxFailure=10
 )>)
-[ERR][DBG] - 2025-06-08 05:50:21.211407 - Error in job 'ClickUnfired': Execution error in job '<Job(
+[ERR][DBG] - 2025-06-08 05:52:22.003649 - Error in job 'ClickUnfired': Execution error in job '<Job(
     type=ROI,
     description=点击未点火好友,
     image=<Image(
@@ -910,19 +678,19 @@
     )>,
     name=ClickUnfired
 )>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF][DBG] - 2025-06-08 05:50:21.213075 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR][DBG] - 2025-06-08 05:50:21.213618 - Job 'ClickUnfired' Execute failure
-[WRN][DBG] - 2025-06-08 05:50:21.214350 - Current try: 5 for job 'NextPage'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:22.005611 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:52:22.006139 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:52:22.006733 - Current try: 5 for job 'NextPage'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF][DBG] - 2025-06-08 05:50:22.266511 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF][DBG] - 2025-06-08 05:50:22.267272 - Job 'NextPage' Execute success
-[WRN][DBG] - 2025-06-08 05:50:22.267801 - Current try: 6 for job 'ClickUnfired'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:23.058569 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:52:23.059318 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:52:23.060115 - Current try: 6 for job 'ClickUnfired'(<Limit(
     maxFailure=10
 )>)
-[ERR][DBG] - 2025-06-08 05:50:22.337551 - Error in job 'ClickUnfired': Execution error in job '<Job(
+[ERR][DBG] - 2025-06-08 05:52:23.129508 - Error in job 'ClickUnfired': Execution error in job '<Job(
     type=ROI,
     description=点击未点火好友,
     image=<Image(
@@ -955,19 +723,19 @@
     )>,
     name=ClickUnfired
 )>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF][DBG] - 2025-06-08 05:50:22.339728 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR][DBG] - 2025-06-08 05:50:22.340400 - Job 'ClickUnfired' Execute failure
-[WRN][DBG] - 2025-06-08 05:50:22.340975 - Current try: 6 for job 'NextPage'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:23.131222 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:52:23.131750 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:52:23.132322 - Current try: 6 for job 'NextPage'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF][DBG] - 2025-06-08 05:50:23.392884 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF][DBG] - 2025-06-08 05:50:23.393566 - Job 'NextPage' Execute success
-[WRN][DBG] - 2025-06-08 05:50:23.394132 - Current try: 7 for job 'ClickUnfired'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:24.184319 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:52:24.185036 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:52:24.185706 - Current try: 7 for job 'ClickUnfired'(<Limit(
     maxFailure=10
 )>)
-[ERR][DBG] - 2025-06-08 05:50:23.472227 - Error in job 'ClickUnfired': Execution error in job '<Job(
+[ERR][DBG] - 2025-06-08 05:52:24.258897 - Error in job 'ClickUnfired': Execution error in job '<Job(
     type=ROI,
     description=点击未点火好友,
     image=<Image(
@@ -1000,19 +768,19 @@
     )>,
     name=ClickUnfired
 )>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF][DBG] - 2025-06-08 05:50:23.474548 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR][DBG] - 2025-06-08 05:50:23.475320 - Job 'ClickUnfired' Execute failure
-[WRN][DBG] - 2025-06-08 05:50:23.475944 - Current try: 7 for job 'NextPage'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:24.260757 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:52:24.261301 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:52:24.261978 - Current try: 7 for job 'NextPage'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF][DBG] - 2025-06-08 05:50:24.528362 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF][DBG] - 2025-06-08 05:50:24.529106 - Job 'NextPage' Execute success
-[WRN][DBG] - 2025-06-08 05:50:24.529935 - Current try: 8 for job 'ClickUnfired'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:25.313998 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:52:25.314599 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:52:25.315307 - Current try: 8 for job 'ClickUnfired'(<Limit(
     maxFailure=10
 )>)
-[ERR][DBG] - 2025-06-08 05:50:24.601051 - Error in job 'ClickUnfired': Execution error in job '<Job(
+[ERR][DBG] - 2025-06-08 05:52:25.388036 - Error in job 'ClickUnfired': Execution error in job '<Job(
     type=ROI,
     description=点击未点火好友,
     image=<Image(
@@ -1045,19 +813,19 @@
     )>,
     name=ClickUnfired
 )>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF][DBG] - 2025-06-08 05:50:24.603115 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR][DBG] - 2025-06-08 05:50:24.603958 - Job 'ClickUnfired' Execute failure
-[WRN][DBG] - 2025-06-08 05:50:24.604674 - Current try: 8 for job 'NextPage'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:25.389439 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:52:25.389915 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:52:25.390483 - Current try: 8 for job 'NextPage'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF][DBG] - 2025-06-08 05:50:25.656907 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF][DBG] - 2025-06-08 05:50:25.657645 - Job 'NextPage' Execute success
-[WRN][DBG] - 2025-06-08 05:50:25.658315 - Current try: 9 for job 'ClickUnfired'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:26.442904 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:52:26.443717 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:52:26.444599 - Current try: 9 for job 'ClickUnfired'(<Limit(
     maxFailure=10
 )>)
-[ERR][DBG] - 2025-06-08 05:50:25.734457 - Error in job 'ClickUnfired': Execution error in job '<Job(
+[ERR][DBG] - 2025-06-08 05:52:26.517122 - Error in job 'ClickUnfired': Execution error in job '<Job(
     type=ROI,
     description=点击未点火好友,
     image=<Image(
@@ -1090,19 +858,19 @@
     )>,
     name=ClickUnfired
 )>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF][DBG] - 2025-06-08 05:50:25.736174 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR][DBG] - 2025-06-08 05:50:25.736800 - Job 'ClickUnfired' Execute failure
-[WRN][DBG] - 2025-06-08 05:50:25.737509 - Current try: 9 for job 'NextPage'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:26.518703 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:52:26.519166 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:52:26.519711 - Current try: 9 for job 'NextPage'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF][DBG] - 2025-06-08 05:50:26.789905 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF][DBG] - 2025-06-08 05:50:26.790536 - Job 'NextPage' Execute success
-[WRN][DBG] - 2025-06-08 05:50:26.791025 - Current try: 10 for job 'ClickUnfired'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:27.572014 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:52:27.572714 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:52:27.573375 - Current try: 10 for job 'ClickUnfired'(<Limit(
     maxFailure=10
 )>)
-[ERR][DBG] - 2025-06-08 05:50:26.869785 - Error in job 'ClickUnfired': Execution error in job '<Job(
+[ERR][DBG] - 2025-06-08 05:52:27.640738 - Error in job 'ClickUnfired': Execution error in job '<Job(
     type=ROI,
     description=点击未点火好友,
     image=<Image(
@@ -1135,12 +903,557 @@
     )>,
     name=ClickUnfired
 )>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
-[INF][DBG] - 2025-06-08 05:50:26.872299 - Directing to next job: 'NextPage' after job 'ClickUnfired'
-[ERR][DBG] - 2025-06-08 05:50:26.873147 - Job 'ClickUnfired' Execute failure
-[WRN][DBG] - 2025-06-08 05:50:26.873849 - Current try: 10 for job 'NextPage'(<Limit(
+[INF][DBG] - 2025-06-08 05:52:27.642727 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:52:27.643273 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:52:27.643756 - Current try: 10 for job 'NextPage'(<Limit(
     maxCount=-1,
     maxFailure=-1,
     maxSuccess=-1
 )>)
-[INF][DBG] - 2025-06-08 05:50:27.926074 - Directing to next job: 'ClickUnfired' after job 'NextPage'
-[INF][DBG] - 2025-06-08 05:50:27.926792 - Job 'NextPage' Execute success
+[INF][DBG] - 2025-06-08 05:52:28.695313 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:52:28.696049 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:53:12.255477 - Current try: 1 for job 'EnterDelay'(<Limit(
+    maxCount=-1,
+    maxFailure=-1,
+    maxSuccess=-1
+)>)
+[INF][DBG] - 2025-06-08 05:53:13.257304 - Directing to next job: 'ClickUnfired' after job 'EnterDelay'
+[INF][DBG] - 2025-06-08 05:53:13.257972 - Job 'EnterDelay' Execute success
+[WRN][DBG] - 2025-06-08 05:53:13.258551 - Current try: 1 for job 'ClickUnfired'(<Limit(
+    maxFailure=10
+)>)
+[ERR][DBG] - 2025-06-08 05:53:13.362286 - Error in job 'ClickUnfired': Execution error in job '<Job(
+    type=ROI,
+    description=点击未点火好友,
+    image=<Image(
+        path=images/sky_fire/unfired--2-3.png,
+        confidence=0.93
+    )>,
+    action=<Action(
+        type=LClick,
+        position=<Position(
+            type=Relative
+        )>
+    )>,
+    region=<Region(
+        x=130,
+        y=290,
+        width=1390,
+        height=830
+    )>,
+    next=<Next(
+        success=CheckEnter,
+        failure=NextPage
+    )>,
+    delay=<Delay(
+        pre=0,
+        cur=50,
+        post=0
+    )>,
+    limits=<Limit(
+        maxFailure=10
+    )>,
+    name=ClickUnfired
+)>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
+[INF][DBG] - 2025-06-08 05:53:13.364004 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:53:13.364621 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:53:13.365199 - Current try: 1 for job 'NextPage'(<Limit(
+    maxCount=-1,
+    maxFailure=-1,
+    maxSuccess=-1
+)>)
+[INF][DBG] - 2025-06-08 05:53:14.546462 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:53:14.547162 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:53:14.547779 - Current try: 2 for job 'ClickUnfired'(<Limit(
+    maxFailure=10
+)>)
+[ERR][DBG] - 2025-06-08 05:53:14.630054 - Error in job 'ClickUnfired': Execution error in job '<Job(
+    type=ROI,
+    description=点击未点火好友,
+    image=<Image(
+        path=images/sky_fire/unfired--2-3.png,
+        confidence=0.93
+    )>,
+    action=<Action(
+        type=LClick,
+        position=<Position(
+            type=Relative
+        )>
+    )>,
+    region=<Region(
+        x=130,
+        y=290,
+        width=1390,
+        height=830
+    )>,
+    next=<Next(
+        success=CheckEnter,
+        failure=NextPage
+    )>,
+    delay=<Delay(
+        pre=0,
+        cur=50,
+        post=0
+    )>,
+    limits=<Limit(
+        maxFailure=10
+    )>,
+    name=ClickUnfired
+)>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
+[INF][DBG] - 2025-06-08 05:53:14.632038 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:53:14.633014 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:53:14.633819 - Current try: 2 for job 'NextPage'(<Limit(
+    maxCount=-1,
+    maxFailure=-1,
+    maxSuccess=-1
+)>)
+[INF][DBG] - 2025-06-08 05:53:15.686184 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:53:15.687150 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:53:15.687761 - Current try: 3 for job 'ClickUnfired'(<Limit(
+    maxFailure=10
+)>)
+[INF][DBG] - 2025-06-08 05:53:15.873156 - Directing to next job: 'CheckEnter' after job 'ClickUnfired'
+[INF][DBG] - 2025-06-08 05:53:15.873932 - Job 'ClickUnfired' Execute success
+[WRN][DBG] - 2025-06-08 05:53:15.874505 - Current try: 1 for job 'CheckEnter'(<Limit(
+    maxCount=-1,
+    maxFailure=-1,
+    maxSuccess=-1
+)>)
+[ERR][DBG] - 2025-06-08 05:53:16.324669 - Error in job 'CheckEnter': Execution error in job '<Job(
+    type=ROI,
+    description=通过编辑, 检查是否进入了好友操作界面, 如果有编辑说明还需要点击,
+    image=<Image(
+        path=images/sky_fire/edit--2-3.png,
+        confidence=0.95
+    )>,
+    next=<Next(
+        success=ClickUnfired,
+        failure=FireFriend
+    )>,
+    delay=<Delay(
+        pre=300,
+        cur=50,
+        post=0
+    )>,
+    name=CheckEnter
+)>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.95.
+[INF][DBG] - 2025-06-08 05:53:16.327977 - Directing to next job: 'FireFriend' after job 'CheckEnter'
+[ERR][DBG] - 2025-06-08 05:53:16.328770 - Job 'CheckEnter' Execute failure
+[WRN][DBG] - 2025-06-08 05:53:16.329499 - Current try: 1 for job 'FireFriend'(<Limit(
+    maxCount=-1,
+    maxFailure=-1,
+    maxSuccess=-1
+)>)
+[INF][DBG] - 2025-06-08 05:53:16.712151 - Directing to next job: 'ExitFriend' after job 'FireFriend'
+[INF][DBG] - 2025-06-08 05:53:16.712956 - Job 'FireFriend' Execute success
+[WRN][DBG] - 2025-06-08 05:53:16.713527 - Current try: 1 for job 'ExitFriend'(<Limit(
+    maxCount=-1,
+    maxFailure=-1,
+    maxSuccess=-1
+)>)
+[INF][DBG] - 2025-06-08 05:53:17.065628 - Directing to next job: 'ClickUnfired' after job 'ExitFriend'
+[INF][DBG] - 2025-06-08 05:53:17.066330 - Job 'ExitFriend' Execute success
+[WRN][DBG] - 2025-06-08 05:53:17.066898 - Current try: 4 for job 'ClickUnfired'(<Limit(
+    maxFailure=10
+)>)
+[ERR][DBG] - 2025-06-08 05:53:17.156630 - Error in job 'ClickUnfired': Execution error in job '<Job(
+    type=ROI,
+    description=点击未点火好友,
+    image=<Image(
+        path=images/sky_fire/unfired--2-3.png,
+        confidence=0.93
+    )>,
+    action=<Action(
+        type=LClick,
+        position=<Position(
+            type=Relative
+        )>
+    )>,
+    region=<Region(
+        x=130,
+        y=290,
+        width=1390,
+        height=830
+    )>,
+    next=<Next(
+        success=CheckEnter,
+        failure=NextPage
+    )>,
+    delay=<Delay(
+        pre=0,
+        cur=50,
+        post=0
+    )>,
+    limits=<Limit(
+        maxFailure=10
+    )>,
+    name=ClickUnfired
+)>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
+[INF][DBG] - 2025-06-08 05:53:17.158112 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:53:17.158683 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:53:17.159226 - Current try: 3 for job 'NextPage'(<Limit(
+    maxCount=-1,
+    maxFailure=-1,
+    maxSuccess=-1
+)>)
+[INF][DBG] - 2025-06-08 05:53:18.212639 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:53:18.213713 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:53:18.214311 - Current try: 5 for job 'ClickUnfired'(<Limit(
+    maxFailure=10
+)>)
+[ERR][DBG] - 2025-06-08 05:53:18.316070 - Error in job 'ClickUnfired': Execution error in job '<Job(
+    type=ROI,
+    description=点击未点火好友,
+    image=<Image(
+        path=images/sky_fire/unfired--2-3.png,
+        confidence=0.93
+    )>,
+    action=<Action(
+        type=LClick,
+        position=<Position(
+            type=Relative
+        )>
+    )>,
+    region=<Region(
+        x=130,
+        y=290,
+        width=1390,
+        height=830
+    )>,
+    next=<Next(
+        success=CheckEnter,
+        failure=NextPage
+    )>,
+    delay=<Delay(
+        pre=0,
+        cur=50,
+        post=0
+    )>,
+    limits=<Limit(
+        maxFailure=10
+    )>,
+    name=ClickUnfired
+)>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
+[INF][DBG] - 2025-06-08 05:53:18.318065 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:53:18.318817 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:53:18.319695 - Current try: 4 for job 'NextPage'(<Limit(
+    maxCount=-1,
+    maxFailure=-1,
+    maxSuccess=-1
+)>)
+[INF][DBG] - 2025-06-08 05:53:19.371968 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:53:19.372727 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:53:19.373388 - Current try: 6 for job 'ClickUnfired'(<Limit(
+    maxFailure=10
+)>)
+[ERR][DBG] - 2025-06-08 05:53:19.459865 - Error in job 'ClickUnfired': Execution error in job '<Job(
+    type=ROI,
+    description=点击未点火好友,
+    image=<Image(
+        path=images/sky_fire/unfired--2-3.png,
+        confidence=0.93
+    )>,
+    action=<Action(
+        type=LClick,
+        position=<Position(
+            type=Relative
+        )>
+    )>,
+    region=<Region(
+        x=130,
+        y=290,
+        width=1390,
+        height=830
+    )>,
+    next=<Next(
+        success=CheckEnter,
+        failure=NextPage
+    )>,
+    delay=<Delay(
+        pre=0,
+        cur=50,
+        post=0
+    )>,
+    limits=<Limit(
+        maxFailure=10
+    )>,
+    name=ClickUnfired
+)>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
+[INF][DBG] - 2025-06-08 05:53:19.461530 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:53:19.462325 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:53:19.463046 - Current try: 5 for job 'NextPage'(<Limit(
+    maxCount=-1,
+    maxFailure=-1,
+    maxSuccess=-1
+)>)
+[INF][DBG] - 2025-06-08 05:53:20.515282 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:53:20.516190 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:53:20.516888 - Current try: 7 for job 'ClickUnfired'(<Limit(
+    maxFailure=10
+)>)
+[INF][DBG] - 2025-06-08 05:53:20.713113 - Directing to next job: 'CheckEnter' after job 'ClickUnfired'
+[INF][DBG] - 2025-06-08 05:53:20.713931 - Job 'ClickUnfired' Execute success
+[WRN][DBG] - 2025-06-08 05:53:20.714760 - Current try: 2 for job 'CheckEnter'(<Limit(
+    maxCount=-1,
+    maxFailure=-1,
+    maxSuccess=-1
+)>)
+[ERR][DBG] - 2025-06-08 05:53:21.169555 - Error in job 'CheckEnter': Execution error in job '<Job(
+    type=ROI,
+    description=通过编辑, 检查是否进入了好友操作界面, 如果有编辑说明还需要点击,
+    image=<Image(
+        path=images/sky_fire/edit--2-3.png,
+        confidence=0.95
+    )>,
+    next=<Next(
+        success=ClickUnfired,
+        failure=FireFriend
+    )>,
+    delay=<Delay(
+        pre=300,
+        cur=50,
+        post=0
+    )>,
+    name=CheckEnter
+)>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.95.
+[INF][DBG] - 2025-06-08 05:53:21.172722 - Directing to next job: 'FireFriend' after job 'CheckEnter'
+[ERR][DBG] - 2025-06-08 05:53:21.173604 - Job 'CheckEnter' Execute failure
+[WRN][DBG] - 2025-06-08 05:53:21.174154 - Current try: 2 for job 'FireFriend'(<Limit(
+    maxCount=-1,
+    maxFailure=-1,
+    maxSuccess=-1
+)>)
+[INF][DBG] - 2025-06-08 05:53:21.557086 - Directing to next job: 'ExitFriend' after job 'FireFriend'
+[INF][DBG] - 2025-06-08 05:53:21.557845 - Job 'FireFriend' Execute success
+[WRN][DBG] - 2025-06-08 05:53:21.558488 - Current try: 2 for job 'ExitFriend'(<Limit(
+    maxCount=-1,
+    maxFailure=-1,
+    maxSuccess=-1
+)>)
+[INF][DBG] - 2025-06-08 05:53:21.910802 - Directing to next job: 'ClickUnfired' after job 'ExitFriend'
+[INF][DBG] - 2025-06-08 05:53:21.911541 - Job 'ExitFriend' Execute success
+[WRN][DBG] - 2025-06-08 05:53:21.912165 - Current try: 8 for job 'ClickUnfired'(<Limit(
+    maxFailure=10
+)>)
+[ERR][DBG] - 2025-06-08 05:53:21.991839 - Error in job 'ClickUnfired': Execution error in job '<Job(
+    type=ROI,
+    description=点击未点火好友,
+    image=<Image(
+        path=images/sky_fire/unfired--2-3.png,
+        confidence=0.93
+    )>,
+    action=<Action(
+        type=LClick,
+        position=<Position(
+            type=Relative
+        )>
+    )>,
+    region=<Region(
+        x=130,
+        y=290,
+        width=1390,
+        height=830
+    )>,
+    next=<Next(
+        success=CheckEnter,
+        failure=NextPage
+    )>,
+    delay=<Delay(
+        pre=0,
+        cur=50,
+        post=0
+    )>,
+    limits=<Limit(
+        maxFailure=10
+    )>,
+    name=ClickUnfired
+)>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
+[INF][DBG] - 2025-06-08 05:53:21.993522 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:53:21.994088 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:53:21.994762 - Current try: 6 for job 'NextPage'(<Limit(
+    maxCount=-1,
+    maxFailure=-1,
+    maxSuccess=-1
+)>)
+[INF][DBG] - 2025-06-08 05:53:23.046712 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:53:23.047565 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:53:23.048248 - Current try: 9 for job 'ClickUnfired'(<Limit(
+    maxFailure=10
+)>)
+[ERR][DBG] - 2025-06-08 05:53:23.138080 - Error in job 'ClickUnfired': Execution error in job '<Job(
+    type=ROI,
+    description=点击未点火好友,
+    image=<Image(
+        path=images/sky_fire/unfired--2-3.png,
+        confidence=0.93
+    )>,
+    action=<Action(
+        type=LClick,
+        position=<Position(
+            type=Relative
+        )>
+    )>,
+    region=<Region(
+        x=130,
+        y=290,
+        width=1390,
+        height=830
+    )>,
+    next=<Next(
+        success=CheckEnter,
+        failure=NextPage
+    )>,
+    delay=<Delay(
+        pre=0,
+        cur=50,
+        post=0
+    )>,
+    limits=<Limit(
+        maxFailure=10
+    )>,
+    name=ClickUnfired
+)>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
+[INF][DBG] - 2025-06-08 05:53:23.140120 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:53:23.140922 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:53:23.141678 - Current try: 7 for job 'NextPage'(<Limit(
+    maxCount=-1,
+    maxFailure=-1,
+    maxSuccess=-1
+)>)
+[INF][DBG] - 2025-06-08 05:53:24.194104 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:53:24.194875 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:53:24.195498 - Current try: 10 for job 'ClickUnfired'(<Limit(
+    maxFailure=10
+)>)
+[ERR][DBG] - 2025-06-08 05:53:24.277098 - Error in job 'ClickUnfired': Execution error in job '<Job(
+    type=ROI,
+    description=点击未点火好友,
+    image=<Image(
+        path=images/sky_fire/unfired--2-3.png,
+        confidence=0.93
+    )>,
+    action=<Action(
+        type=LClick,
+        position=<Position(
+            type=Relative
+        )>
+    )>,
+    region=<Region(
+        x=130,
+        y=290,
+        width=1390,
+        height=830
+    )>,
+    next=<Next(
+        success=CheckEnter,
+        failure=NextPage
+    )>,
+    delay=<Delay(
+        pre=0,
+        cur=50,
+        post=0
+    )>,
+    limits=<Limit(
+        maxFailure=10
+    )>,
+    name=ClickUnfired
+)>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
+[INF][DBG] - 2025-06-08 05:53:24.278727 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:53:24.279341 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:53:24.279999 - Current try: 8 for job 'NextPage'(<Limit(
+    maxCount=-1,
+    maxFailure=-1,
+    maxSuccess=-1
+)>)
+[INF][DBG] - 2025-06-08 05:53:25.332201 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:53:25.333176 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:53:25.333779 - Current try: 11 for job 'ClickUnfired'(<Limit(
+    maxFailure=10
+)>)
+[ERR][DBG] - 2025-06-08 05:53:25.425248 - Error in job 'ClickUnfired': Execution error in job '<Job(
+    type=ROI,
+    description=点击未点火好友,
+    image=<Image(
+        path=images/sky_fire/unfired--2-3.png,
+        confidence=0.93
+    )>,
+    action=<Action(
+        type=LClick,
+        position=<Position(
+            type=Relative
+        )>
+    )>,
+    region=<Region(
+        x=130,
+        y=290,
+        width=1390,
+        height=830
+    )>,
+    next=<Next(
+        success=CheckEnter,
+        failure=NextPage
+    )>,
+    delay=<Delay(
+        pre=0,
+        cur=50,
+        post=0
+    )>,
+    limits=<Limit(
+        maxFailure=10
+    )>,
+    name=ClickUnfired
+)>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
+[INF][DBG] - 2025-06-08 05:53:25.427113 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:53:25.427829 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:53:25.428696 - Current try: 9 for job 'NextPage'(<Limit(
+    maxCount=-1,
+    maxFailure=-1,
+    maxSuccess=-1
+)>)
+[INF][DBG] - 2025-06-08 05:53:26.480998 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:53:26.481813 - Job 'NextPage' Execute success
+[WRN][DBG] - 2025-06-08 05:53:26.482445 - Current try: 12 for job 'ClickUnfired'(<Limit(
+    maxFailure=10
+)>)
+[ERR][DBG] - 2025-06-08 05:53:26.574168 - Error in job 'ClickUnfired': Execution error in job '<Job(
+    type=ROI,
+    description=点击未点火好友,
+    image=<Image(
+        path=images/sky_fire/unfired--2-3.png,
+        confidence=0.93
+    )>,
+    action=<Action(
+        type=LClick,
+        position=<Position(
+            type=Relative
+        )>
+    )>,
+    region=<Region(
+        x=130,
+        y=290,
+        width=1390,
+        height=830
+    )>,
+    next=<Next(
+        success=CheckEnter,
+        failure=NextPage
+    )>,
+    delay=<Delay(
+        pre=0,
+        cur=50,
+        post=0
+    )>,
+    limits=<Limit(
+        maxFailure=10
+    )>,
+    name=ClickUnfired
+)>': ROI error occurred: Matching error occurred: No match found in region with confidence >= 0.93.
+[INF][DBG] - 2025-06-08 05:53:26.576060 - Directing to next job: 'NextPage' after job 'ClickUnfired'
+[ERR][DBG] - 2025-06-08 05:53:26.576669 - Job 'ClickUnfired' Execute failure
+[WRN][DBG] - 2025-06-08 05:53:26.577245 - Current try: 10 for job 'NextPage'(<Limit(
+    maxCount=-1,
+    maxFailure=-1,
+    maxSuccess=-1
+)>)
+[INF][DBG] - 2025-06-08 05:53:27.629919 - Directing to next job: 'ClickUnfired' after job 'NextPage'
+[INF][DBG] - 2025-06-08 05:53:27.630782 - Job 'NextPage' Execute success

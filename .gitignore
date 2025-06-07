@@ -3,6 +3,7 @@
 # Folder
 **/__pycache__/
 .mypy_cache/
+log/
 
 # File
 **/*.py[cod]
