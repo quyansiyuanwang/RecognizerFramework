@@ -47,7 +47,7 @@
         "post": 0
       },
       "limits": {
-        "maxCount": 5
+        "maxFailure": 10
       }
     },
     "CheckEnter": {

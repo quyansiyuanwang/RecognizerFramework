@@ -58,7 +58,7 @@ class Logger:
             highest_level = max(levels, key=lambda l: l.value)
             color = Logger.COLOR_MAP.get(highest_level, Color.RESET)
 
-        msg_type = "|".join(Logger.ABBREVIATIONS.get(l, "UNK") for l in levels)
+        msg_type = "][".join(Logger.ABBREVIATIONS.get(l, "UNK") for l in levels)
         date_formatted = datetime.now().strftime(
             log_config.get("datefmt", "%Y-%m-%d %H:%M:%S.%f")
         )
