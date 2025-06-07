@@ -1,3 +1,7 @@
 import subprocess
 
-subprocess.run(["mypy", ".", "--check-untyped-defs"], check=True, shell=True)
+subprocess.run(
+    ["mypy", ".", "--check-untyped-defs"],
+    check=True,
+    shell=True,
+)

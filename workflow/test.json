@@ -1,0 +1,21 @@
+{
+  "begin": "TestTask",
+  "globals": {
+    "debug": true
+  },
+  "jobs": {
+    "TestTask": {
+      "type": "Input",
+      "description": "测试任务",
+      "action": {
+        "type": "KeyboardInput",
+        "keys": ["f"]
+      },
+      "delay": {
+        "pre": 1000,
+        "cur": 50,
+        "post": 1000
+      }
+    }
+  }
+}

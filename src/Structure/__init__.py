@@ -2,6 +2,7 @@ from .action import Action
 from .delay import Delay
 from .image import Image
 from .job import Job
+from .next import Next
 from .position import Position
 from .region import Region
 
@@ -12,4 +13,5 @@ __all__ = [
     "Position",
     "Image",
     "Region",
+    "Next",
 ]

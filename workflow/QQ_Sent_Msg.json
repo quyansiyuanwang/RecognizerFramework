@@ -1,5 +1,5 @@
 {
-  "begin": "OpenQQ",
+  "begin": "ClickInputBox",
   "globals": {
     "debug": true
   },
@@ -19,35 +19,9 @@
         "failure": "OpenQQ"
       },
       "delay": {
-        "pre": 2000,
+        "pre": 1000,
         "cur": 50,
-        "post": 1000
-      }
-    },
-    "FindChat": {
-      "type": "OCR",
-      "description": "Find chat input box with specific user",
-      "needs": ["OpenQQ"],
-      "confidence": 0.9,
-      "action": {
-        "type": "LClick",
-        "position": {
-          "type": "Relative",
-          "x": 0,
-          "y": 0
-        }
-      },
-      "region": {
-        "x": 150,
-        "y": 250,
-        "width": 200,
-        "height": 50
-      },
-      "next": "ClickInputBox",
-      "delay": {
-        "pre": 0,
-        "cur": 50,
-        "post": 500
+        "post": 0
       }
     },
     "ClickInputBox": {
@@ -65,12 +39,12 @@
       },
       "next": {
         "success": "InputMessage",
-        "failure": "ClickInputBox"
+        "failure": "OpenQQ"
       },
       "delay": {
-        "pre": 500,
+        "pre": 0,
         "cur": 50,
-        "post": 500
+        "post": 0
       },
       "ret": "position",
       "maxTries": 5
@@ -87,30 +61,7 @@
       "delay": {
         "pre": 0,
         "cur": 1000,
-        "post": 500
-      }
-    },
-    "Useless": {
-      "type": "Input",
-      "description": "This job is not used in the workflow",
-      "action": {
-        "type": "LClick",
-        "position": {
-          "type": "Relative",
-          "x": 0,
-          "y": 0
-        }
-      },
-      "region": {
-        "x": 0,
-        "y": 0,
-        "width": 0,
-        "height": 0
-      },
-      "delay": {
-        "pre": 0,
-        "cur": 50,
-        "post": 500
+        "post": 0
       }
     },
     "SendMessage": {

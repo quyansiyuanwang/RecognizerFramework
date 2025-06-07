@@ -1,23 +1,14 @@
-from typing import Any
+from typing import Optional
 
 from ..Typehints import ActionDict
+from .Base import Base
 from .TypeMap import TypeMap
-from .Util import repr_indent
 
 
 @TypeMap.register("action")
-class Action:
+class Action(Base):
     def __init__(self, kwargs: ActionDict) -> None:
-        self._kwargs: ActionDict = kwargs
+        super().__init__(dict(kwargs))
 
-        for key, value in self._kwargs.items():
-            tp = TypeMap.get(key=key)
-            if tp is not None:
-                value = tp(value)
-            setattr(self, key, value)
-
-    def __getitem__(self, key: str) -> Any:
-        return getattr(self, key, None)
-
-    def __repr__(self, indent: int = 0) -> str:
-        return repr_indent(self, "Action", indent=indent)
+    def __repr__(self, indent: int = 0, _name: Optional[str] = None) -> str:
+        return super().__repr__(indent, "Action")

@@ -1,0 +1,56 @@
+{
+  "begin": "CheckMumu",
+  "globals": {
+    "debug": true
+  },
+  "jobs": {
+    "CheckMumu": {
+      "type": "ROI",
+      "description": "Check if Mumu application is running",
+      "image": { "path": "images/mumu_running_ico.png", "confidence": 0.95 },
+      "next": {
+        "success": "CloseMumu"
+      },
+      "delay": {
+        "pre": 3000,
+        "cur": 50,
+        "post": 0
+      }
+    },
+    "CloseMumu": {
+      "type": "ROI",
+      "description": "Close Mumu application",
+      "image": { "path": "images/mumu_close_ico.png", "confidence": 0.95 },
+      "action": {
+        "type": "LClick",
+        "position": {
+          "type": "Relative"
+        }
+      },
+      "next": {
+        "success": "CloseMumu",
+        "failure": "CloseSky"
+      },
+      "delay": {
+        "pre": 0,
+        "cur": 50,
+        "post": 0
+      }
+    },
+    "CloseSky": {
+      "type": "ROI",
+      "description": "Close Sky application",
+      "needs": [],
+      "image": { "path": "images/sky_close_ico.png", "confidence": 0.95 },
+      "action": {
+        "type": "LClick"
+      },
+      "delay": {
+        "pre": 0,
+        "cur": 50,
+        "post": 0
+      },
+      "maxTries": 5
+    }
+  }
+}

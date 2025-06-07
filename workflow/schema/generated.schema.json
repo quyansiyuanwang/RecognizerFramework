@@ -1,0 +1,512 @@
+{
+  "$defs": {
+    "Action": {
+      "properties": {
+        "type": {
+          "description": "动作类型, 可选: LClick(左键点击)、RClick(右键点击)、DoubleClick(双击)、TextInput(文本输入)、KeyboardInput(键盘输入)、Delay(延时)、Paste(粘贴)、Typewrite(逐字输入)、Hotkey(组合键)",
+          "enum": [
+            "LClick",
+            "RClick",
+            "DoubleClick",
+            "TextInput",
+            "KeyboardInput",
+            "Delay",
+            "Paste",
+            "Typewrite",
+            "Hotkey"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Position"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "点击/操作位置, 部分动作类型可用"
+        },
+        "keys": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "键盘输入的按键列表, 如[\"ctrl\", \"v\"], KeyboardInput/Hotkey专用",
+          "title": "Keys"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "要输入的文本, TextInput/Paste/Typewrite专用",
+          "title": "Text"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "操作持续时间/延时(ms), Delay/Typewrite专用",
+          "title": "Duration"
+        },
+        "use_keyboard": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "是否用键盘输入(如typewrite), TextInput专用",
+          "title": "Use Keyboard"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "Action",
+      "type": "object"
+    },
+    "Delay": {
+      "properties": {
+        "pre": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "前置延时(ms), 任务执行前等待时间",
+          "title": "Pre"
+        },
+        "cur": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "当前延时(ms), 任务执行中等待时间",
+          "title": "Cur"
+        },
+        "post": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "后置延时(ms), 任务执行后等待时间",
+          "title": "Post"
+        }
+      },
+      "title": "Delay",
+      "type": "object"
+    },
+    "IdentifiedGlobals": {
+      "properties": {
+        "debug": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "调试模式, 开启后输出详细日志",
+          "title": "Debug"
+        },
+        "colorful": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "彩色日志输出",
+          "title": "Colorful"
+        }
+      },
+      "title": "IdentifiedGlobals",
+      "type": "object"
+    },
+    "Image": {
+      "properties": {
+        "path": {
+          "description": "图片路径, 支持相对或绝对路径",
+          "title": "Path",
+          "type": "string"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1.0,
+          "description": "置信度, 0~1, 默认1.0",
+          "title": "Confidence"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "Image",
+      "type": "object"
+    },
+    "Job": {
+      "properties": {
+        "type": {
+          "description": "任务类型, 可选: image(图片匹配)、ocr(文字识别)、text_input(文本输入)、ROI(区域识别)、Input(输入操作)、System(系统操作)",
+          "enum": [
+            "image",
+            "ocr",
+            "text_input",
+            "ROI",
+            "OCR",
+            "Input",
+            "System"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "action": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Action"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "动作定义, 详见Action类型"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "任务描述, 便于理解用途",
+          "title": "Description"
+        },
+        "image": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Image"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "图片信息(ROI/OCR专用), 包含路径和置信度"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Region"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "操作区域, 指定任务作用的屏幕区域"
+        },
+        "next": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/Next"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "下一个任务名或分支, 支持 success/failure 分支",
+          "title": "Next"
+        },
+        "delay": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Delay"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "延时设置, 控制任务前中后等待时间"
+        },
+        "maxTries": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 3,
+          "description": "最大重试次数, 默认3",
+          "title": "Maxtries"
+        },
+        "needs": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "依赖的前置任务名, 只有全部完成后才会执行本任务",
+          "title": "Needs"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "置信度(OCR/ROI专用), 0~1",
+          "title": "Confidence"
+        },
+        "ret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "返回值类型, 供后续任务引用",
+          "title": "Ret"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "Job",
+      "type": "object"
+    },
+    "Next": {
+      "properties": {
+        "success": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "成功时的下一个任务名",
+          "title": "Success"
+        },
+        "failure": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "失败时的下一个任务名",
+          "title": "Failure"
+        }
+      },
+      "title": "Next",
+      "type": "object"
+    },
+    "Position": {
+      "properties": {
+        "type": {
+          "description": "坐标类型, Absolute为绝对坐标, Relative为相对坐标",
+          "enum": [
+            "Absolute",
+            "Relative"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "x": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "X坐标, 默认0",
+          "title": "X"
+        },
+        "y": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Y坐标, 默认0",
+          "title": "Y"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "Position",
+      "type": "object"
+    },
+    "Region": {
+      "properties": {
+        "x": {
+          "description": "区域左上角X坐标, 像素值",
+          "title": "X",
+          "type": "integer"
+        },
+        "y": {
+          "description": "区域左上角Y坐标, 像素值",
+          "title": "Y",
+          "type": "integer"
+        },
+        "width": {
+          "description": "区域宽度, 像素值, 必须大于0",
+          "exclusiveMinimum": 0,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "description": "区域高度, 像素值, 必须大于0",
+          "exclusiveMinimum": 0,
+          "title": "Height",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "title": "Region",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "begin": {
+      "description": "起始任务名, 必须是 jobs 中的一个 key",
+      "title": "Begin",
+      "type": "string"
+    },
+    "globals": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/IdentifiedGlobals"
+        },
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "全局配置, 影响所有任务",
+      "title": "Globals"
+    },
+    "jobs": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Job"
+      },
+      "description": "所有任务节点, key为任务名, value为Job定义",
+      "title": "Jobs",
+      "type": "object"
+    }
+  },
+  "required": [
+    "begin",
+    "jobs"
+  ],
+  "title": "Workflow",
+  "type": "object"
+}

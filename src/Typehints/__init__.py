@@ -1,8 +1,10 @@
 from .workflow import (
     ActionDict,
     DelayDict,
+    GlobalsDict,
     ImageDict,
     JobDict,
+    NextDict,
     PositionDict,
     RegionDict,
     WorkflowDict,
@@ -16,4 +18,6 @@ __all__ = [
     "PositionDict",
     "RegionDict",
     "ImageDict",
+    "NextDict",
+    "GlobalsDict",
 ]

@@ -1,13 +1,11 @@
-from typing import Any
-
 from src.WorkflowEngine import ExecutorManager, WorkflowManager
 
 
-def main() -> None:
-    manager = WorkflowManager("workflow/example.json")
-    exe = ExecutorManager[Any](workflow=manager)
-    results = exe.run()
-    for result in results:
+def main():
+    workflow = WorkflowManager("workflow/SkyFire.json")
+    # workflow = WorkflowManager("workflow/test.json")
+    exe = ExecutorManager[str](workflow=workflow)
+    for result in exe.run():
         print(result)
 
 

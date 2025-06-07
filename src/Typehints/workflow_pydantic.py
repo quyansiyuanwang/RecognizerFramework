@@ -1,77 +1,8 @@
-from typing import Any, Dict, List, Literal, NotRequired, Optional, TypedDict, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 
 from pydantic import BaseModel, Field
 
 
-# TypedDict 类型定义区
-class ImageDict(TypedDict):
-    path: str
-    confidence: NotRequired[float]
-
-
-class RegionDict(TypedDict):
-    x: int
-    y: int
-    width: int
-    height: int
-
-
-class PositionDict(TypedDict):
-    type: str  # "Absolute" | "Relative"
-    x: NotRequired[int]
-    y: NotRequired[int]
-
-
-class ActionDict(TypedDict):
-    type: str
-    position: NotRequired[PositionDict]
-    keys: NotRequired[list[str]]
-    text: NotRequired[str]
-    duration: NotRequired[int]
-    use_keyboard: NotRequired[bool]
-
-
-class DelayDict(TypedDict):
-    pre: NotRequired[int]
-    cur: NotRequired[int]
-    post: NotRequired[int]
-
-
-class NextDict(TypedDict):
-    success: NotRequired[str]
-    failure: NotRequired[str]
-
-
-class JobDict(TypedDict):
-    type: str
-    action: NotRequired[ActionDict]
-    description: NotRequired[str]
-    image: NotRequired[ImageDict]
-    region: NotRequired[RegionDict]
-    next: NotRequired[Union[str, NextDict]]
-    delay: NotRequired[DelayDict]
-    maxTries: NotRequired[int]
-    needs: NotRequired[list[str]]
-    confidence: NotRequired[float]
-    ret: NotRequired[str]
-
-
-class IdentifiedGlobalsDict(TypedDict):
-    debug: NotRequired[bool]
-    colorful: NotRequired[bool]
-    ignore: NotRequired[bool]
-
-
-GlobalsDict = Union[IdentifiedGlobalsDict, Dict[str, Any]]
-
-
-class WorkflowDict(TypedDict):
-    begin: str
-    globals: NotRequired[GlobalsDict]
-    jobs: Dict[str, JobDict]
-
-
-# Pydantic BaseModel 类型定义迁移到 workflow_pydantic.py
 class Image(BaseModel):
     path: str = Field(..., description="图片路径, 支持相对或绝对路径")
     confidence: Optional[float] = Field(
@@ -107,7 +38,7 @@ class Action(BaseModel):
         "Hotkey",
     ] = Field(
         ...,
-        description="动作类型, 可选: LClick(左键点击)、RClick(右键点击)、DoubleClick(双击)、TextInput(文本输入)、KeyboardInput(键盘输入)、Delay(延时)、Paste(粘贴)、Typewrite(逐字输入)、Hotkey(组合键)",
+        description="动作类型, 可选: LClick(左键点击), RClick(右键点击), DoubleClick(双击), TextInput(文本输入), KeyboardInput(键盘输入), Delay(延时), Paste(粘贴), Typewrite(逐字输入), Hotkey(组合键)",
     )
     position: Optional[Position] = Field(
         None, description="点击/操作位置, 部分动作类型可用"
@@ -123,7 +54,7 @@ class Action(BaseModel):
         None, ge=0, description="操作持续时间/延时(ms), Delay/Typewrite专用"
     )
     use_keyboard: Optional[bool] = Field(
-        None, description="是否用键盘输入(如typewrite), TextInput专用"
+        None, description="是否用键盘输入(typewrite), TextInput专用"
     )
 
 
@@ -139,11 +70,9 @@ class Next(BaseModel):
 
 
 class Job(BaseModel):
-    type: Literal["image", "ocr", "text_input", "ROI", "OCR", "Input", "System"] = (
-        Field(
-            ...,
-            description="任务类型, 可选: image(图片匹配)、ocr(文字识别)、text_input(文本输入)、ROI(区域识别)、Input(输入操作)、System(系统操作)",
-        )
+    type: Literal["ROI", "OCR", "Input", "System"] = Field(
+        ...,
+        description="任务类型, 可选: ROI(区域识别), OCR(文字识别), Input(输入操作), System(系统操作)",
     )
     action: Optional[Action] = Field(None, description="动作定义, 详见Action类型")
     description: Optional[str] = Field(None, description="任务描述, 便于理解用途")
@@ -161,10 +90,6 @@ class Job(BaseModel):
     needs: Optional[List[str]] = Field(
         None, description="依赖的前置任务名, 只有全部完成后才会执行本任务"
     )
-    confidence: Optional[float] = Field(
-        None, ge=0, le=1, description="置信度(OCR/ROI专用), 0~1"
-    )
-    ret: Optional[str] = Field(None, description="返回值类型, 供后续任务引用")
 
 
 class IdentifiedGlobals(BaseModel):
@@ -181,12 +106,3 @@ class Workflow(BaseModel):
     jobs: Dict[str, Job] = Field(
         ..., description="所有任务节点, key为任务名, value为Job定义"
     )
-
-
-# 生成 schema 示例：
-if __name__ == "__main__":
-    import json
-
-    with open("workflow/schema/generated.schema.json", "w", encoding="utf-8") as f:
-        json.dump(Workflow.model_json_schema(), f, indent=2, ensure_ascii=False)
-    print(json.dumps(Workflow.model_json_schema(), indent=2, ensure_ascii=False))
