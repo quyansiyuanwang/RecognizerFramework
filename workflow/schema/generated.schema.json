@@ -3,7 +3,7 @@
     "Action": {
       "properties": {
         "type": {
-          "description": "动作类型, 可选: LClick(左键点击)、RClick(右键点击)、DoubleClick(双击)、TextInput(文本输入)、KeyboardInput(键盘输入)、Delay(延时)、Paste(粘贴)、Typewrite(逐字输入)、Hotkey(组合键)",
+          "description": "动作类型, 可选: LClick(左键点击), RClick(右键点击), DoubleClick(双击), TextInput(文本输入), KeyboardInput(键盘输入), Delay(延时), Paste(粘贴), Typewrite(逐字输入), Hotkey(组合键)",
           "enum": [
             "LClick",
             "RClick",
@@ -83,7 +83,7 @@
             }
           ],
           "default": null,
-          "description": "是否用键盘输入(如typewrite), TextInput专用",
+          "description": "是否用键盘输入(typewrite), TextInput专用",
           "title": "Use Keyboard"
         }
       },
@@ -205,11 +205,8 @@
     "Job": {
       "properties": {
         "type": {
-          "description": "任务类型, 可选: image(图片匹配)、ocr(文字识别)、text_input(文本输入)、ROI(区域识别)、Input(输入操作)、System(系统操作)",
+          "description": "任务类型, 可选: ROI(区域识别), OCR(文字识别), Input(输入操作), System(系统操作)",
           "enum": [
-            "image",
-            "ocr",
-            "text_input",
             "ROI",
             "OCR",
             "Input",
@@ -324,34 +321,6 @@
           "default": null,
           "description": "依赖的前置任务名, 只有全部完成后才会执行本任务",
           "title": "Needs"
-        },
-        "confidence": {
-          "anyOf": [
-            {
-              "maximum": 1,
-              "minimum": 0,
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "置信度(OCR/ROI专用), 0~1",
-          "title": "Confidence"
-        },
-        "ret": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "返回值类型, 供后续任务引用",
-          "title": "Ret"
         }
       },
       "required": [
