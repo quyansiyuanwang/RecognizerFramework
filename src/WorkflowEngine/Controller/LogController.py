@@ -95,10 +95,11 @@ class Logger:
 
 
 class LogManager:
+
     def __init__(
         self,
         debug: bool = False,
-        level: LogLevel = LogLevel.INFO,
+        level: LogLevel = LogLevel.LOG,
     ):
         self.debug: bool = debug
         self.level: LogLevel = level
@@ -108,6 +109,7 @@ class LogManager:
         self,
         msg: str,
         levels: Iterable[LogLevel],
+        debug: bool = False,
         log_config: Optional[LogConfigDict] = None,
     ):
         if log_config is None:
@@ -122,13 +124,10 @@ class LogManager:
             self.cleared = True
 
         # 支持 debug 控制和日志级别过滤
-        if self.debug or LogLevel.DEBUG in levels:
-            Logger.log(
-                message=msg,
-                level=levels,
-                log_config=log_config,
-            )
-        elif any(l >= self.level for l in levels):
+        if not debug and LogLevel.DEBUG in levels:
+            return
+
+        if any(l >= self.level for l in levels):
             Logger.log(
                 message=msg,
                 level=levels,

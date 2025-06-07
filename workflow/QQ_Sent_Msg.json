@@ -2,7 +2,11 @@
   "$schema": "./schema/generated.schema.json",
   "begin": "ClickInputBox",
   "globals": {
-    "debug": true
+    "debug": false,
+    "logConfig": {
+      "file": "log/test.log",
+      "clear": false
+    }
   },
   "jobs": {
     "OpenQQ": {
@@ -48,7 +52,7 @@
         "post": 0
       },
       "limits": {
-        "maxSuccess": 0
+        "maxCount": 2
       }
     },
     "InputMessage": {

@@ -193,6 +193,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
         global_log_manager.log(
             fmt.format(**kwargs),
             levels,
+            debug=self.globals_.get("debug", False),
             log_config=self.globals_.get("logConfig"),
         )
 

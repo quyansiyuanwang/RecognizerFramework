@@ -15,7 +15,7 @@ class SystemExecutor(Executor):
         self.globals: GlobalsDict = globals
 
     def execute_Delay(self, action: ActionDict) -> str:
-        duration = action.get("duration", 0)
+        duration: int = action.get("duration", 0)
         SystemController.sleep(duration, debug=self.globals.get("debug", False))
         return f"Executed delay: {duration} ms"
 
@@ -37,4 +37,3 @@ class SystemExecutor(Executor):
         finally:
             post_delay = self.job.get("delay", {}).get("post", 0)
             SystemController.sleep(post_delay, debug=self.globals.get("debug", False))
-            return f"Executed job: {self.job['name']}"
