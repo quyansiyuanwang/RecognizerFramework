@@ -6,6 +6,7 @@ from .workflow import (
     ImageDict,
     JobDict,
     LimitsDict,
+    LogConfigDict,
     NextDict,
     PositionDict,
     RegionDict,
@@ -23,6 +24,7 @@ __all__ = [
     "NextDict",
     "GlobalsDict",
     "LimitsDict",
+    "LogConfigDict",
     # structure
     "TaskAttemptDict",
 ]

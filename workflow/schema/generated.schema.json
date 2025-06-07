@@ -168,6 +168,31 @@
           "default": null,
           "description": "彩色日志输出",
           "title": "Colorful"
+        },
+        "ignore": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "忽略错误",
+          "title": "Ignore"
+        },
+        "logConfig": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LogConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "日志配置"
         }
       },
       "title": "IdentifiedGlobals",
@@ -373,6 +398,84 @@
         }
       },
       "title": "Limits",
+      "type": "object"
+    },
+    "LogConfig": {
+      "properties": {
+        "level": {
+          "anyOf": [
+            {
+              "enum": [
+                "DEBUG",
+                "INFO",
+                "WARNING",
+                "ERROR",
+                "CRITICAL"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "日志级别, 可选: DEBUG, INFO, WARNING, ERROR, CRITICAL",
+          "title": "Level"
+        },
+        "file": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "日志文件路径, 如果为None则不写入文件",
+          "title": "File"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "%(levelname)s - %(asctime)s - %(message)s",
+          "description": "日志格式化字符串",
+          "title": "Format"
+        },
+        "datefmt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "%Y-%m-%d %H:%M:%S.%f",
+          "description": "日期时间格式化字符串",
+          "title": "Datefmt"
+        },
+        "clear": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "是否清空日志",
+          "title": "Clear"
+        }
+      },
+      "title": "LogConfig",
       "type": "object"
     },
     "Next": {

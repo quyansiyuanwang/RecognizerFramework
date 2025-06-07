@@ -100,9 +100,28 @@ class Job(BaseModel):
     )
 
 
+class LogConfig(BaseModel):
+    level: Optional[Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]] = Field(
+        None, description="日志级别, 可选: DEBUG, INFO, WARNING, ERROR, CRITICAL"
+    )
+    file: Optional[str] = Field(
+        None, description="日志文件路径, 如果为None则不写入文件"
+    )
+    format: Optional[str] = Field(
+        "%(levelname)s - %(asctime)s - %(message)s",
+        description="日志格式化字符串",
+    )
+    datefmt: Optional[str] = Field(
+        "%Y-%m-%d %H:%M:%S.%f", description="日期时间格式化字符串"
+    )
+    clear: Optional[bool] = Field(False, description="是否清空日志")
+
+
 class IdentifiedGlobals(BaseModel):
     debug: Optional[bool] = Field(None, description="调试模式, 开启后输出详细日志")
     colorful: Optional[bool] = Field(None, description="彩色日志输出")
+    ignore: Optional[bool] = Field(None, description="忽略错误")
+    logConfig: Optional[LogConfig] = Field(None, description="日志配置")
 
 
 Globals = Union[IdentifiedGlobals, Dict[str, Any]]

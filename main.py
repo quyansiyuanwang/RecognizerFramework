@@ -2,7 +2,7 @@ from src.WorkflowEngine import ExecutorManager, WorkflowManager
 
 
 def main():
-    workflow = WorkflowManager("workflow/QQ_Sent_Msg.json")
+    workflow = WorkflowManager("workflow/SkyFire.json")
     exe = ExecutorManager[str](workflow=workflow)
     for result in exe.run():
         print(result)

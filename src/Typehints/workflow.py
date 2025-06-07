@@ -1,9 +1,19 @@
-from typing import Any, Dict, NotRequired, TypedDict, Union
+from typing import (
+    Any,
+    Dict,
+    List,
+    Literal,
+    NotRequired,
+    Optional,
+    TypeAlias,
+    TypedDict,
+    Union,
+)
 
 
 class ImageDict(TypedDict):
     path: str
-    confidence: NotRequired[float]
+    confidence: float
 
 
 class RegionDict(TypedDict):
@@ -14,17 +24,27 @@ class RegionDict(TypedDict):
 
 
 class PositionDict(TypedDict):
-    type: str  # "Absolute" | "Relative"
+    type: Literal["absolute", "relative"]
     x: NotRequired[int]
     y: NotRequired[int]
 
 
 class ActionDict(TypedDict):
-    type: str
+    type: Literal[
+        "LClick",
+        "RClick",
+        "DoubleClick",
+        "TextInput",
+        "KeyboardInput",
+        "Delay",
+        "Paste",
+        "Typewrite",
+        "Hotkey",
+    ]
     position: NotRequired[PositionDict]
-    keys: NotRequired[list[str]]
-    text: NotRequired[str]
     duration: NotRequired[int]
+    keys: NotRequired[List[str]]
+    text: NotRequired[str]
     use_keyboard: NotRequired[bool]
 
 
@@ -46,24 +66,35 @@ class LimitsDict(TypedDict):
 
 
 class JobDict(TypedDict):
-    type: str
-    action: NotRequired[ActionDict]
+    name: str  # NOTE: special field, job name
+    # Required fields
+    type: Literal["ROI", "OCR", "Input", "System"]
+    action: ActionDict
+    # Optional fields
     description: NotRequired[str]
     image: NotRequired[ImageDict]
     region: NotRequired[RegionDict]
     next: NotRequired[Union[str, NextDict]]
     delay: NotRequired[DelayDict]
-    needs: NotRequired[list[str]]
     limits: NotRequired[LimitsDict]
+
+
+class LogConfigDict(TypedDict):
+    level: int
+    file: NotRequired[Optional[str]]
+    format: NotRequired[str]
+    datefmt: NotRequired[str]
+    clear: NotRequired[bool]
 
 
 class IdentifiedGlobalsDict(TypedDict):
     debug: NotRequired[bool]
     colorful: NotRequired[bool]
     ignore: NotRequired[bool]
+    logConfig: NotRequired[LogConfigDict]
 
 
-GlobalsDict = Union[IdentifiedGlobalsDict, Dict[str, Any]]
+GlobalsDict: TypeAlias = Union[IdentifiedGlobalsDict, Dict[str, Any]]
 
 
 class WorkflowDict(TypedDict):

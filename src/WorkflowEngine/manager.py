@@ -26,10 +26,7 @@ class WorkflowManager:
         return self.workflow["jobs"].keys()
 
     def jobs(self) -> Iterable[Job]:
-        return [Job(job) for job in self.workflow["jobs"].values()]
-
-    def items(self) -> Iterable[Tuple[str, Job]]:
-        return ((name, Job(job)) for name, job in self.workflow["jobs"].items())
+        return [Job(name, job) for name, job in self.workflow["jobs"].items()]
 
     def get_globals(
         self, default: Optional[_DEFAULT_T] = None
@@ -41,7 +38,7 @@ class WorkflowManager:
 
     def get_flow_pairs(self) -> Generator[Tuple[str, Job], None, None]:
         for name in self:
-            job: Job = Job(self.workflow["jobs"][name])
+            job: Job = Job(name, self.workflow["jobs"][name])
             yield name, job
         return None
 
@@ -64,7 +61,7 @@ class WorkflowManager:
     def get_job(self, name: str) -> Optional[Job]:
         jobs: Dict[str, JobDict] = self.workflow["jobs"]
         if name in jobs:
-            return Job(jobs[name])
+            return Job(name, jobs[name])
         return None
 
     def __iter__(self) -> Self:
@@ -90,5 +87,5 @@ class WorkflowManager:
         raise StopIteration
 
     def __repr__(self) -> str:
-        jobs = "\n" + ", \n".join([f"{name}: {job}" for name, job in self.items()])
+        jobs = "\n" + ", \n".join([f"{job.get('name')}: {job}" for job in self.jobs()])
         return f"WorkflowManager(path={self.path}, jobs={{ {jobs} }})"
