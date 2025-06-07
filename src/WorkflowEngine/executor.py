@@ -8,17 +8,20 @@ from typing import (
     Dict,
     Generic,
     List,
+    Literal,
     NoReturn,
     Optional,
+    Tuple,
     Type,
     TypeVar,
     Union,
 )
 
-from src.Typehints import GlobalsDict
+from src.Typehints import GlobalsDict, TaskAttemptDict
 from src.WorkflowEngine.Controller import LogController
 
-from ..Structure import Job
+from ..Structure import Job, Limits
+from .Controller.LogManager import LogManager
 from .exceptions import NeededError, RetryError
 from .manager import WorkflowManager
 
@@ -108,12 +111,17 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
         self,
         workflow: WorkflowManager,
         callback: Callable[..., Any] = __self_callback,
+        log_manager: Optional[LogManager] = None,
     ) -> None:
         self.workflow: WorkflowManager = workflow
-        self._tries: Dict[str, int] = {}
+        self._tries: Dict[str, TaskAttemptDict] = {}
         self.callback: Union[
             Callable[..., Any], Callable[[Union[_EXEC_YT, _CB_SF_V]], _CB_SF_V]
         ] = callback
+        globals_: GlobalsDict = workflow.get_globals({})
+        self.log_manager: LogManager = log_manager or LogManager(
+            debug=globals_.get("debug", False)
+        )
 
     def set_callback(self, callback: Callable[..., Any]) -> None:
         self.callback = callback
@@ -130,27 +138,94 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
             f"Available results: {list(results.keys())}",
         )
 
+    def check_attempts(
+        self, job_name: str, job: Job, ta: TaskAttemptDict, tl: Limits
+    ) -> Union[NoReturn, None]:
+        limits: List[
+            Tuple[Literal["maxCount", "maxFailure", "maxSuccess"], int, str]
+        ] = [
+            ("maxCount", ta.get("success", 0) + ta.get("failure", 0), "attempts"),
+            ("maxFailure", ta.get("failure", 0), "failures"),
+            ("maxSuccess", ta.get("success", 0), "successes"),
+        ]
+        for key, value, label in limits:
+            max_limit: int = tl.get(key, -1)
+            if max_limit != -1 and value > max_limit:
+                raise RetryError(
+                    job=job,
+                    message=f"Task '{job_name}' exceeded {key}: {max_limit} {label}",
+                )
+        return None
+
+    def _get_task_attempts(self, job_name: str, start: int) -> TaskAttemptDict:
+        return self._tries.get(job_name) or TaskAttemptDict(
+            success=start, failure=start
+        )
+
+    def _get_task_limits(self, job: Job) -> Limits:
+        return job.get("limits") or Limits(
+            {"maxCount": -1, "maxFailure": -1, "maxSuccess": -1}
+        )
+
+    def _log_event(self, event: str, **kwargs: Any):
+        templates = {
+            "TaskStatus": (
+                "Current try: {attempts} for job '{job_name}'({limits})",
+                [LogLevel.WARNING, LogLevel.DEBUG],
+            ),
+            "JobResult": (
+                "Job '{job_name}' Execute {result}",
+                [
+                    LogLevel.INFO if kwargs.get("success") else LogLevel.ERROR,
+                    LogLevel.DEBUG,
+                ],
+            ),
+            "NextJob": (
+                "Directing to next job: '{nxt_job}' after job '{cur_job}'",
+                [LogLevel.INFO, LogLevel.DEBUG],
+            ),
+            "Error": (
+                "Error in job '{job_name}': {error}.",
+                [LogLevel.ERROR, LogLevel.DEBUG],
+            ),
+        }
+        if event not in templates:
+            assert False, f"Unknown event type: {event}"
+        fmt, levels = templates[event]
+
+        if event == "JobResult":
+            kwargs = dict(kwargs)
+            kwargs["result"] = "success" if kwargs.get("success") else "failure"
+        self.log_manager.log(fmt.format(**kwargs), levels)
+
     def run(self) -> Generator[_EXEC_YT, _EXEC_ST, List[_CB_SF_V]]:
         results: Dict[str, _EXEC_YT] = {}
         cur_job_name: str = self.workflow.get_begin()
-        globals_: GlobalsDict = self.workflow.get_globals() or {}
         while cur_job_name in self.workflow:
             job: Optional[Job] = self.workflow.get_job(cur_job_name)
             if job is None:
                 return [self.callback(result) for result in results.values()]
+
             success: bool = True
-            if globals_.get("debug", False):
-                Logger.log(
-                    f"Current try: {self._tries.get(cur_job_name, 1)} for job '{cur_job_name}'(max: {job.get('maxTries', -1)})",
-                    [LogLevel.WARNING, LogLevel.DEBUG],
-                )
+            attempts: TaskAttemptDict = self._get_task_attempts(cur_job_name, 0)
+            limits: Limits = self._get_task_limits(job)
+            self._log_event(
+                event="TaskStatus",
+                job_name=cur_job_name,
+                attempts=sum(v for v in attempts.values() if isinstance(v, int)) + 1,
+                limits=limits,
+            )
+
             try:
                 self.check_needed(job, needs=job["needs"], results=results)
 
-                result: _EXEC_YT = JobExecutor[_EXEC_YT](
-                    name=cur_job_name, job=job, globals=self.workflow.get_globals()
+                result: _EXEC_YT = JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT](
+                    name=cur_job_name, job=job, globals=self.workflow.get_globals({})
                 ).execute()
+
                 results[cur_job_name] = result
+                attempts["success"] += 1
+                self._tries[cur_job_name] = attempts
                 yield result
             except NeededError as e:
                 raise NeededError(
@@ -159,32 +234,20 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                 ) from e
             except Exception as e:
                 success = False
-                self._tries[cur_job_name] = self._tries.get(cur_job_name, 0) + 1
-                if globals_.get("debug", False):
-                    Logger.log(
-                        f"Error in job '{cur_job_name}': {e}. ",
-                        [LogLevel.ERROR, LogLevel.DEBUG],
-                    )
+                attempts["failure"] += 1
+                self._tries[cur_job_name] = attempts
+                self._log_event("Error", job_name=cur_job_name, error=e)
             finally:
-                if self._tries.get(cur_job_name, 0) == job.get("maxTries", -1):
-                    raise RetryError(
-                        job=job,
-                        message=f"Task '{cur_job_name}' failed after {self._tries[cur_job_name]} tries",
-                    )
-                original_job_name = cur_job_name
-                cur_job_name = self.workflow.get_next(cur_job_name, success) or ""
-                if globals_.get("debug", False):
-                    Logger.log(
-                        f"Job '{cur_job_name}' Execute {{'success' if success else 'failure'}}",
-                        [
-                            LogLevel.INFO if success else LogLevel.ERROR,
-                            LogLevel.DEBUG,
-                        ],
-                    )
-                    Logger.log(
-                        f"Directing to next job: '{cur_job_name}' after job '{original_job_name}'",
-                        [LogLevel.INFO, LogLevel.DEBUG],
-                    )
+                self.check_attempts(cur_job_name, job, attempts, limits)
+
+                self._log_event("JobResult", job_name=cur_job_name, success=success)
+                nxt = self.workflow.get_next(cur_job_name, success) or ""
+                self._log_event(
+                    "NextJob",
+                    nxt_job=nxt,
+                    cur_job=cur_job_name,
+                )
+                cur_job_name = nxt
 
         return [self.callback(result) for result in results.values()]
 

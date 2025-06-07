@@ -1,32 +1,33 @@
-class Color:
-    RED: str = "\033[31m"
-    GREEN: str = "\033[32m"
-    YELLOW: str = "\033[33m"
-    BLUE: str = "\033[34m"
-    MAGENTA: str = "\033[35m"
-    CYAN: str = "\033[36m"
-    WHITE: str = "\033[37m"
-    RESET: str = "\033[0m"
+from typing import Callable, Mapping, Tuple, TypeVar
+
+_DF_K = TypeVar("_DF_K")
+_DF_V = TypeVar("_DF_V")
 
 
-class Background:
-    BLACK: str = "\033[40m"
-    RED: str = "\033[41m"
-    GREEN: str = "\033[42m"
-    YELLOW: str = "\033[43m"
-    BLUE: str = "\033[44m"
-    MAGENTA: str = "\033[45m"
-    CYAN: str = "\033[46m"
-    WHITE: str = "\033[47m"
-    RESET: str = "\033[0m"
+def dict_filter(
+    d: Mapping[_DF_K, _DF_V],
+    lam: Callable[[Tuple[_DF_K, _DF_V]], bool],
+) -> Mapping[_DF_K, _DF_V]:
+    return {k: v for k, v in d.items() if lam((k, v))}
 
 
-class Style:
-    BOLD: str = "\033[1m"
-    DIM: str = "\033[2m"
-    ITALIC: str = "\033[3m"
-    UNDERLINE: str = "\033[4m"
-    BLINK: str = "\033[5m"
-    REVERSE: str = "\033[7m"
-    HIDDEN: str = "\033[8m"
-    RESET: str = "\033[0m"
+def dict_filter_keys(
+    d: Mapping[_DF_K, _DF_V],
+    k: _DF_K,
+    reverse: bool = False,
+) -> Mapping[_DF_K, _DF_V]:
+    return dict_filter(
+        d,
+        lambda item: (item[0] == k if not reverse else item[0] != k),
+    )
+
+
+def dict_filter_values(
+    d: Mapping[_DF_K, _DF_V],
+    v: _DF_V,
+    reverse: bool = False,
+) -> Mapping[_DF_K, _DF_V]:
+    return dict_filter(
+        d,
+        lambda item: (item[1] == v if not reverse else item[1] != v),
+    )

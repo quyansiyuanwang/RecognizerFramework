@@ -292,19 +292,17 @@
           "default": null,
           "description": "延时设置, 控制任务前中后等待时间"
         },
-        "maxTries": {
+        "limits": {
           "anyOf": [
             {
-              "minimum": 1,
-              "type": "integer"
+              "$ref": "#/$defs/Limits"
             },
             {
               "type": "null"
             }
           ],
-          "default": 3,
-          "description": "最大重试次数, 默认3",
-          "title": "Maxtries"
+          "default": null,
+          "description": "任务执行限制, 包含最大执行次数、失败次数等"
         },
         "needs": {
           "anyOf": [
@@ -327,6 +325,54 @@
         "type"
       ],
       "title": "Job",
+      "type": "object"
+    },
+    "Limits": {
+      "properties": {
+        "maxCount": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": -1,
+          "description": "最大执行次数, 默认不限制",
+          "title": "Maxcount"
+        },
+        "maxFailure": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": -1,
+          "description": "最大失败次数, 默认不限制",
+          "title": "Maxfailure"
+        },
+        "maxSuccess": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": -1,
+          "description": "最大成功次数, 默认不限制",
+          "title": "Maxsuccess"
+        }
+      },
+      "title": "Limits",
       "type": "object"
     },
     "Next": {

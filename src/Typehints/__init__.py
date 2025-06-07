@@ -1,9 +1,11 @@
+from .structure import TaskAttemptDict
 from .workflow import (
     ActionDict,
     DelayDict,
     GlobalsDict,
     ImageDict,
     JobDict,
+    LimitsDict,
     NextDict,
     PositionDict,
     RegionDict,
@@ -20,4 +22,7 @@ __all__ = [
     "ImageDict",
     "NextDict",
     "GlobalsDict",
+    "LimitsDict",
+    # structure
+    "TaskAttemptDict",
 ]

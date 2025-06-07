@@ -15,6 +15,11 @@
         "pre": 1000,
         "cur": 50,
         "post": 1000
+      },
+      "limits": {
+        "maxCount": 5,
+        "maxFailure": 3,
+        "maxSuccess": 4
       }
     }
   }

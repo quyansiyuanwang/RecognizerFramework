@@ -1,4 +1,5 @@
 {
+  "$schema": "./schema/generated.schema.json",
   "begin": "ClickInputBox",
   "globals": {
     "debug": true
@@ -46,8 +47,9 @@
         "cur": 50,
         "post": 0
       },
-      "ret": "position",
-      "maxTries": 5
+      "limits": {
+        "maxSuccess": 0
+      }
     },
     "InputMessage": {
       "type": "Input",

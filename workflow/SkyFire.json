@@ -2,7 +2,7 @@
   "$schema": "./schema/generated.schema.json",
   "begin": "EnterDelay",
   "globals": {
-    "debug": true
+    "debug": false
   },
   "jobs": {
     "EnterDelay": {

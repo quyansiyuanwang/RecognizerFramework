@@ -69,6 +69,12 @@ class Next(BaseModel):
     failure: Optional[str] = Field(None, description="失败时的下一个任务名")
 
 
+class Limits(BaseModel):
+    maxCount: Optional[int] = Field(-1, ge=1, description="最大执行次数, 默认不限制")
+    maxFailure: Optional[int] = Field(-1, ge=0, description="最大失败次数, 默认不限制")
+    maxSuccess: Optional[int] = Field(-1, ge=0, description="最大成功次数, 默认不限制")
+
+
 class Job(BaseModel):
     type: Literal["ROI", "OCR", "Input", "System"] = Field(
         ...,
@@ -86,7 +92,9 @@ class Job(BaseModel):
         None, description="下一个任务名或分支, 支持 success/failure 分支"
     )
     delay: Optional[Delay] = Field(None, description="延时设置, 控制任务前中后等待时间")
-    maxTries: Optional[int] = Field(3, ge=1, description="最大重试次数, 默认3")
+    limits: Optional[Limits] = Field(
+        None, description="任务执行限制, 包含最大执行次数、失败次数等"
+    )
     needs: Optional[List[str]] = Field(
         None, description="依赖的前置任务名, 只有全部完成后才会执行本任务"
     )
