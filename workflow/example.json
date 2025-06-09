@@ -1,133 +1,56 @@
 {
-  "begin": "OpenQQ",
+  "$schema": "./schema/generated.schema.json",
+  "begin": "OpenSettings",
   "globals": {
-    "debug": true
+    "debug": true,
+    "logConfig": {
+      "level": "INFO",
+      "file": "log/example.log",
+      "format": "%(levelname)s - %(asctime)s - %(message)s",
+      "datefmt": "%Y-%m-%d %H:%M:%S"
+    }
   },
   "jobs": {
-    "OpenQQ": {
-      "type": "ROI",
-      "description": "Open QQ application",
-      "image": { "path": "images/qq.png", "confidence": 0.95 },
+    "OpenSettings": {
+      "type": "Input",
+      "description": "打开 Windows 设置",
       "action": {
-        "type": "LClick",
-        "position": {
-          "type": "Relative"
-        }
+        "type": "KeyboardInput",
+        "keys": ["win", "i"]
       },
       "next": {
-        "success": "ClickInputBox",
-        "failure": "OpenQQ"
-      },
-      "delay": {
-        "pre": 2000,
-        "cur": 50,
-        "post": 1000
-      }
-    },
-    "FindChat": {
-      "type": "OCR",
-      "description": "Find chat input box with specific user",
-      "needs": ["OpenQQ"],
-      "confidence": 0.9,
-      "action": {
-        "type": "LClick",
-        "position": {
-          "type": "Relative",
-          "x": 0,
-          "y": 0
-        }
-      },
-      "region": {
-        "x": 150,
-        "y": 250,
-        "width": 200,
-        "height": 50
-      },
-      "next": "ClickInputBox",
-      "delay": {
-        "pre": 0,
-        "cur": 50,
-        "post": 500
-      }
-    },
-    "ClickInputBox": {
-      "type": "ROI",
-      "description": "Click on the input box",
-      "needs": [],
-      "image": { "path": "images/send.png", "confidence": 0.95 },
-      "action": {
-        "type": "LClick",
-        "position": {
-          "type": "Relative",
-          "x": -300,
-          "y": -40
-        }
-      },
-      "next": {
-        "success": "InputMessage",
-        "failure": "ClickInputBox"
+        "success": "WaitForSettings",
+        "failure": "RetryOpenSettings"
       },
       "delay": {
         "pre": 500,
-        "cur": 50,
-        "post": 500
-      },
-      "ret": "position",
-      "maxTries": 5
-    },
-    "InputMessage": {
-      "type": "Input",
-      "description": "Input a message",
-      "needs": ["ClickInputBox"],
-      "action": {
-        "type": "TextInput",
-        "text": "Hello, this is a test message! 你好, 这是一个测试消息!"
-      },
-      "next": "SendMessage",
-      "delay": {
-        "pre": 0,
         "cur": 1000,
         "post": 500
+      },
+      "limits": {
+        "maxCount": 3
       }
     },
-    "Useless": {
+    "WaitForSettings": {
       "type": "Input",
-      "description": "This job is not used in the workflow",
+      "description": "等待设置窗口打开",
       "action": {
-        "type": "LClick",
-        "position": {
-          "type": "Relative",
-          "x": 0,
-          "y": 0
-        }
-      },
-      "region": {
-        "x": 0,
-        "y": 0,
-        "width": 0,
-        "height": 0
-      },
-      "delay": {
-        "pre": 0,
-        "cur": 50,
-        "post": 500
+        "type": "Delay",
+        "duration": 2000
       }
     },
-    "SendMessage": {
-      "type": "ROI",
-      "description": "Click the send button to send the message",
-      "needs": ["ClickInputBox"],
-      "image": {
-        "path": "images/send_button.png",
-        "confidence": 0.9
-      },
+    "RetryOpenSettings": {
+      "type": "Input",
+      "description": "重试打开 Windows 设置",
       "action": {
-        "type": "LClick"
+        "type": "KeyboardInput",
+        "keys": ["win", "i"]
       },
-      "delay": {
-        "pre": 0,
-        "cur": 50,
-        "post": 500
+      "next": {
+        "success": "WaitForSettings"
+      },
+      "limits": {
+        "maxCount": 2
       }
     }
   }

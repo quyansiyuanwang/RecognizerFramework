@@ -4,6 +4,15 @@
 **/__pycache__/
 .mypy_cache/
 log/
+images/
+
+# Folder files
+workflow/*.*
+workflow/schema/*.*
 
 # File
 **/*.py[cod]
+
+# Exclude specific files
+!workflow/example.json
+!workflow/schema/generated.schema.json
