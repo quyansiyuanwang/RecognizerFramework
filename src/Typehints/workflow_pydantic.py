@@ -101,8 +101,11 @@ class Job(BaseModel):
 
 
 class LogConfig(BaseModel):
-    level: Optional[Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]] = Field(
-        None, description="日志级别, 可选: DEBUG, INFO, WARNING, ERROR, CRITICAL"
+    level: Optional[Literal["LOG", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]] = (
+        Field(
+            None,
+            description="日志级别, 可选: LOG, DEBUG, INFO, WARNING, ERROR, CRITICAL",
+        )
     )
     file: Optional[str] = Field(
         None, description="日志文件路径, 如果为None则不写入文件"

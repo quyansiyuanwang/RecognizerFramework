@@ -8,7 +8,7 @@ from src.Structure import Action, Delay
 from src.Typehints import GlobalsDict
 from src.WorkflowEngine.Controller.LogController import LogLevel
 
-from ..Controller import InputController, Logger, SystemController
+from ..Controller import InputController, SystemController, global_log_manager
 from ..exceptions import MatchingError, ROIError, TemplateError
 from ..executor import Executor, Job, JobExecutor
 
@@ -43,7 +43,9 @@ class ROIExecutor(Executor):
                 message=f"Template image not found at path: {template_path}",
             )
         if roi.shape[0] < template.shape[0] or roi.shape[1] < template.shape[1]:
-            Logger.warning("ROI区域小于模板, 自动使用全图进行匹配。")
+            global_log_manager.log(
+                "ROI区域小于模板, 自动使用全图进行匹配。", [LogLevel.WARNING]
+            )
             roi = cv2.cvtColor(
                 np.array(pyautogui.screenshot()),
                 cv2.COLOR_RGB2BGR,
@@ -78,8 +80,8 @@ class ROIExecutor(Executor):
         target_y += int(region.get("y", 0))
 
         if self.globals.get("debug", False):
-            Logger.log(
-                f"ROI match: location={(target_x, target_y)}, threshold={confidence}, template={template_path}",
+            global_log_manager.log(
+                f"ROI match: location={(target_x, target_y)}, confidence={max_val}, template={template_path}",
                 [LogLevel.DEBUG],
             )
 

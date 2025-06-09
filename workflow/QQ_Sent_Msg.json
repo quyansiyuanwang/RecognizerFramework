@@ -2,7 +2,7 @@
   "$schema": "./schema/generated.schema.json",
   "begin": "ClickInputBox",
   "globals": {
-    "debug": false,
+    "debug": true,
     "logConfig": {
       "file": "log/test.log",
       "clear": false
@@ -49,7 +49,7 @@
       "delay": {
         "pre": 0,
         "cur": 50,
-        "post": 0
+        "post": 500
       },
       "limits": {
         "maxCount": 2
@@ -71,15 +71,11 @@
       }
     },
     "SendMessage": {
-      "type": "ROI",
-      "description": "Click the send button to send the message",
-      "needs": ["ClickInputBox"],
-      "image": {
-        "path": "images/send_button.png",
-        "confidence": 0.9
-      },
+      "type": "Input",
       "action": {
-        "type": "LClick"
+        "type": "KeyboardInput",
+        "keys": ["Enter"],
+        "duration": 50
       },
       "delay": {
         "pre": 0,

@@ -18,6 +18,7 @@ from typing import (
 )
 
 from src.Typehints import GlobalsDict, TaskAttemptDict
+from src.Typehints.workflow import IdentifiedGlobalsDict
 from src.WorkflowEngine.Controller import LogController
 
 from ..Structure import Job, Limits
@@ -25,7 +26,6 @@ from .Controller import global_log_manager
 from .exceptions import NeededError, RetryError
 from .manager import WorkflowManager
 
-Logger = LogController.Logger
 LogLevel = LogController.LogLevel
 
 
@@ -114,7 +114,14 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
         self.callback: Union[
             Callable[..., Any], Callable[[Union[_EXEC_YT, _CB_SF_V]], _CB_SF_V]
         ] = callback
-        self.globals_: GlobalsDict = workflow.get_globals({})
+        self.globals_: IdentifiedGlobalsDict = workflow.get_globals(
+            IdentifiedGlobalsDict()
+        )
+
+        # logger setup
+        self.global_log_manager: LogController.LogManager = global_log_manager
+        self.global_log_manager.set_level_str(self.globals_.get("logLevel", "LOG"))
+        self.global_log_manager.set_debug(self.globals_.get("debug", False))
 
     def set_callback(self, callback: Callable[..., Any]) -> None:
         self.callback = callback

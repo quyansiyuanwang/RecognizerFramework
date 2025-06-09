@@ -2,7 +2,7 @@
   "$schema": "./schema/generated.schema.json",
   "begin": "EnterDelay",
   "globals": {
-    "debug": false,
+    "debug": true,
     "logConfig": {
       "file": "log/test.log",
       "clear": false

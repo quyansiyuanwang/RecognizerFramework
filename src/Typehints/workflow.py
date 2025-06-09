@@ -91,6 +91,9 @@ class IdentifiedGlobalsDict(TypedDict):
     debug: NotRequired[bool]
     colorful: NotRequired[bool]
     ignore: NotRequired[bool]
+    logLevel: NotRequired[
+        Literal["LOG", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+    ]
     logConfig: NotRequired[LogConfigDict]
 
 

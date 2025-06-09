@@ -406,6 +406,7 @@
           "anyOf": [
             {
               "enum": [
+                "LOG",
                 "DEBUG",
                 "INFO",
                 "WARNING",
@@ -419,7 +420,7 @@
             }
           ],
           "default": null,
-          "description": "日志级别, 可选: DEBUG, INFO, WARNING, ERROR, CRITICAL",
+          "description": "日志级别, 可选: LOG, DEBUG, INFO, WARNING, ERROR, CRITICAL",
           "title": "Level"
         },
         "file": {

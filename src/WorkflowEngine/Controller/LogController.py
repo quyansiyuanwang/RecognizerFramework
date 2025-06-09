@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import IntFlag
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Literal, Optional, Union
 
 from src.Typehints import LogConfigDict
 
@@ -13,11 +13,30 @@ class LogLevel(IntFlag):
     INFO = 4
     WARNING = 8
     ERROR = 16
+    CRITICAL = 32
 
     @classmethod
     def from_value(cls, value: int) -> List["LogLevel"]:
         members = [member for member in cls if member.value & value]
         return members
+
+    @classmethod
+    def from_str(cls, value: str) -> "LogLevel":
+        value = value.upper()
+        if value == "LOG":
+            return cls.LOG
+        elif value == "DEBUG":
+            return cls.DEBUG
+        elif value == "INFO":
+            return cls.INFO
+        elif value == "WARNING":
+            return cls.WARNING
+        elif value == "ERROR":
+            return cls.ERROR
+        elif value == "CRITICAL":
+            return cls.CRITICAL
+        else:
+            raise ValueError(f"Unknown log level: {value}")
 
 
 class Logger:
@@ -139,6 +158,22 @@ class LogManager:
 
     def set_level(self, level: LogLevel):
         self.level = level
+
+    def set_level_str(
+        self,
+        level: Union[
+            Literal[
+                "LOG",
+                "DEBUG",
+                "INFO",
+                "WARNING",
+                "ERROR",
+                "CRITICAL",
+            ],
+            str,
+        ],
+    ):
+        self.set_level(LogLevel.from_str(level))
 
 
 global_log_manager = LogManager()

@@ -4,6 +4,7 @@ from functools import cached_property
 from typing import Any, Dict, Iterable, Optional, Self, Tuple, TypeVar, Union
 
 from src.Typehints import NextDict
+from src.Typehints.workflow import IdentifiedGlobalsDict
 
 from ..Structure import Job
 from ..Typehints import JobDict, WorkflowDict
@@ -30,7 +31,7 @@ class WorkflowManager:
 
     def get_globals(
         self, default: Optional[_DEFAULT_T] = None
-    ) -> Union[_DEFAULT_T, Any]:
+    ) -> Union[_DEFAULT_T, IdentifiedGlobalsDict, Any]:
         return self.workflow.get("globals", default)
 
     def __contains__(self, name: Any) -> bool:

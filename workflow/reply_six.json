@@ -1,0 +1,61 @@
+{
+  "$schema": "./schema/generated.schema.json",
+  "begin": "CheckSix",
+  "globals": {
+    "debug": true,
+    "logConfig": {
+      "file": "log/test.log"
+    }
+  },
+  "jobs": {
+    "CheckSix": {
+      "type": "ROI",
+      "image": {
+        "path": "images/QQ_Six.png",
+        "confidence": 0.98
+      },
+      "next": {
+        "success": "TypeSix",
+        "failure": "CheckSix"
+      },
+      "region": {
+        "x": 400,
+        "y": 1030,
+        "width": 500,
+        "height": 100
+      },
+      "delay": {
+        "pre": 50
+      }
+    },
+    "TypeSix": {
+      "type": "Input",
+      "action": {
+        "type": "KeyboardInput",
+        "keys": ["6"]
+      },
+      "next": "Reply",
+      "delay": {
+        "cur": 50,
+        "post": 0
+      }
+    },
+    "Reply": {
+      "type": "ROI",
+      "description": "回复六",
+      "image": {
+        "path": "images/send_button.png",
+        "confidence": 0.95
+      },
+      "action": {
+        "type": "LClick",
+        "position": {
+          "type": "Relative",
+          "x": 0,
+          "y": 0
+        }
+      },
+      "next": "CheckSix"
+    }
+  }
+}
