@@ -3,6 +3,7 @@ from .workflow import (
     ActionDict,
     DelayDict,
     GlobalsDict,
+    IdentifiedGlobalsDict,
     ImageDict,
     JobDict,
     LimitsDict,
@@ -12,6 +13,7 @@ from .workflow import (
     RegionDict,
     WorkflowDict,
 )
+from .workflow_pydantic import Workflow
 
 __all__ = [
     "WorkflowDict",
@@ -25,6 +27,9 @@ __all__ = [
     "GlobalsDict",
     "LimitsDict",
     "LogConfigDict",
+    "IdentifiedGlobalsDict",
     # structure
     "TaskAttemptDict",
+    # pydantic
+    "Workflow",
 ]

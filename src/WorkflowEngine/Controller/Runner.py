@@ -1,11 +1,10 @@
 from typing import Any, Callable, Dict, Iterable, Optional, Tuple, TypeVar
 
-from src.Typehints.workflow import LogConfigDict
+from src.Typehints import LogConfigDict
 
-from .LogController import global_log_manager
+from .LogController import LogLevel, global_log_manager
 
 T = TypeVar("T")
-from .LogController import LogLevel
 
 
 class SafeRunner:

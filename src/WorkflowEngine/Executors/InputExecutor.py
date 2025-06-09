@@ -1,7 +1,6 @@
 from typing import Any
 
-from src.Structure.action import Action
-from src.Structure.delay import Delay
+from src.Structure import Action, Delay
 from src.Typehints import GlobalsDict
 
 from ..Controller import InputController, SystemController

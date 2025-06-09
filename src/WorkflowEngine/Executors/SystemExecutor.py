@@ -1,10 +1,10 @@
 from typing import Any
 
-from src.Structure.delay import Delay
+from src.Structure import Delay
 from src.Typehints import ActionDict, GlobalsDict
-from src.WorkflowEngine.Controller import SystemController
-from src.WorkflowEngine.exceptions import ArgumentError, JobTypeError
 
+from ..Controller import SystemController
+from ..exceptions import ArgumentError, JobTypeError
 from ..executor import Executor, Job, JobExecutor
 
 

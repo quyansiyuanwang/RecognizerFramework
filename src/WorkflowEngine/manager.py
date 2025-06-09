@@ -3,11 +3,9 @@ from collections.abc import Generator
 from functools import cached_property
 from typing import Any, Dict, Iterable, Optional, Self, Tuple, TypeVar, Union
 
-from src.Typehints import NextDict
-from src.Typehints.workflow import IdentifiedGlobalsDict
+from src.Typehints import IdentifiedGlobalsDict, JobDict, NextDict, WorkflowDict
 
 from ..Structure import Job
-from ..Typehints import JobDict, WorkflowDict
 
 _DEFAULT_T = TypeVar("_DEFAULT_T", bound=Any)
 

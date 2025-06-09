@@ -6,9 +6,8 @@ import pyautogui
 
 from src.Structure import Action, Delay
 from src.Typehints import GlobalsDict
-from src.WorkflowEngine.Controller.LogController import LogLevel
 
-from ..Controller import InputController, SystemController, global_log_manager
+from ..Controller import InputController, LogLevel, SystemController, global_log_manager
 from ..exceptions import MatchingError, ROIError, TemplateError
 from ..executor import Executor, Job, JobExecutor
 

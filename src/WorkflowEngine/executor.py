@@ -17,16 +17,13 @@ from typing import (
     Union,
 )
 
-from src.Typehints import GlobalsDict, TaskAttemptDict
-from src.Typehints.workflow import IdentifiedGlobalsDict
-from src.WorkflowEngine.Controller import LogController
+from src.Typehints import GlobalsDict, IdentifiedGlobalsDict, TaskAttemptDict
+from src.WorkflowEngine.Controller import LogController, LogLevel
 
 from ..Structure import Job, Limits
 from .Controller import global_log_manager
 from .exceptions import NeededError, RetryError
 from .manager import WorkflowManager
-
-LogLevel = LogController.LogLevel
 
 
 class Executor(ABC):

@@ -1,4 +1,4 @@
-from ..Structure.job import Job
+from ..Structure import Job
 
 
 class ExecutionError(Exception):
