@@ -54,6 +54,13 @@ class ArgumentError(ExecutionError):
         self.message: str = message
 
 
+class LogLevelError(ExecutionError):
+    def __init__(self, job: Job, message: str):
+        super().__init__(job, "Log level error occurred: " + message)
+        self.job: Job = job
+        self.message: str = message
+
+
 class NeededError(ExecutionError):
     def __init__(self, job: Job, message: str):
         super().__init__(job, "Needed error occurred: " + message)

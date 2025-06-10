@@ -3,7 +3,7 @@
     "Action": {
       "properties": {
         "type": {
-          "description": "动作类型, 可选: LClick(左键点击), RClick(右键点击), DoubleClick(双击), TextInput(文本输入), KeyboardInput(键盘输入), Delay(延时), Paste(粘贴), Typewrite(逐字输入), Hotkey(组合键)",
+          "description": "动作类型, 可选: LClick(左键点击), RClick(右键点击), DoubleClick(双击), TextInput(文本输入), KeyboardInput(键盘输入), Delay(延时), Paste(粘贴)",
           "enum": [
             "LClick",
             "RClick",
@@ -12,8 +12,7 @@
             "KeyboardInput",
             "Delay",
             "Paste",
-            "Typewrite",
-            "Hotkey"
+            "Log"
           ],
           "title": "Type",
           "type": "string"
@@ -42,8 +41,8 @@
               "type": "null"
             }
           ],
-          "default": null,
-          "description": "键盘输入的按键列表, 如[\"ctrl\", \"v\"], KeyboardInput/Hotkey专用",
+          "default": [],
+          "description": "键盘输入的按键列表, 如[\"ctrl\", \"v\"], KeyboardInput专用",
           "title": "Keys"
         },
         "text": {
@@ -55,9 +54,46 @@
               "type": "null"
             }
           ],
-          "default": null,
-          "description": "要输入的文本, TextInput/Paste/Typewrite专用",
+          "default": "",
+          "description": "要输入的文本, TextInput/Paste专用",
           "title": "Text"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "",
+          "description": "日志消息, Log专用, 用于记录操作信息",
+          "title": "Message"
+        },
+        "levels": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "LOG",
+                  "DEBUG",
+                  "INFO",
+                  "WARNING",
+                  "ERROR",
+                  "CRITICAL"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": [],
+          "description": "Log专用 日志级别, 可选: LOG, DEBUG, INFO, WARNING, ERROR, CRITICAL",
+          "title": "Levels"
         },
         "duration": {
           "anyOf": [
@@ -69,8 +105,8 @@
               "type": "null"
             }
           ],
-          "default": null,
-          "description": "操作持续时间/延时(ms), Delay/Typewrite专用",
+          "default": 0,
+          "description": "操作持续时间/延时(ms), Delay专用",
           "title": "Duration"
         },
         "use_keyboard": {
@@ -82,7 +118,7 @@
               "type": "null"
             }
           ],
-          "default": null,
+          "default": false,
           "description": "是否用键盘输入(typewrite), TextInput专用",
           "title": "Use Keyboard"
         }
@@ -152,7 +188,7 @@
               "type": "null"
             }
           ],
-          "default": null,
+          "default": false,
           "description": "调试模式, 开启后输出详细日志",
           "title": "Debug"
         },
@@ -165,7 +201,7 @@
               "type": "null"
             }
           ],
-          "default": null,
+          "default": true,
           "description": "彩色日志输出",
           "title": "Colorful"
         },
@@ -178,7 +214,7 @@
               "type": "null"
             }
           ],
-          "default": null,
+          "default": false,
           "description": "忽略错误",
           "title": "Ignore"
         },
@@ -261,7 +297,7 @@
               "type": "null"
             }
           ],
-          "default": null,
+          "default": "",
           "description": "任务描述, 便于理解用途",
           "title": "Description"
         },
@@ -341,7 +377,7 @@
               "type": "null"
             }
           ],
-          "default": null,
+          "default": [],
           "description": "依赖的前置任务名, 只有全部完成后才会执行本任务",
           "title": "Needs"
         }
@@ -432,7 +468,7 @@
               "type": "null"
             }
           ],
-          "default": null,
+          "default": "",
           "description": "日志文件路径, 如果为None则不写入文件",
           "title": "File"
         },
@@ -490,7 +526,7 @@
               "type": "null"
             }
           ],
-          "default": null,
+          "default": "",
           "description": "成功时的下一个任务名",
           "title": "Success"
         },
@@ -503,7 +539,7 @@
               "type": "null"
             }
           ],
-          "default": null,
+          "default": "",
           "description": "失败时的下一个任务名",
           "title": "Failure"
         }
@@ -609,7 +645,6 @@
           "type": "null"
         }
       ],
-      "default": null,
       "description": "全局配置, 影响所有任务",
       "title": "Globals"
     },
@@ -624,6 +659,7 @@
   },
   "required": [
     "begin",
+    "globals",
     "jobs"
   ],
   "title": "Workflow",

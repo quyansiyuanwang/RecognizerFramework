@@ -2,7 +2,7 @@ from datetime import datetime
 from enum import IntFlag
 from typing import Dict, Iterable, List, Literal, Optional, Union
 
-from src.Typehints import LogConfigDict
+from src.Typehints import LogConfigDict, LogLevelLiteral
 
 from ..Util import Color
 
@@ -14,6 +14,25 @@ class LogLevel(IntFlag):
     WARNING = 8
     ERROR = 16
     CRITICAL = 32
+
+    @staticmethod
+    def is_all_available(
+        levels: Union[List[LogLevelLiteral], List["LogLevel"]],
+    ) -> bool:
+        if not levels:
+            return False
+        if all(isinstance(l, str) for l in levels) and all(
+            l in LogLevel.get_available_strs() for l in levels
+        ):
+            return True
+        if all(isinstance(l, LogLevel) for l in levels):
+            return True
+
+        return False
+
+    @staticmethod
+    def get_available_strs() -> List[str]:
+        return ["LOG", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
     @classmethod
     def from_value(cls, value: int) -> List["LogLevel"]:

@@ -8,6 +8,7 @@ from .workflow import (
     JobDict,
     LimitsDict,
     LogConfigDict,
+    LogLevelLiteral,
     NextDict,
     PositionDict,
     RegionDict,
@@ -28,6 +29,7 @@ __all__ = [
     "LimitsDict",
     "LogConfigDict",
     "IdentifiedGlobalsDict",
+    "LogLevelLiteral",
     # structure
     "TaskAttemptDict",
     # pydantic

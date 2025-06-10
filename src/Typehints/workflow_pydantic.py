@@ -25,6 +25,9 @@ class Position(BaseModel):
     y: Optional[int] = Field(0, description="Y坐标, 默认0")
 
 
+LogLevelLiteral = Literal["LOG", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+
+
 class Action(BaseModel):
     type: Literal[
         "LClick",
@@ -34,27 +37,31 @@ class Action(BaseModel):
         "KeyboardInput",
         "Delay",
         "Paste",
-        "Typewrite",
-        "Hotkey",
+        "Log",
     ] = Field(
         ...,
-        description="动作类型, 可选: LClick(左键点击), RClick(右键点击), DoubleClick(双击), TextInput(文本输入), KeyboardInput(键盘输入), Delay(延时), Paste(粘贴), Typewrite(逐字输入), Hotkey(组合键)",
+        description="动作类型, 可选: LClick(左键点击), RClick(右键点击), DoubleClick(双击), TextInput(文本输入), KeyboardInput(键盘输入), Delay(延时), Paste(粘贴)",
     )
     position: Optional[Position] = Field(
         None, description="点击/操作位置, 部分动作类型可用"
     )
     keys: Optional[List[str]] = Field(
-        None,
-        description='键盘输入的按键列表, 如["ctrl", "v"], KeyboardInput/Hotkey专用',
+        list(),
+        description='键盘输入的按键列表, 如["ctrl", "v"], KeyboardInput专用',
     )
-    text: Optional[str] = Field(
-        None, description="要输入的文本, TextInput/Paste/Typewrite专用"
+    text: Optional[str] = Field(str(), description="要输入的文本, TextInput/Paste专用")
+    message: Optional[str] = Field(
+        str(), description="日志消息, Log专用, 用于记录操作信息"
+    )
+    levels: Optional[List[LogLevelLiteral]] = Field(
+        list(),
+        description="Log专用 日志级别, 可选: LOG, DEBUG, INFO, WARNING, ERROR, CRITICAL",
     )
     duration: Optional[int] = Field(
-        None, ge=0, description="操作持续时间/延时(ms), Delay/Typewrite专用"
+        0, ge=0, description="操作持续时间/延时(ms), Delay专用"
     )
     use_keyboard: Optional[bool] = Field(
-        None, description="是否用键盘输入(typewrite), TextInput专用"
+        False, description="是否用键盘输入(typewrite), TextInput专用"
     )
 
 
@@ -65,8 +72,8 @@ class Delay(BaseModel):
 
 
 class Next(BaseModel):
-    success: Optional[str] = Field(None, description="成功时的下一个任务名")
-    failure: Optional[str] = Field(None, description="失败时的下一个任务名")
+    success: Optional[str] = Field(str(), description="成功时的下一个任务名")
+    failure: Optional[str] = Field(str(), description="失败时的下一个任务名")
 
 
 class Limits(BaseModel):
@@ -81,7 +88,7 @@ class Job(BaseModel):
         description="任务类型, 可选: ROI(区域识别), OCR(文字识别), Input(输入操作), System(系统操作)",
     )
     action: Optional[Action] = Field(None, description="动作定义, 详见Action类型")
-    description: Optional[str] = Field(None, description="任务描述, 便于理解用途")
+    description: Optional[str] = Field(str(), description="任务描述, 便于理解用途")
     image: Optional[Image] = Field(
         None, description="图片信息(ROI/OCR专用), 包含路径和置信度"
     )
@@ -96,7 +103,7 @@ class Job(BaseModel):
         None, description="任务执行限制, 包含最大执行次数、失败次数等"
     )
     needs: Optional[List[str]] = Field(
-        None, description="依赖的前置任务名, 只有全部完成后才会执行本任务"
+        list(), description="依赖的前置任务名, 只有全部完成后才会执行本任务"
     )
 
 
@@ -108,7 +115,7 @@ class LogConfig(BaseModel):
         )
     )
     file: Optional[str] = Field(
-        None, description="日志文件路径, 如果为None则不写入文件"
+        str(), description="日志文件路径, 如果为None则不写入文件"
     )
     format: Optional[str] = Field(
         "%(levelname)s - %(asctime)s - %(message)s",
@@ -121,9 +128,9 @@ class LogConfig(BaseModel):
 
 
 class IdentifiedGlobals(BaseModel):
-    debug: Optional[bool] = Field(None, description="调试模式, 开启后输出详细日志")
-    colorful: Optional[bool] = Field(None, description="彩色日志输出")
-    ignore: Optional[bool] = Field(None, description="忽略错误")
+    debug: Optional[bool] = Field(False, description="调试模式, 开启后输出详细日志")
+    colorful: Optional[bool] = Field(True, description="彩色日志输出")
+    ignore: Optional[bool] = Field(False, description="忽略错误")
     logConfig: Optional[LogConfig] = Field(None, description="日志配置")
 
 
@@ -132,7 +139,7 @@ Globals = Union[IdentifiedGlobals, Dict[str, Any]]
 
 class Workflow(BaseModel):
     begin: str = Field(..., description="起始任务名, 必须是 jobs 中的一个 key")
-    globals: Optional[Globals] = Field(None, description="全局配置, 影响所有任务")
+    globals: Optional[Globals] = Field(..., description="全局配置, 影响所有任务")
     jobs: Dict[str, Job] = Field(
         ..., description="所有任务节点, key为任务名, value为Job定义"
     )

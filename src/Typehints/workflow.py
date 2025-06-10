@@ -29,6 +29,9 @@ class PositionDict(TypedDict):
     y: NotRequired[int]
 
 
+LogLevelLiteral = Literal["LOG", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+
+
 class ActionDict(TypedDict):
     type: Literal[
         "LClick",
@@ -38,13 +41,14 @@ class ActionDict(TypedDict):
         "KeyboardInput",
         "Delay",
         "Paste",
-        "Typewrite",
-        "Hotkey",
+        "Log",
     ]
     position: NotRequired[PositionDict]
     duration: NotRequired[int]
     keys: NotRequired[List[str]]
     text: NotRequired[str]
+    message: NotRequired[str]
+    levels: NotRequired[List[LogLevelLiteral]]
     use_keyboard: NotRequired[bool]
 
 

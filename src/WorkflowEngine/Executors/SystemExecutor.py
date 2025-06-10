@@ -1,10 +1,10 @@
-from typing import Any
+from typing import Any, List
 
 from src.Structure import Delay
-from src.Typehints import ActionDict, GlobalsDict
+from src.Typehints import ActionDict, GlobalsDict, LogLevelLiteral
 
-from ..Controller import SystemController
-from ..exceptions import ArgumentError, JobTypeError
+from ..Controller import Logger, LogLevel, SystemController
+from ..exceptions import ArgumentError, JobTypeError, LogLevelError
 from ..executor import Executor, Job, JobExecutor
 
 
@@ -19,6 +19,14 @@ class SystemExecutor(Executor):
         SystemController.sleep(duration, debug=self.globals.get("debug", False))
         return f"Executed delay: {duration} ms"
 
+    def execute_Log(self, action: ActionDict) -> str:
+        message: str = action.get("message", "")
+        levels: List[LogLevelLiteral] = action.get("levels", ["LOG"])
+        if not LogLevel.is_all_available(levels=levels):
+            raise LogLevelError(self.job, f"Invalid log levels: {levels}")
+        Logger.log(message, level=map(LogLevel.from_str, levels))
+        return f"Logged message: {message} at levels: {levels}"
+
     def execute(self, *args: Any, **kwargs: Any) -> str:
         delay: Delay = self.job.get("delay", {})
         pre_delay: int = delay.get("pre", 0)
@@ -30,7 +38,8 @@ class SystemExecutor(Executor):
         try:
             if action.get("type") == "Delay":
                 return self.execute_Delay(action)
-
+            elif action.get("type") == "Log":
+                return self.execute_Log(action)
             raise JobTypeError(self.job, f"Unsupported action: {action}")
         except Exception as e:
             raise e
