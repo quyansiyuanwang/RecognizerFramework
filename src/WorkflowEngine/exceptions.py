@@ -3,7 +3,7 @@ from ..Structure import Job
 
 class ExecutionError(Exception):
     def __init__(self, job: Job, message: str):
-        super().__init__(f"Execution error in job '{job}': {message}")
+        super().__init__(f"Execution error in job '{job}': \n{message}")
         self.job: Job = job
         self.message: str = message
 
@@ -57,6 +57,20 @@ class ArgumentError(ExecutionError):
 class LogLevelError(ExecutionError):
     def __init__(self, job: Job, message: str):
         super().__init__(job, "Log level error occurred: " + message)
+        self.job: Job = job
+        self.message: str = message
+
+
+class OverloadError(ExecutionError):
+    def __init__(self, job: Job, message: str):
+        super().__init__(job, "Overload error occurred: " + message)
+        self.job: Job = job
+        self.message: str = message
+
+
+class RecursiveError(OverloadError):
+    def __init__(self, job: Job, message: str):
+        super().__init__(job, "Recursive overload error occurred: " + message)
         self.job: Job = job
         self.message: str = message
 

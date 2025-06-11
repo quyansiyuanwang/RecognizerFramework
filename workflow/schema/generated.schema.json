@@ -266,15 +266,29 @@
     "Job": {
       "properties": {
         "type": {
-          "description": "任务类型, 可选: ROI(区域识别), OCR(文字识别), Input(输入操作), System(系统操作)",
+          "description": "任务类型, 可选: ROI(区域识别), OCR(文字识别), Input(输入操作), System(系统操作), Overload(继承)",
           "enum": [
             "ROI",
             "OCR",
             "Input",
-            "System"
+            "System",
+            "Overload"
           ],
           "title": "Type",
           "type": "string"
+        },
+        "overload": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "继承的任务名, 仅在type为Overload时有效, 允许继承其他任务的定义",
+          "title": "Overload"
         },
         "action": {
           "anyOf": [

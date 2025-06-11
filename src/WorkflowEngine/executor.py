@@ -225,6 +225,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
             try:
                 # legal check
                 self.check_needed(job, needs=job["needs"], results=results)
+
                 # exec
                 result: _EXEC_YT = JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT](
                     job=job, globals=self.workflow.get_globals({})

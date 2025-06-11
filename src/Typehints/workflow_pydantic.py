@@ -83,9 +83,13 @@ class Limits(BaseModel):
 
 
 class Job(BaseModel):
-    type: Literal["ROI", "OCR", "Input", "System"] = Field(
+    type: Literal["ROI", "OCR", "Input", "System", "Overload"] = Field(
         ...,
-        description="任务类型, 可选: ROI(区域识别), OCR(文字识别), Input(输入操作), System(系统操作)",
+        description="任务类型, 可选: ROI(区域识别), OCR(文字识别), Input(输入操作), System(系统操作), Overload(继承)",
+    )
+    overload: Optional[str] = Field(
+        None,
+        description="继承的任务名, 仅在type为Overload时有效, 允许继承其他任务的定义",
     )
     action: Optional[Action] = Field(None, description="动作定义, 详见Action类型")
     description: Optional[str] = Field(str(), description="任务描述, 便于理解用途")

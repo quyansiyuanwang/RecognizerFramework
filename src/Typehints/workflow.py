@@ -72,7 +72,7 @@ class LimitsDict(TypedDict):
 class JobDict(TypedDict):
     name: str  # NOTE: special field, job name
     # Required fields
-    type: Literal["ROI", "OCR", "Input", "System"]
+    type: Literal["ROI", "OCR", "Input", "System", "Overload"]
     action: ActionDict
     # Optional fields
     description: NotRequired[str]
@@ -81,6 +81,7 @@ class JobDict(TypedDict):
     next: NotRequired[Union[str, NextDict]]
     delay: NotRequired[DelayDict]
     limits: NotRequired[LimitsDict]
+    overload: NotRequired[str]
 
 
 class LogConfigDict(TypedDict):
