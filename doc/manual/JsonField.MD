@@ -9,6 +9,7 @@
     - [`globals`](#globals)
   - [`Job` 字段](#job-字段)
     - [`type`](#type)
+    - [`overload`](#overload)
     - [`action`](#action)
     - [`description`](#description)
     - [`image`](#image)
@@ -51,6 +52,12 @@
   - `OCR`: 文字识别
   - `Input`: 输入操作
   - `System`: 系统操作
+  - `Overload`: 继承其他任务
+
+### `overload`
+
+- **类型**: `string`
+- **描述**: 继承的任务名，仅在 `type` 为 `Overload` 时有效，允许继承其他任务的定义。
 
 ### `action`
 
@@ -58,10 +65,12 @@
 - **描述**: 定义任务的具体动作，取决于任务类型。
 
 - **子字段**:
-  - `type`: 字符串，必填。可选值包括：`"LClick"`、`"RClick"`、`"DoubleClick"`、`"TextInput"`、`"KeyboardInput"`、`"Delay"`、`"Paste"`、`"Typewrite"`、`"Hotkey"`。
+  - `type`: 字符串，必填。可选值包括：`"LClick"`、`"RClick"`、`"DoubleClick"`、`"TextInput"`、`"KeyboardInput"`、`"Delay"`、`"Paste"`、`"Log"`。
   - `position`: 对象，可选。定义点击或操作的位置。
   - `keys`: 数组，可选。键盘输入的按键列表，例如：`["ctrl", "c"]`。
   - `text`: 字符串，可选。要输入的文本，例如：`"Hello World"`。
+  - `message`: 字符串，可选。要输出的日志消息，例如：`"Hello World"`。
+  - `levels`: 数组，可选。日志级别列表，例如：`["INFO", "DEBUG"]`。
   - `duration`: 整数，可选。操作持续时间或延时，单位为毫秒，例如：`1000`。
   - `use_keyboard`: 布尔值，可选。是否使用键盘输入，例如：`true`。
 
