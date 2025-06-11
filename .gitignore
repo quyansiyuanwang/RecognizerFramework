@@ -3,6 +3,7 @@
 # Folder
 **/__pycache__/
 .mypy_cache/
+.vscode/
 log/
 images/
 
@@ -16,3 +17,6 @@ workflow/schema/*.*
 # Exclude specific files
 !workflow/example.json
 !workflow/schema/generated.schema.json
+
+# test files
+test.py
