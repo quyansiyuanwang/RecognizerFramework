@@ -252,13 +252,13 @@
               "type": "null"
             }
           ],
-          "default": 1.0,
           "description": "置信度, 0~1, 默认1.0",
           "title": "Confidence"
         }
       },
       "required": [
-        "path"
+        "path",
+        "confidence"
       ],
       "title": "Image",
       "type": "object"
@@ -564,6 +564,7 @@
     "Position": {
       "properties": {
         "type": {
+          "default": "Relative",
           "description": "坐标类型, Absolute为绝对坐标, Relative为相对坐标",
           "enum": [
             "Absolute",
@@ -599,9 +600,6 @@
           "title": "Y"
         }
       },
-      "required": [
-        "type"
-      ],
       "title": "Position",
       "type": "object"
     },
@@ -659,6 +657,7 @@
           "type": "null"
         }
       ],
+      "default": null,
       "description": "全局配置, 影响所有任务",
       "title": "Globals"
     },
@@ -673,7 +672,6 @@
   },
   "required": [
     "begin",
-    "globals",
     "jobs"
   ],
   "title": "Workflow",

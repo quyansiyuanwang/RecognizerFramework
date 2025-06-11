@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 class Image(BaseModel):
     path: str = Field(..., description="图片路径, 支持相对或绝对路径")
     confidence: Optional[float] = Field(
-        1.0, ge=0, le=1, description="置信度, 0~1, 默认1.0"
+        ..., ge=0, le=1, description="置信度, 0~1, 默认1.0"
     )
 
 
@@ -19,7 +19,7 @@ class Region(BaseModel):
 
 class Position(BaseModel):
     type: Literal["Absolute", "Relative"] = Field(
-        ..., description="坐标类型, Absolute为绝对坐标, Relative为相对坐标"
+        "Relative", description="坐标类型, Absolute为绝对坐标, Relative为相对坐标"
     )
     x: Optional[int] = Field(0, description="X坐标, 默认0")
     y: Optional[int] = Field(0, description="Y坐标, 默认0")
@@ -143,7 +143,7 @@ Globals = Union[IdentifiedGlobals, Dict[str, Any]]
 
 class Workflow(BaseModel):
     begin: str = Field(..., description="起始任务名, 必须是 jobs 中的一个 key")
-    globals: Optional[Globals] = Field(..., description="全局配置, 影响所有任务")
+    globals: Optional[Globals] = Field(None, description="全局配置, 影响所有任务")
     jobs: Dict[str, Job] = Field(
         ..., description="所有任务节点, key为任务名, value为Job定义"
     )
