@@ -29,6 +29,7 @@ class SafeRunner:
             global_log_manager.log(
                 debug_msg.format_map({**ctx, **locals()}),
                 log_lvl,
+                debug=debug,
                 log_config=log_config,
             )
         try:
@@ -40,12 +41,14 @@ class SafeRunner:
                 global_log_manager.log(
                     warn_msg.format_map({**ctx, **locals(), "error": str(e)}),
                     [LogLevel.WARNING],
+                    debug=debug,
                     log_config=log_config,
                 )
                 return None
             global_log_manager.log(
                 err_msg.format_map({**ctx, **locals(), "error": str(e)}),
                 [LogLevel.ERROR],
+                debug=debug,
                 log_config=log_config,
             )
             raise RuntimeError(e) from e

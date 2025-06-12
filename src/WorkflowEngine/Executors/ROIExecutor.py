@@ -43,7 +43,9 @@ class ROIExecutor(Executor):
             )
         if roi.shape[0] < template.shape[0] or roi.shape[1] < template.shape[1]:
             global_log_manager.log(
-                "ROI区域小于模板, 自动使用全图进行匹配。", [LogLevel.WARNING]
+                "ROI区域小于模板, 自动使用全图进行匹配。",
+                [LogLevel.WARNING],
+                debug=self.globals.get("debug", False),
             )
             roi = cv2.cvtColor(
                 np.array(pyautogui.screenshot()),
@@ -78,11 +80,11 @@ class ROIExecutor(Executor):
         target_x += int(region.get("x", 0))
         target_y += int(region.get("y", 0))
 
-        if self.globals.get("debug", False):
-            global_log_manager.log(
-                f"ROI match: location={(target_x, target_y)}, confidence={max_val}, template={template_path}",
-                [LogLevel.DEBUG],
-            )
+        global_log_manager.log(
+            f"ROI match: location={(target_x, target_y)}, confidence={max_val}, template={template_path}",
+            [LogLevel.DEBUG],
+            debug=self.globals.get("debug", False),
+        )
 
         # 默认点击位置
         click_x = target_x

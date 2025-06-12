@@ -60,7 +60,7 @@ class LogLevel(IntFlag):
 
 class Logger:
     DEFAULT_LOG_CONFIG = LogConfigDict(
-        level=LogLevel.INFO,
+        level=LogLevel.LOG,
         file=None,
         format="%(levelname)s - %(asctime)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S.%f",
