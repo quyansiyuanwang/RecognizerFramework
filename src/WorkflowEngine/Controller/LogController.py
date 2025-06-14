@@ -40,7 +40,13 @@ class LogLevel(IntFlag):
         return members
 
     @classmethod
-    def from_str(cls, value: str) -> "LogLevel":
+    def from_str(
+        cls,
+        value: Union[
+            str,
+            Literal["LOG", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        ],
+    ) -> "LogLevel":
         value = value.upper()
         if value == "LOG":
             return cls.LOG
@@ -141,7 +147,7 @@ class LogManager:
     ):
         self.debug: bool = debug
         self.level: LogLevel = level
-        self.cleared: bool = False
+        self.__cleared: bool = False
 
     def log(
         self,
@@ -153,13 +159,13 @@ class LogManager:
         if log_config is None:
             log_config = Logger.DEFAULT_LOG_CONFIG
 
-        if log_config.get("clear", False) and not self.cleared:
+        if not self.__cleared and log_config.get("clear", False):
             # 清空日志文件
             file = log_config.get("file")
             if file:
                 with open(file, "w", encoding="utf-8") as f:
                     f.write("")
-            self.cleared = True
+            self.__cleared = True
 
         # 支持 debug 控制和日志级别过滤
         if not debug and LogLevel.DEBUG in levels:
