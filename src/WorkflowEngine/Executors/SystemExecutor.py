@@ -16,7 +16,11 @@ class SystemExecutor(Executor):
 
     def execute_Delay(self, action: ActionDict) -> str:
         duration: int = action.get("duration", 0)
-        SystemController.sleep(duration, debug=self.globals.get("debug", False))
+        SystemController.sleep(
+            duration,
+            debug=self.globals.get("debug", False),
+            prefix="SystemExecutorDelay(Cur)",
+        )
         return f"Executed delay: {duration} ms"
 
     def execute_Log(self, action: ActionDict) -> str:
@@ -32,7 +36,11 @@ class SystemExecutor(Executor):
         pre_delay: int = delay.get("pre", 0)
         post_delay: int = delay.get("post", 0)
         action = self.job.get("action", None)
-        SystemController.sleep(pre_delay, debug=self.globals.get("debug", False))
+        SystemController.sleep(
+            pre_delay,
+            debug=self.globals.get("debug", False),
+            prefix="SystemExecutorPreDelay",
+        )
         if not action:
             raise ArgumentError(self.job, "No action found in the job to execute.")
         try:
@@ -45,4 +53,8 @@ class SystemExecutor(Executor):
             raise e
         finally:
             post_delay = self.job.get("delay", {}).get("post", 0)
-            SystemController.sleep(post_delay, debug=self.globals.get("debug", False))
+            SystemController.sleep(
+                post_delay,
+                debug=self.globals.get("debug", False),
+                prefix="SystemExecutorPostDelay",
+            )

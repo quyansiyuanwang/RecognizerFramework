@@ -121,6 +121,11 @@ class InputController:
     ) -> None:
         for k in keys:
             InputController.keyboard_press(k, debug=debug, ignore=ignore)
-        SystemController.sleep(delay_ms, debug=debug, ignore=ignore)
+        SystemController.sleep(
+            delay_ms,
+            debug=debug,
+            ignore=ignore,
+            prefix="InputControllerPressCurDelay",
+        )
         for k in reversed(keys):
             InputController.keyboard_release(k, debug=debug, ignore=ignore)

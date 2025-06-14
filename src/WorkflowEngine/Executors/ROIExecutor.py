@@ -121,11 +121,19 @@ class ROIExecutor(Executor):
         post_delay: int = delay.get("post", 0)
         action = self.job.get("action", {})
 
-        SystemController.sleep(pre_delay, debug=self.globals.get("debug", False))
+        SystemController.sleep(
+            pre_delay,
+            debug=self.globals.get("debug", False),
+            prefix="ROIExecutorPreDelay",
+        )
         try:
             res: str = self.main(delay, action)
         except Exception as e:
             raise e
         finally:
-            SystemController.sleep(post_delay, debug=self.globals.get("debug", False))
+            SystemController.sleep(
+                post_delay,
+                debug=self.globals.get("debug", False),
+                prefix="ROIExecutorPostDelay",
+            )
         return res

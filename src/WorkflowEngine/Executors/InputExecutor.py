@@ -50,7 +50,11 @@ class InputExecutor(Executor):
         pre_delay: int = delay.get("pre", 0)
         post_delay: int = delay.get("post", 0)
 
-        SystemController.sleep(pre_delay, debug=self.globals.get("debug", False))
+        SystemController.sleep(
+            pre_delay,
+            debug=self.globals.get("debug", False),
+            prefix="InputExecutorPreDelay",
+        )
 
         action: Action = self.job.get("action", None)
         if not action:
@@ -67,6 +71,10 @@ class InputExecutor(Executor):
         except Exception as e:
             raise e
         finally:
-            SystemController.sleep(post_delay, debug=self.globals.get("debug", False))
+            SystemController.sleep(
+                post_delay,
+                debug=self.globals.get("debug", False),
+                prefix="InputExecutorPostDelay",
+            )
 
         return res

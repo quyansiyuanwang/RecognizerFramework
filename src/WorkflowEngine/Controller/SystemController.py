@@ -5,7 +5,9 @@ from .Runner import SafeRunner
 
 class SystemController:
     @staticmethod
-    def sleep(ms: float, debug: bool = True, ignore: bool = False) -> None:
+    def sleep(
+        ms: float, debug: bool = True, ignore: bool = False, prefix: str = ""
+    ) -> None:
         if ms < 0:
             if ignore:
                 return
@@ -18,7 +20,7 @@ class SystemController:
             ignore=ignore,
             # logger
             context={"ms": ms},
-            debug_msg="Sleeping for {ms} ms",
-            warn_msg="Failed to sleep for {ms} ms",
-            err_msg="Error sleeping for {ms} ms: {error}",
+            debug_msg=f"{prefix} Sleeping for {ms} ms",
+            warn_msg=f"{prefix} Failed to sleep for {ms} ms",
+            err_msg=f"{prefix} Error sleeping for {ms} ms: {{error}}",
         )
