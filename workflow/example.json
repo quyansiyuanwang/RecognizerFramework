@@ -14,9 +14,11 @@
     "OpenSettings": {
       "type": "Input",
       "description": "打开 Windows 设置",
-      "action": {
-        "type": "KeyboardInput",
-        "keys": ["win", "i"]
+      "input": {
+        "type": "Keyboard",
+        "keyboard": {
+          "keys": ["win", "i"]
+        }
       },
       "next": {
         "success": "WaitForSettings",
@@ -32,9 +34,9 @@
       }
     },
     "WaitForSettings": {
-      "type": "Input",
+      "type": "System",
       "description": "等待设置窗口打开",
-      "action": {
+      "system": {
         "type": "Delay",
         "duration": 2000
       }
@@ -42,9 +44,11 @@
     "RetryOpenSettings": {
       "type": "Input",
       "description": "重试打开 Windows 设置",
-      "action": {
-        "type": "KeyboardInput",
-        "keys": ["win", "i"]
+      "input": {
+        "type": "Keyboard",
+        "keyboard": {
+          "keys": ["win", "i"]
+        }
       },
       "next": {
         "success": "WaitForSettings"

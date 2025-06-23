@@ -1,11 +1,21 @@
-from typing import Any
+from typing import Any, Dict, Final, Literal
 
-from src.Structure import Action, Delay
+from src.Structure import Delay, Input, Keyboard, Mouse, Text
 from src.Typehints import GlobalsDict
+from src.WorkflowEngine.Exceptions.crash import ActionTypeError
 
 from ..Controller import InputController, SystemController
-from ..exceptions import ActionError
+from ..Exceptions.crash import MissingRequiredError
+from ..Exceptions.ignorable import MouseMoveError, MouseMovePositionError
 from ..executor import Executor, Job, JobExecutor
+
+BUTTON_MAP: Final[
+    Dict[Literal["LClick", "RClick", "MClick"], Literal["LEFT", "RIGHT", "MIDDLE"]]
+] = {
+    "LClick": "LEFT",
+    "RClick": "RIGHT",
+    "MClick": "MIDDLE",
+}
 
 
 @JobExecutor.register("Input")
@@ -14,36 +24,73 @@ class InputExecutor(Executor):
         self.job: Job = job
         self.globals: GlobalsDict = globals
 
-    def execute_TestInput(self, action: Action, delay: Delay) -> str:
-        input_text = action.get("text", "")
-        cur_delay = delay.get("cur", 0)
+    def execute_TextInput(self, text: Text) -> str:
+        input_text = text.get("text", "")
+        duration = text.get("duration", 0)
 
         InputController.typewrite(
-            input_text, duration=cur_delay, debug=self.globals.get("debug", False)
+            input_text, duration=duration, debug=self.globals.get("debug", False)
         )
-        return f"Typed input: {input_text}"
+        return f"Typed input: {input_text} with duration {duration} ms"
 
-    def execute_MouseInput(self, action: Action, delay: Delay) -> str:
-        x = action.get("x", 0)
-        y = action.get("y", 0)
-        cur_delay = delay.get("cur", 0)
+    def __dissolve_click(self, mouse: Mouse) -> str:
+        x = mouse.get("x", None)
+        y = mouse.get("y", None)
+        duration = mouse.get("duration", 0)
+        input_type = mouse.get("type", "LClick")
+        button_type: Literal["LEFT", "RIGHT", "MIDDLE"] = BUTTON_MAP.get(
+            input_type, "LEFT"
+        )
 
         InputController.click(
-            x, y, delay_ms=cur_delay, debug=self.globals.get("debug", False)
+            x,
+            y,
+            delay_ms=duration,
+            debug=self.globals.get("debug", False),
+            click_type=button_type,
         )
-        return f"Clicked at ({x}, {y}) with delay {cur_delay} ms"
+        return f"{input_type} clicked at ({x}, {y}) with duration {duration} ms"
 
-    def execute_KeyboardInput(self, action: Action, delay: Delay) -> str:
-        input_text = action.get("text", "")
-        cur_delay = delay.get("cur", 0)
-        keys = action.get("keys", None)
+    def __dissolve_move(self, mouse: Mouse) -> str:
+        if not any(mouse.get(key, None) for key in ("x", "y")):
+            raise MouseMovePositionError("Missing required any of keys: x, y", self.job)
+
+        x = mouse.get("x", 0)
+        y = mouse.get("y", 0)
+        move_type = mouse.get("type", "Move")
+        if move_type == "Move":
+            InputController.move(x, y, debug=self.globals.get("debug", False))
+        elif move_type == "MoveTo":
+            InputController.move_to(x, y, debug=self.globals.get("debug", False))
+        else:
+            raise MouseMoveError(f"Unsupported mouse move type: {move_type}", self.job)
+        return f"Mouse moved to ({x}, {y})"
+
+    def execute_MouseInput(self, mouse: Mouse) -> str:
+        if mouse.get("type") in {"Move", "MoveTo"}:
+            return self.__dissolve_move(mouse)
+        elif mouse.get("type") in {"LClick", "RClick", "MClick"}:
+            return self.__dissolve_click(mouse)
+        else:
+            raise ActionTypeError(
+                f"Unsupported mouse action type: {mouse.get('type')}", self.job
+            )
+
+    def execute_KeyboardInput(self, keyboard: Keyboard) -> str:
+        input_text = keyboard.get("text", "")
+        duration = keyboard.get("duration", 0)
+        sep_time = keyboard.get("sep_time", 0)
+        keys = keyboard.get("keys", None)
         if keys:
             input_text = keys
 
         InputController.keyboard_press_and_release(
-            input_text, delay_ms=cur_delay, debug=self.globals.get("debug", False)
+            input_text,
+            duration=duration,
+            sep_time=sep_time,
+            debug=self.globals.get("debug", False),
         )
-        return f"Keyboard input: {input_text} with delay {cur_delay} ms"
+        return f"Keyboard input: {input_text} with duration {duration} ms"
 
     def execute(self, *args: Any, **kwargs: Any) -> str:
         delay: Delay = self.job.get("delay", {})
@@ -56,18 +103,20 @@ class InputExecutor(Executor):
             prefix="InputExecutorPreDelay",
         )
 
-        action: Action = self.job.get("action", None)
-        if not action:
-            raise ActionError(self.job, "No action found in the job to execute.")
+        inp: Input = self.job.get("input", None)
+        if not inp:
+            raise MissingRequiredError(
+                "No input found in the job to execute.", self.job
+            )
 
-        res: str = "Unknown action type"
+        res: str = "Unknown input type"
         try:
-            if action.get("type") == "TextInput":
-                res = self.execute_TestInput(action, delay)
-            elif action.get("type") == "MouseInput":
-                res = self.execute_MouseInput(action, delay)
-            elif action.get("type") == "KeyboardInput":
-                res = self.execute_KeyboardInput(action, delay)
+            if inp.get("type") == "Text":
+                res = self.execute_TextInput(inp.get("text", ""))
+            elif inp.get("type") == "Mouse":
+                res = self.execute_MouseInput(inp.get("mouse", {}))
+            elif inp.get("type") == "Keyboard":
+                res = self.execute_KeyboardInput(inp.get("keyboard", {}))
         except Exception as e:
             raise e
         finally:

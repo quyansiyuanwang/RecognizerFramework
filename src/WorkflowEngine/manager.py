@@ -4,7 +4,12 @@ from functools import cached_property
 from typing import Any, Dict, Iterable, List, Optional, Self, Set, Tuple, TypeVar, Union
 
 from src.Typehints import IdentifiedGlobalsDict, JobDict, NextDict, WorkflowDict
-from src.WorkflowEngine.exceptions import OverloadError, RecursiveError
+from src.WorkflowEngine.Exceptions.crash import (
+    JobNotFoundError,
+    OverloadError,
+    RecursiveError,
+    WorkflowBeginError,
+)
 
 from ..Structure import Job
 
@@ -31,8 +36,13 @@ class WorkflowManager:
     def names(self) -> Iterable[str]:
         return self.workflow["jobs"].keys()
 
-    def jobs(self) -> Iterable[Job]:
-        return [Job(name, job) for name, job in self.workflow["jobs"].items()]
+    def jobs(self) -> List[Job]:
+        jobs: List[Job] = []
+        for name in self.workflow["jobs"]:
+            job = self.get_job(name)
+            if job is not None:
+                jobs.append(job)
+        return jobs
 
     def get_globals(
         self, default: Optional[_DEFAULT_T] = None
@@ -44,12 +54,31 @@ class WorkflowManager:
 
     def get_flow_pairs(self) -> Generator[Tuple[str, Job], None, None]:
         for name in self.names():
-            job: Job = Job(name, self.workflow["jobs"][name])
+            job: Job = Job(name=name, kwargs=self.workflow["jobs"][name])
             yield name, job
         return None
 
     def get_begin(self) -> str:
-        return self.workflow.get("begin", "")
+        begin = self.workflow.get("begin")
+        if not begin:
+            raise WorkflowBeginError("Workflow 'begin' not found.")
+        return begin
+
+    @staticmethod
+    def _merge_cpx_obj(
+        parent_value: Union[Dict[str, Any], str, float, int, None, List[Any]],
+        child_value: Union[Dict[str, Any], str, float, int, None, List[Any]],
+    ) -> Any:
+        if isinstance(parent_value, dict) and isinstance(child_value, dict):
+            # Merge dictionaries recursively
+            for key, value in child_value.items():
+                parent_value[key] = WorkflowManager._merge_cpx_obj(
+                    parent_value.get(key, {}), value
+                )
+            return parent_value
+        else:
+            # For other types, child value overrides parent value
+            return child_value
 
     def _overload_case(self, job: Job) -> Job:
         job_name: str = job.get("name", "")
@@ -64,11 +93,11 @@ class WorkflowManager:
             if cur == job_name:
                 nxt = self.__RelativedOverloadMap[cur]
                 raise RecursiveError(
-                    job,
                     (
                         f"Overload job '{nxt}' has recursive overload. \n"
                         f"Recursive chain: {' -> '.join(chain + [nxt])}"
                     ),
+                    job,
                 )
 
         parent_job: Optional[Job] = self.get_job(overloaded)
@@ -76,15 +105,20 @@ class WorkflowManager:
         child_kwargs: Optional[JobDict] = self.workflow["jobs"].get(job_name, None)
         if parent_job is None or parent_kwargs is None or child_kwargs is None:
             raise OverloadError(
-                job,
                 f"Overload job '{overloaded}' not found in workflow or has no definition.",
+                job,
             )
 
         parent_kwargs.update({"name": job_name})
-        for key in child_kwargs:
+        for key, value in child_kwargs.items():
             if key not in self.__OVERLOAD_IGNORE_FIELDS:
-                parent_kwargs[key] = child_kwargs[key]  # type: ignore[literal-required]
-        return Job(job_name, parent_kwargs)
+                pk = parent_kwargs.get(key, None)  # type: ignore[literal-required]
+                if pk is not None and isinstance(pk, dict) and isinstance(value, dict):
+                    # Merge dicts recursively
+                    parent_kwargs[key] = self._merge_cpx_obj(pk, value)  # type: ignore[literal-required]
+                else:
+                    parent_kwargs[key] = value  # type: ignore[literal-required]
+        return Job(name=job_name, kwargs=parent_kwargs)
 
     def special_case(self, job: Job) -> Optional[Job]:
         if job["type"] == "Overload":
@@ -94,7 +128,7 @@ class WorkflowManager:
 
     def get_next(self, name: str, status: bool) -> Optional[str]:
         if name in self.workflow["jobs"]:
-            job = self.workflow["jobs"][name]
+            job: JobDict = self.workflow["jobs"][name]
             nxt: Optional[Union[str, NextDict]] = job.get("next")
             if isinstance(nxt, str):
                 return nxt
@@ -102,13 +136,13 @@ class WorkflowManager:
                 value = nxt.get("success" if status else "failure", None)
                 return value if isinstance(value, str) or value is None else None
         else:
-            raise ValueError(f"Job '{name}' not found in workflow.")
+            raise JobNotFoundError(f"Job '{name}' not found in workflow.")
         return None
 
     def get_job(self, name: str) -> Optional[Job]:
         jobs: Dict[str, JobDict] = self.workflow["jobs"]
         if name in jobs:
-            origin: Job = Job(name, jobs[name])
+            origin: Job = Job(name=name, kwargs=jobs[name])
             job: Optional[Job] = self.special_case(origin)
             while job is not None:
                 origin = job
@@ -118,7 +152,7 @@ class WorkflowManager:
         return None
 
     def __iter__(self) -> Self:
-        self.__current_job = self.workflow["begin"]
+        self.__current_job = self.get_begin()
         return self
 
     def __next__(self) -> Job:

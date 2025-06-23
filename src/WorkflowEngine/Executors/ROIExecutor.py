@@ -4,11 +4,12 @@ import cv2
 import numpy as np
 import pyautogui
 
-from src.Structure import Action, Delay
+from src.Structure import ROI, Delay
 from src.Typehints import GlobalsDict
+from src.WorkflowEngine.Exceptions.crash import ActionTypeError, TemplateError
+from src.WorkflowEngine.Exceptions.execs.roi import MatchingError, ROIError
 
 from ..Controller import InputController, LogLevel, SystemController, global_log_manager
-from ..exceptions import MatchingError, ROIError, TemplateError
 from ..executor import Executor, Job, JobExecutor
 
 
@@ -18,49 +19,49 @@ class ROIExecutor(Executor):
         self.job: Job = job
         self.globals: GlobalsDict = globals
 
-    def main(self, delay: Delay, action: Action) -> str:
+    def main(self, roi: ROI) -> str:
         # 0. 读取region
-        region = self.job.get("region", {})
+        region = roi.get("region", {})
         x: int = int(region.get("x", 0))
         y: int = int(region.get("y", 0))
         w: int = int(region.get("width", 0))
         h: int = int(region.get("height", 0))
 
         # 1. 截屏
-        roi = cv2.cvtColor(
+        mat = cv2.cvtColor(
             np.array(pyautogui.screenshot(region=(x, y, w, h) if region else None)),
             cv2.COLOR_RGB2BGR,
         )
 
         # 2. 读取模板图
-        template_path: str = self.job["image"]["path"]
-        confidence: float = self.job["image"].get("confidence", 1.0)
+        template_path: str = roi["image"]["path"]
+        confidence: float = roi["image"].get("confidence", 1.0)
         template = cv2.imread(template_path)
         if template is None:  # type: ignore[union-attr]
             raise TemplateError(
                 job=self.job,
                 message=f"Template image not found at path: {template_path}",
             )
-        if roi.shape[0] < template.shape[0] or roi.shape[1] < template.shape[1]:
+        if mat.shape[0] < template.shape[0] or mat.shape[1] < template.shape[1]:
             global_log_manager.log(
                 "ROI区域小于模板, 自动使用全图进行匹配。",
                 [LogLevel.WARNING],
                 debug=self.globals.get("debug", False),
             )
-            roi = cv2.cvtColor(
+            mat = cv2.cvtColor(
                 np.array(pyautogui.screenshot()),
                 cv2.COLOR_RGB2BGR,
             )
-            if roi.shape[0] < template.shape[0] or roi.shape[1] < template.shape[1]:
+            if mat.shape[0] < template.shape[0] or mat.shape[1] < template.shape[1]:
                 raise ROIError(
                     job=self.job,
                     message="ROI region is smaller than the template image, cannot match.",
                 )
 
         # 3. 匹配
-        roi_gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+        mat_gray = cv2.cvtColor(mat, cv2.COLOR_BGR2GRAY)
         template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
-        res = cv2.matchTemplate(roi_gray, template_gray, cv2.TM_CCOEFF_NORMED)
+        res = cv2.matchTemplate(mat_gray, template_gray, cv2.TM_CCOEFF_NORMED)
         _, max_val, _, max_loc = cv2.minMaxLoc(res)
         if max_val < confidence:
             raise MatchingError(
@@ -68,58 +69,56 @@ class ROIExecutor(Executor):
                 message=f"No match found in region with confidence >= {confidence}",
             )
 
-        # 4. 计算点击点
-        top_left = max_loc
-        h_temp, w_temp = template_gray.shape
+        # action Factory
+        if roi.get("type") == "DetectOnly":
+            global_log_manager.log(
+                f"ROI detected at {max_loc} with confidence {max_val}",
+                [LogLevel.DEBUG],
+                debug=self.globals.get("debug", False),
+            )
+            return f"Detected at {max_loc} with confidence {max_val}"
 
-        # 默认点击模板中心
-        target_x = top_left[0] + w_temp // 2
-        target_y = top_left[1] + h_temp // 2
+        elif roi.get("type") == "MoveMouse":
+            # 4. 计算点击点
+            top_left = max_loc
+            h_temp, w_temp = template_gray.shape
 
-        # 加上region偏移
-        target_x += int(region.get("x", 0))
-        target_y += int(region.get("y", 0))
+            # 默认点击模板中心
+            target_x = top_left[0] + w_temp // 2
+            target_y = top_left[1] + h_temp // 2
 
-        global_log_manager.log(
-            f"ROI match: location={(target_x, target_y)}, confidence={max_val}, template={template_path}",
-            [LogLevel.DEBUG],
-            debug=self.globals.get("debug", False),
-        )
+            # 加上region偏移
+            target_x += int(region.get("x", 0))
+            target_y += int(region.get("y", 0))
 
-        # 默认点击位置
-        click_x = target_x
-        click_y = target_y
+            global_log_manager.log(
+                f"ROI match: location={(target_x, target_y)}, confidence={max_val}, template={template_path}",
+                [LogLevel.DEBUG],
+                debug=self.globals.get("debug", False),
+            )
 
-        # 5. 执行动作, 如果有position, 做点击偏移
-        if action:
-            pos = action.get("position", {})
-            if pos.get("type", "Relative") == "Relative":
-                click_x = target_x + int(pos.get("x", 0))
-                click_y = target_y + int(pos.get("y", 0))
-            elif pos.get("type", "Relative") == "Absolute":
-                click_x = int(pos.get("x", target_x))
-                click_y = int(pos.get("y", target_y))
-
-            InputController.click(
-                x=click_x,
-                y=click_y,
-                delay_ms=delay.get("cur", 0),
+            # 移动鼠标
+            duration: int = roi.get("duration", 0)
+            InputController.move_to(
+                x=target_x,
+                y=target_y,
+                duration=duration,
                 debug=self.globals.get("debug", False),
                 ignore=self.globals.get("ignore", False),
             )
 
-        return (
-            f"Matched at ({target_x}, {target_y}), click at ({click_x}, {click_y})"
-            f", confidence: {max_val}"
-            if action
-            else "No action specified"
-        )
+            return f"Matched at ({target_x}, {target_y})" f", confidence: {max_val}"
+        else:
+            raise ActionTypeError(
+                job=self.job,
+                message=f"Unsupported ROI type: {roi.get('type')}",
+            )
 
     def execute(self, *args: Any, **kwargs: Any) -> str:
         delay: Delay = self.job.get("delay", {})
         pre_delay: int = delay.get("pre", 0)
         post_delay: int = delay.get("post", 0)
-        action = self.job.get("action", {})
+        roi: ROI = self.job.get("roi", {})
 
         SystemController.sleep(
             pre_delay,
@@ -127,7 +126,7 @@ class ROIExecutor(Executor):
             prefix="ROIExecutorPreDelay",
         )
         try:
-            res: str = self.main(delay, action)
+            res: str = self.main(roi)
         except Exception as e:
             raise e
         finally:

@@ -1,10 +1,10 @@
 from typing import Any, List
 
 from src.Structure import Delay
-from src.Typehints import ActionDict, GlobalsDict, LogLevelLiteral
+from src.Typehints import GlobalsDict, LogDict, LogLevelLiteral
+from src.WorkflowEngine.Exceptions.crash import ActionTypeError, LogLevelError
 
 from ..Controller import Logger, LogLevel, SystemController
-from ..exceptions import ArgumentError, JobTypeError, LogLevelError
 from ..executor import Executor, Job, JobExecutor
 
 
@@ -14,20 +14,20 @@ class SystemExecutor(Executor):
         self.job: Job = job
         self.globals: GlobalsDict = globals
 
-    def execute_Delay(self, action: ActionDict) -> str:
-        duration: int = action.get("duration", 0)
+    def execute_Delay(self, delay: Delay) -> str:
+        duration: int = delay.get("duration", 0)
         SystemController.sleep(
             duration,
             debug=self.globals.get("debug", False),
-            prefix="SystemExecutorDelay(Cur)",
+            prefix="SystemExecutorDelay",
         )
         return f"Executed delay: {duration} ms"
 
-    def execute_Log(self, action: ActionDict) -> str:
+    def execute_Log(self, action: LogDict) -> str:
         message: str = action.get("message", "")
         levels: List[LogLevelLiteral] = action.get("levels", ["LOG"])
         if not LogLevel.is_all_available(levels=levels):
-            raise LogLevelError(self.job, f"Invalid log levels: {levels}")
+            raise LogLevelError(f"Invalid log levels: {levels}", self.job)
         Logger.log(message, level=map(LogLevel.from_str, levels))
         return f"Logged message: {message} at levels: {levels}"
 
@@ -35,20 +35,18 @@ class SystemExecutor(Executor):
         delay: Delay = self.job.get("delay", {})
         pre_delay: int = delay.get("pre", 0)
         post_delay: int = delay.get("post", 0)
-        action = self.job.get("action", None)
         SystemController.sleep(
             pre_delay,
             debug=self.globals.get("debug", False),
             prefix="SystemExecutorPreDelay",
         )
-        if not action:
-            raise ArgumentError(self.job, "No action found in the job to execute.")
+        action = self.job.get("system", None)
         try:
             if action.get("type") == "Delay":
                 return self.execute_Delay(action)
             elif action.get("type") == "Log":
-                return self.execute_Log(action)
-            raise JobTypeError(self.job, f"Unsupported action: {action}")
+                return self.execute_Log(action.get("log", {}))
+            raise ActionTypeError(f"Unsupported action: {action.get('type')}", self.job)
         except Exception as e:
             raise e
         finally:
@@ -57,4 +55,5 @@ class SystemExecutor(Executor):
                 post_delay,
                 debug=self.globals.get("debug", False),
                 prefix="SystemExecutorPostDelay",
+                levels=[LogLevel.DEBUG],
             )

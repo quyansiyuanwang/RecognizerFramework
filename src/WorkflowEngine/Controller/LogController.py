@@ -78,6 +78,7 @@ class Logger:
         LogLevel.ERROR: Color.RED,
         LogLevel.WARNING: Color.YELLOW,
         LogLevel.INFO: Color.GREEN,
+        LogLevel.CRITICAL: Color.MAGENTA,
     }
     ABBREVIATIONS: Dict[LogLevel, str] = {
         LogLevel.LOG: "LOG",
@@ -85,6 +86,7 @@ class Logger:
         LogLevel.ERROR: "ERR",
         LogLevel.WARNING: "WRN",
         LogLevel.INFO: "INF",
+        LogLevel.CRITICAL: "CRT",
     }
 
     @staticmethod

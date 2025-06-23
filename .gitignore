@@ -6,6 +6,7 @@
 .vscode/
 log/
 images/
+workflow/tests/
 
 # Folder files
 workflow/*.*

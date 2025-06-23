@@ -5,13 +5,13 @@ from .Util import repr_indent
 
 
 class Base:
-    def __init__(self, kwargs: Dict[str, Any]) -> None:
+    def __init__(self, *, kwargs: Dict[str, Any]) -> None:
         self._kwargs: Dict[str, Any] = kwargs
 
         for key, value in self._kwargs.items():
             tp = TypeMap.get(key=key)
             if tp is not None:
-                value = tp(value)
+                value = tp(kwargs=value)
             setattr(self, key, value)
 
     def get(self, key: str, default: Any = None) -> Any:

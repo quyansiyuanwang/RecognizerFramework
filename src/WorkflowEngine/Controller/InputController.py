@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Literal, Optional
 
 import keyboard
 import pyautogui
@@ -11,23 +11,87 @@ from .SystemController import SystemController
 
 class InputController:
     @staticmethod
-    def click(
+    def move_to(
         x: int,
         y: int,
-        delay_ms: int = 0,
+        duration: int = 0,
         debug: bool = True,
         ignore: bool = False,
     ) -> None:
         SafeRunner.run(
-            pyautogui.click,
+            pyautogui.moveTo,
             (x, y),
-            {},
+            {"duration": duration / 1000},
             ignore=ignore,
             debug=debug,
             # logger
-            debug_msg=f"Clicking at ({x}, {y}) with delay {delay_ms} ms",
-            warn_msg=f"Failed to click at ({x}, {y}) with delay {delay_ms} ms",
-            err_msg=f"Error clicking at ({x}, {y}) with delay {delay_ms} ms: {{error}}",
+            debug_msg=f"Moving mouse to ({x}, {y}) with duration {duration} ms",
+            warn_msg=f"Failed to move mouse to ({x}, {y}) with duration {duration} ms",
+            err_msg=f"Error moving mouse to ({x}, {y}) with duration {duration} ms: {{error}}",
+        )
+
+    @staticmethod
+    def move(
+        x: int, y: int, duration: int = 0, debug: bool = True, ignore: bool = False
+    ) -> None:
+        SafeRunner.run(
+            pyautogui.move,
+            (x, y),
+            {"duration": duration / 1000},
+            ignore=ignore,
+            debug=debug,
+            # logger
+            debug_msg=f"Moving mouse to ({x}, {y}) with duration {duration} ms",
+            warn_msg=f"Failed to move mouse to ({x}, {y}) with duration {duration} ms",
+            err_msg=f"Error moving mouse to ({x}, {y}) with duration {duration} ms: {{error}}",
+        )
+
+    @staticmethod
+    def only_click(
+        delay_ms: int = 0,
+        debug: bool = True,
+        ignore: bool = False,
+        click_type: Literal["LEFT", "RIGHT", "MIDDLE"] = "LEFT",
+    ) -> None:
+        if click_type not in ["LEFT", "RIGHT", "MIDDLE"]:
+            raise ValueError(
+                f"Invalid click type: {click_type}. Must be 'LEFT', 'RIGHT', or 'MIDDLE'."
+            )
+        SafeRunner.run(
+            pyautogui.click,
+            (),
+            {"button": click_type, "interval": delay_ms / 1000},
+            ignore=ignore,
+            debug=debug,
+            # logger
+            debug_msg=f"Clicking with delay {delay_ms} ms using {click_type} click",
+            warn_msg=f"Failed to click with delay {delay_ms} ms using {click_type} click",
+            err_msg=f"Error clicking with delay {delay_ms} ms using {click_type} click: {{error}}",
+        )
+
+    @staticmethod
+    def click(
+        x: Optional[int] = None,
+        y: Optional[int] = None,
+        delay_ms: int = 0,
+        debug: bool = True,
+        ignore: bool = False,
+        click_type: Literal["LEFT", "RIGHT", "MIDDLE"] = "LEFT",
+    ) -> None:
+        if click_type not in ["LEFT", "RIGHT", "MIDDLE"]:
+            raise ValueError(
+                f"Invalid click type: {click_type}. Must be 'LEFT', 'RIGHT', or 'MIDDLE'."
+            )
+        SafeRunner.run(
+            pyautogui.click,
+            (x, y),
+            {"button": click_type, "interval": delay_ms / 1000},
+            ignore=ignore,
+            debug=debug,
+            # logger
+            debug_msg=f"Clicking at ({x}, {y}) with delay {delay_ms} ms using {click_type} click",
+            warn_msg=f"Failed to click at ({x}, {y}) with delay {delay_ms} ms using {click_type} click",
+            err_msg=f"Error clicking at ({x}, {y}) with delay {delay_ms} ms using {click_type} click: {{error}}",
         )
 
     @staticmethod
@@ -115,17 +179,25 @@ class InputController:
     @staticmethod
     def keyboard_press_and_release(
         keys: List[str],
-        delay_ms: int = 0,
+        duration: int = 0,
+        sep_time: int = 0,
         debug: bool = True,
         ignore: bool = False,
     ) -> None:
         for k in keys:
             InputController.keyboard_press(k, debug=debug, ignore=ignore)
+            SystemController.sleep(
+                sep_time,
+                debug=debug,
+                ignore=ignore,
+                prefix="InputControllerPressSepDelay",
+            )
+
         SystemController.sleep(
-            delay_ms,
+            duration,
             debug=debug,
             ignore=ignore,
-            prefix="InputControllerPressCurDelay",
+            prefix="InputControllerPressDurationDelay",
         )
         for k in reversed(keys):
             InputController.keyboard_release(k, debug=debug, ignore=ignore)
