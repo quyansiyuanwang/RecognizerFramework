@@ -830,6 +830,7 @@
           "$ref": "#/$defs/IdentifiedGlobals"
         },
         {
+          "additionalProperties": true,
           "type": "object"
         },
         {

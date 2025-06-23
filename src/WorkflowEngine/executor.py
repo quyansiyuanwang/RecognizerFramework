@@ -189,7 +189,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                 (
                     [LogLevel.INFO, LogLevel.DEBUG]
                     if kwargs.get("success")
-                    else [LogLevel.WARNING]
+                    else [LogLevel.WARNING, LogLevel.DEBUG]
                 ),
             ),
             "NextJob": (
@@ -227,12 +227,12 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                 (
                     [LogLevel.INFO, LogLevel.DEBUG]
                     if kwargs.get("success")
-                    else [LogLevel.WARNING]
+                    else [LogLevel.WARNING, LogLevel.DEBUG]
                 ),
             ),
             "Crash": (
                 "Crash occurred in job '{job_name}': {error}",
-                [LogLevel.CRITICAL, LogLevel.DEBUG],
+                [LogLevel.CRITICAL],
             ),
         }
         if event not in templates:
