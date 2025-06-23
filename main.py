@@ -39,7 +39,6 @@ def main():
     args = args_parse()
 
     workflow = WorkflowManager(args.input)
-    # print(workflow)
     execute_workflow(workflow, args.await_all)
 
 
