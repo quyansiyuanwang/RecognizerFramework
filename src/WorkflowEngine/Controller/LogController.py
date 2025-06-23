@@ -3,6 +3,7 @@ from enum import IntFlag
 from typing import Dict, Iterable, List, Literal, Optional, Union
 
 from src.Typehints import LogConfigDict, LogLevelLiteral
+from src.Typehints.framework.frame import IdentifiedGlobalsDict
 
 from ..Util import Color
 
@@ -94,15 +95,16 @@ class Logger:
         message: str,
         level: Iterable[LogLevel],
         log_config: Optional[LogConfigDict] = None,
+        colorful: bool = True,
     ) -> None:
         if log_config is None:
             log_config = Logger.DEFAULT_LOG_CONFIG
         levels = list(level)
-        if not levels:
-            color = Color.RESET
-        else:
+        if colorful and levels:
             highest_level = max(levels, key=lambda l: l.value)
             color = Logger.COLOR_MAP.get(highest_level, Color.RESET)
+        else:
+            color = Color.RESET if colorful else ""
 
         msg_type = "][".join(Logger.ABBREVIATIONS.get(l, "UNK") for l in levels)
         date_formatted = datetime.now().strftime(
@@ -124,20 +126,20 @@ class Logger:
         print(f"{color}{final}{Color.RESET}")
 
     @staticmethod
-    def error(message: str) -> None:
-        Logger.log(message, [LogLevel.ERROR])
+    def error(message: str, colorful: bool = True) -> None:
+        Logger.log(message, [LogLevel.ERROR], colorful=colorful)
 
     @staticmethod
-    def warning(message: str) -> None:
-        Logger.log(message, [LogLevel.WARNING])
+    def warning(message: str, colorful: bool = True) -> None:
+        Logger.log(message, [LogLevel.WARNING], colorful=colorful)
 
     @staticmethod
-    def info(message: str) -> None:
-        Logger.log(message, [LogLevel.INFO])
+    def info(message: str, colorful: bool = True) -> None:
+        Logger.log(message, [LogLevel.INFO], colorful=colorful)
 
     @staticmethod
-    def debug(message: str) -> None:
-        Logger.log(message, [LogLevel.DEBUG])
+    def debug(message: str, colorful: bool = True) -> None:
+        Logger.log(message, [LogLevel.DEBUG], colorful=colorful)
 
 
 class LogManager:
@@ -149,6 +151,8 @@ class LogManager:
     ):
         self.debug: bool = debug
         self.level: LogLevel = level
+        self.log_config: LogConfigDict = Logger.DEFAULT_LOG_CONFIG
+        self.colorful: bool = True
         self.__cleared: bool = False
 
     def log(
@@ -157,6 +161,7 @@ class LogManager:
         levels: Iterable[LogLevel],
         debug: bool = False,
         log_config: Optional[LogConfigDict] = None,
+        colorful: Optional[bool] = None,
     ):
         if log_config is None:
             log_config = Logger.DEFAULT_LOG_CONFIG
@@ -178,10 +183,15 @@ class LogManager:
                 message=msg,
                 level=levels,
                 log_config=log_config,
+                colorful=colorful or self.colorful,
             )
 
     def set_debug(self, debug: bool):
         self.debug = debug
+
+    def set_attr(self, globals_: IdentifiedGlobalsDict):
+        for key, value in globals_.items():
+            setattr(self, key, value)
 
     def set_level(self, level: LogLevel):
         self.level = level
