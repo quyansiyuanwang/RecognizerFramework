@@ -1,15 +1,14 @@
-from typing import Any
+from typing import Any, Optional
 
 import cv2
 import numpy as np
 import pyautogui
 
-from src.Structure import ROI, Delay
-from src.Typehints import GlobalsDict
-from src.WorkflowEngine.Exceptions.crash import ActionTypeError, TemplateError
-from src.WorkflowEngine.Exceptions.execs.roi import MatchingError, ROIError
-
-from ..Controller import InputController, LogLevel, SystemController, global_log_manager
+from ...Structure import ROI
+from ...Typehints import GlobalsDict
+from ..Controller import InputController, LogLevel, global_log_manager
+from ..Exceptions.crash import ActionTypeError, MissingRequiredError, TemplateError
+from ..Exceptions.ignorable import MatchingError, ROIError
 from ..executor import Executor, Job, JobExecutor
 
 
@@ -115,24 +114,7 @@ class ROIExecutor(Executor):
             )
 
     def execute(self, *args: Any, **kwargs: Any) -> str:
-        delay: Delay = self.job.get("delay", {})
-        pre_delay: int = delay.get("pre", 0)
-        post_delay: int = delay.get("post", 0)
-        roi: ROI = self.job.get("roi", {})
-
-        SystemController.sleep(
-            pre_delay,
-            debug=self.globals.get("debug", False),
-            prefix="ROIExecutorPreDelay",
-        )
-        try:
-            res: str = self.main(roi)
-        except Exception as e:
-            raise e
-        finally:
-            SystemController.sleep(
-                post_delay,
-                debug=self.globals.get("debug", False),
-                prefix="ROIExecutorPostDelay",
-            )
-        return res
+        roi: Optional[ROI] = self.job.get("roi", None)
+        if roi is None:
+            raise MissingRequiredError("No ROI found in the job to execute.", self.job)
+        return self.main(roi)

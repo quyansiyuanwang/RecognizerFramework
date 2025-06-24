@@ -2,9 +2,8 @@ from datetime import datetime
 from enum import IntFlag
 from typing import Dict, Iterable, List, Literal, Optional, Union
 
-from src.Typehints import LogConfigDict, LogLevelLiteral
-from src.Typehints.framework.frame import IdentifiedGlobalsDict
-
+from ...Typehints import LogConfigDict, LogLevelLiteral
+from ...Typehints.framework.frame import IdentifiedGlobalsDict
 from ..Util import Color
 
 

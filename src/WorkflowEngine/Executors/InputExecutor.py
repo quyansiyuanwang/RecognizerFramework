@@ -1,11 +1,9 @@
 from typing import Any, Dict, Final, Literal
 
-from src.Structure import Delay, Input, Keyboard, Mouse, Text
-from src.Typehints import GlobalsDict
-from src.WorkflowEngine.Exceptions.crash import ActionTypeError
-
-from ..Controller import InputController, SystemController
-from ..Exceptions.crash import MissingRequiredError
+from ...Structure import Keyboard, Mouse, Text
+from ...Typehints import GlobalsDict
+from ..Controller import InputController
+from ..Exceptions.crash import ActionTypeError, MissingRequiredError
 from ..Exceptions.ignorable import MouseMoveError, MouseMovePositionError
 from ..executor import Executor, Job, JobExecutor
 
@@ -93,37 +91,19 @@ class InputExecutor(Executor):
         return f"Keyboard input: {input_text} with duration {duration} ms"
 
     def execute(self, *args: Any, **kwargs: Any) -> str:
-        delay: Delay = self.job.get("delay", {})
-        pre_delay: int = delay.get("pre", 0)
-        post_delay: int = delay.get("post", 0)
-
-        SystemController.sleep(
-            pre_delay,
-            debug=self.globals.get("debug", False),
-            prefix="InputExecutorPreDelay",
-        )
-
-        inp: Input = self.job.get("input", None)
+        inp = self.job.get("input", None)
         if not inp:
             raise MissingRequiredError(
                 "No input found in the job to execute.", self.job
             )
 
-        res: str = "Unknown input type"
-        try:
-            if inp.get("type") == "Text":
-                res = self.execute_TextInput(inp.get("text", ""))
-            elif inp.get("type") == "Mouse":
-                res = self.execute_MouseInput(inp.get("mouse", {}))
-            elif inp.get("type") == "Keyboard":
-                res = self.execute_KeyboardInput(inp.get("keyboard", {}))
-        except Exception as e:
-            raise e
-        finally:
-            SystemController.sleep(
-                post_delay,
-                debug=self.globals.get("debug", False),
-                prefix="InputExecutorPostDelay",
+        if inp.get("type") == "Text":
+            return self.execute_TextInput(inp.get("text", ""))
+        elif inp.get("type") == "Mouse":
+            return self.execute_MouseInput(inp.get("mouse", {}))
+        elif inp.get("type") == "Keyboard":
+            return self.execute_KeyboardInput(inp.get("keyboard", {}))
+        else:
+            raise ActionTypeError(
+                f"Unsupported input type: {inp.get('type')}", self.job
             )
-
-        return res

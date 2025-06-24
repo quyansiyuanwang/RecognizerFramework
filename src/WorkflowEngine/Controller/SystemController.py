@@ -1,8 +1,7 @@
 import time
 from typing import List
 
-from src.WorkflowEngine.Controller.LogController import LogLevel
-
+from ...WorkflowEngine.Controller.LogController import LogLevel
 from .Runner import SafeRunner
 
 

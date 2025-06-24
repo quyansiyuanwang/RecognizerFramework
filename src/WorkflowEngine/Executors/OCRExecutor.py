@@ -1,7 +1,6 @@
 from typing import Any
 
-from src.Typehints import GlobalsDict
-
+from ...Typehints import GlobalsDict
 from ..executor import Executor, Job, JobExecutor
 
 

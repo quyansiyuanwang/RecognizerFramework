@@ -18,23 +18,23 @@ from typing import (
     Union,
 )
 
-from src.Typehints import AfterDict, GlobalsDict, IdentifiedGlobalsDict, TaskAttemptDict
-from src.WorkflowEngine.Exceptions.base import (
+from ..Structure import Delay, Job, Limits
+from ..Typehints import AfterDict, GlobalsDict, IdentifiedGlobalsDict, TaskAttemptDict
+from ..WorkflowEngine.Exceptions.base import (
     CrashException,
     CriticalException,
     IgnorableError,
 )
-from src.WorkflowEngine.Exceptions.crash import (
+from ..WorkflowEngine.Exceptions.crash import (
     JobNotFoundError,
     JobTypeError,
     NeededError,
 )
-from src.WorkflowEngine.Exceptions.critical import RetryError
-
-from ..Structure import Job, Limits
+from ..WorkflowEngine.Exceptions.critical import RetryError
 from .Controller import LogController, LogLevel, global_log_manager
 from .Exceptions.ignorable import AfterJobRunError
 from .manager import WorkflowManager
+from .Util.executor_works import delay as task_delay
 
 
 class Executor(ABC):
@@ -92,16 +92,16 @@ class JobExecutor(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT]):
 
         return decorator
 
-    def execute(self) -> _EXEC_YT:
+    def execute(self, *args: Any, **kwargs: Any) -> _EXEC_YT:
         if self.job["type"] in self.executors:
             executor_class = self.executors[self.job["type"]]
             executor_instance = executor_class(self.job, self.globals)
-            return executor_instance.execute(job=self.job)
+            return executor_instance.execute(*args, **kwargs)
         else:
             raise JobTypeError(f"Unknown job type: {self.job['type']}")
 
-    def __call__(self) -> Any:
-        return self.execute()
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+        return self.execute(*args, **kwargs)
 
 
 _CB_SF_V = TypeVar("_CB_SF_V", bound=Any, default=None)
@@ -122,15 +122,15 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
         self.callback: Union[
             Callable[..., Any], Callable[[Union[_EXEC_YT, _CB_SF_V]], _CB_SF_V]
         ] = callback
-        self.globals_: IdentifiedGlobalsDict = workflow.get_globals(
+        self.globals: IdentifiedGlobalsDict = workflow.get_globals(
             IdentifiedGlobalsDict()
         )
 
         # logger setup
         self.global_log_manager: LogController.LogManager = global_log_manager
-        self.global_log_manager.set_level_str(self.globals_.get("logLevel", "LOG"))
-        self.global_log_manager.set_debug(self.globals_.get("debug", False))
-        self.global_log_manager.set_attr(self.globals_)
+        self.global_log_manager.set_level_str(self.globals.get("logLevel", "LOG"))
+        self.global_log_manager.set_debug(self.globals.get("debug", False))
+        self.global_log_manager.set_attr(self.globals)
 
         # global flag
         self.crashed: bool = False
@@ -247,8 +247,8 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
         global_log_manager.log(
             fmt.format(**kwargs),
             levels,
-            debug=self.globals_.get("debug", False),
-            log_config=self.globals_.get("logConfig"),
+            debug=self.globals.get("debug", False),
+            log_config=self.globals.get("logConfig"),
         )
 
     def _after_run(self, job: Job, run_status: bool) -> None:
@@ -258,10 +258,8 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
         ignore: bool = after.get("ignore_errors", False)
         always: List[str] = after.get("always", [])
         executed: Set[str] = set()
-        tasks: List[str] = (
-            always + after.get("success", [])
-            if run_status
-            else after.get("failure", [])
+        tasks: List[str] = always + (
+            after.get("success", []) if run_status else after.get("failure", [])
         )
         for task in tasks:
             if task in executed:
@@ -285,7 +283,23 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                 self._log_event("Error", job_name=task, error=e)
                 raise CrashException("Crash occurred", aft_job) from e
             finally:
-                self._log_event("AfterJobResult", job_name=task, result=True)
+                self._log_event("AfterJobResult", job_name=task, success=True)
+
+    def __pre_works(
+        self, *_: Any, job: Job, globals: IdentifiedGlobalsDict, **kwargs: Any
+    ) -> None:
+        # delay
+        delay: Optional[Delay] = job.get("delay", None)
+        if delay is not None:
+            task_delay(delay, mode="pre", globals=globals, **kwargs)
+
+    def __post_works(
+        self, *_: Any, job: Job, globals: IdentifiedGlobalsDict, **kwargs: Any
+    ) -> None:
+        # delay
+        delay: Optional[Delay] = job.get("delay", None)
+        if delay is not None:
+            task_delay(delay, mode="post", globals=globals, **kwargs)
 
     def run(self) -> Generator[_EXEC_YT, _EXEC_ST, List[_CB_SF_V]]:
         results: Dict[str, _EXEC_YT] = {}
@@ -294,10 +308,9 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
         while cur_job_name in self.workflow:
             # var init
             job: Optional[Job] = self.workflow.get_job(cur_job_name)
-            # early return
-            if job is None:
+            if job is None:  # early return
                 return [self.callback(result) for result in results.values()]
-            success: bool = True
+            success: bool = False
             attempts: TaskAttemptDict = self._get_task_attempts(cur_job_name, 0)
             limits: Limits = self._get_task_limits(job)
 
@@ -314,21 +327,25 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                 self.check_needed(job, needs=job["needs"], results=results)
 
                 # exec
+                self.__pre_works(job=job, globals=self.globals, prefix=job["type"])
                 result: _EXEC_YT = JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT](
                     job=job, globals=self.workflow.get_globals({})
                 ).execute()
+
                 # record results
                 results[cur_job_name] = result
                 attempts["success"] += 1
                 self._tries[cur_job_name] = attempts
                 work_chain.append(cur_job_name)
+                success = True
                 yield result
+
             except IgnorableError as e:
                 # handle error
-                success = False
                 attempts["failure"] += 1
                 self._tries[cur_job_name] = attempts
                 self._log_event("Warn", job_name=cur_job_name, error=e)
+
             except CriticalException as e:
                 exit_job: Optional[str] = limits.get("exit")
                 if exit_job is None:
@@ -366,9 +383,14 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                     f"Crash occurred in job '{cur_job_name}': {e.message}",
                     job=job,
                 ) from e
+
             finally:
                 if not self.crashed:
-                    self._after_run(job, success)
+                    self._after_run(
+                        job=job,
+                        run_status=success,
+                    )
+                    self.__post_works(job=job, globals=self.globals, prefix=job["type"])
 
             nxt = self.workflow.get_next(cur_job_name, success)
             # log event

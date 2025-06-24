@@ -3,15 +3,14 @@ from collections.abc import Generator
 from functools import cached_property
 from typing import Any, Dict, Iterable, List, Optional, Self, Set, Tuple, TypeVar, Union
 
-from src.Typehints import IdentifiedGlobalsDict, JobDict, NextDict, WorkflowDict
-from src.WorkflowEngine.Exceptions.crash import (
+from ..Structure import Job
+from ..Typehints import IdentifiedGlobalsDict, JobDict, NextDict, WorkflowDict
+from ..WorkflowEngine.Exceptions.crash import (
     JobNotFoundError,
     OverloadError,
     RecursiveError,
     WorkflowBeginError,
 )
-
-from ..Structure import Job
 
 _DEFAULT_T = TypeVar("_DEFAULT_T", bound=Any)
 

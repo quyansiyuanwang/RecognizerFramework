@@ -1,10 +1,9 @@
 from typing import Any, List
 
-from src.Structure import Delay
-from src.Typehints import GlobalsDict, LogDict, LogLevelLiteral
-from src.WorkflowEngine.Exceptions.crash import ActionTypeError, LogLevelError
-
+from ...Structure import Delay
+from ...Typehints import GlobalsDict, LogDict, LogLevelLiteral
 from ..Controller import Logger, LogLevel, SystemController
+from ..Exceptions.crash import ActionTypeError, LogLevelError, MissingRequiredError
 from ..executor import Executor, Job, JobExecutor
 
 
@@ -32,28 +31,13 @@ class SystemExecutor(Executor):
         return f"Logged message: {message} at levels: {levels}"
 
     def execute(self, *args: Any, **kwargs: Any) -> str:
-        delay: Delay = self.job.get("delay", {})
-        pre_delay: int = delay.get("pre", 0)
-        post_delay: int = delay.get("post", 0)
-        SystemController.sleep(
-            pre_delay,
-            debug=self.globals.get("debug", False),
-            prefix="SystemExecutorPreDelay",
-        )
         action = self.job.get("system", None)
-        try:
-            if action.get("type") == "Delay":
-                return self.execute_Delay(action)
-            elif action.get("type") == "Log":
-                return self.execute_Log(action.get("log", {}))
-            raise ActionTypeError(f"Unsupported action: {action.get('type')}", self.job)
-        except Exception as e:
-            raise e
-        finally:
-            post_delay = self.job.get("delay", {}).get("post", 0)
-            SystemController.sleep(
-                post_delay,
-                debug=self.globals.get("debug", False),
-                prefix="SystemExecutorPostDelay",
-                levels=[LogLevel.DEBUG],
+        if action is None:
+            raise MissingRequiredError(
+                "No system action found in the job to execute.", self.job
             )
+        if action.get("type") == "Delay":
+            return self.execute_Delay(action)
+        elif action.get("type") == "Log":
+            return self.execute_Log(action.get("log", {}))
+        raise ActionTypeError(f"Unsupported action: {action.get('type')}", self.job)
