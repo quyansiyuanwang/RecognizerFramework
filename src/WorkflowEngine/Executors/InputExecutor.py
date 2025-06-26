@@ -23,13 +23,13 @@ class InputExecutor(Executor):
         self.globals: GlobalsDict = globals
 
     def execute_TextInput(self, text: Text) -> str:
-        input_text = text.get("text", "")
+        message = text.get("message", "")
         duration = text.get("duration", 0)
 
         InputController.typewrite(
-            input_text, duration=duration, debug=self.globals.get("debug", False)
+            message, duration=duration, debug=self.globals.get("debug", False)
         )
-        return f"Typed input: {input_text} with duration {duration} ms"
+        return f"Typed input: {message} with duration {duration} ms"
 
     def __dissolve_click(self, mouse: Mouse) -> str:
         x = mouse.get("x", None)
@@ -75,20 +75,17 @@ class InputExecutor(Executor):
             )
 
     def execute_KeyboardInput(self, keyboard: Keyboard) -> str:
-        input_text = keyboard.get("text", "")
         duration = keyboard.get("duration", 0)
         sep_time = keyboard.get("sep_time", 0)
         keys = keyboard.get("keys", None)
-        if keys:
-            input_text = keys
 
         InputController.keyboard_press_and_release(
-            input_text,
+            keys,
             duration=duration,
             sep_time=sep_time,
             debug=self.globals.get("debug", False),
         )
-        return f"Keyboard input: {input_text} with duration {duration} ms"
+        return f"Keyboard input: {keys} with duration {duration} ms"
 
     def execute(self, *args: Any, **kwargs: Any) -> str:
         inp = self.job.get("input", None)

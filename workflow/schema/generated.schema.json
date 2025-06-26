@@ -313,9 +313,9 @@
     },
     "Input_Text": {
       "properties": {
-        "text": {
+        "message": {
           "description": "要输入的文本内容",
-          "title": "Text",
+          "title": "Message",
           "type": "string"
         },
         "duration": {
@@ -334,7 +334,7 @@
         }
       },
       "required": [
-        "text"
+        "message"
       ],
       "title": "Input_Text",
       "type": "object"
@@ -830,6 +830,7 @@
           "$ref": "#/$defs/IdentifiedGlobals"
         },
         {
+          "additionalProperties": true,
           "type": "object"
         },
         {

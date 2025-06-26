@@ -22,7 +22,7 @@ class MouseDict(TypedDict):
 
 class TextDict(TypedDict):
     # Required fields
-    text: str
+    message: str
 
     # Optional fields
     duration: NotRequired[int]

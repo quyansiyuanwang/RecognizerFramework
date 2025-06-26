@@ -8,6 +8,8 @@ import pywinauto  # type: ignore[import-not-found]
 from .Runner import SafeRunner
 from .SystemController import SystemController
 
+pyautogui.PAUSE = 0  # Disable default pause between actions
+
 
 class InputController:
     @staticmethod
@@ -48,7 +50,7 @@ class InputController:
 
     @staticmethod
     def only_click(
-        delay_ms: int = 0,
+        duration: int = 0,
         debug: bool = True,
         ignore: bool = False,
         click_type: Literal["LEFT", "RIGHT", "MIDDLE"] = "LEFT",
@@ -57,16 +59,17 @@ class InputController:
             raise ValueError(
                 f"Invalid click type: {click_type}. Must be 'LEFT', 'RIGHT', or 'MIDDLE'."
             )
+        # duration是点击的持续时间
         SafeRunner.run(
             pyautogui.click,
             (),
-            {"button": click_type, "interval": delay_ms / 1000},
+            {"button": click_type, "duration": duration / 1000},
             ignore=ignore,
             debug=debug,
             # logger
-            debug_msg=f"Clicking with delay {delay_ms} ms using {click_type} click",
-            warn_msg=f"Failed to click with delay {delay_ms} ms using {click_type} click",
-            err_msg=f"Error clicking with delay {delay_ms} ms using {click_type} click: {{error}}",
+            debug_msg=f"Clicking with duration {duration} ms using {click_type} click",
+            warn_msg=f"Failed to click with duration {duration} ms using {click_type} click",
+            err_msg=f"Error clicking with duration {duration} ms using {click_type} click: {{error}}",
         )
 
     @staticmethod

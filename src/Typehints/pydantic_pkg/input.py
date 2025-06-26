@@ -27,7 +27,7 @@ class Input_Keyboard(BaseModel):
 
 
 class Input_Text(BaseModel):
-    text: str = Field(..., description="要输入的文本内容")
+    message: str = Field(..., description="要输入的文本内容")
     duration: Optional[int] = Field(0, ge=0, description="延时(ms), 文本输入时间")
 
 
