@@ -16,7 +16,7 @@
 
 ## script/ 脚本与工具
 
-- \***\*main**.py\*\*：脚本主入口，支持 `python -m script` 执行批量工具.
+- **\_\_main.py\_\_**：脚本主入口，支持 `python -m script` 执行批量工具.
 - **check_type.py**：类型检查工具，辅助开发时类型安全.
 - **format.py**：代码格式化工具，统一代码风格.
 - **import_sort.py**：导入排序工具，自动整理 import 顺序.
