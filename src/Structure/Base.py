@@ -10,7 +10,7 @@ class Base:
 
         for key, value in self._kwargs.items():
             tp = TypeMap.get(key=key)
-            if tp is not None:
+            if tp is not None and isinstance(value, dict):
                 value = tp(kwargs=value)
             setattr(self, key, value)
 
