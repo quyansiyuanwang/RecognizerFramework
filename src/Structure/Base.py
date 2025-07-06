@@ -5,13 +5,14 @@ from .Util import repr_indent
 
 
 class Base:
-    def __init__(self, *, kwargs: Dict[str, Any]) -> None:
+    def __init__(self, *, kwargs: Dict[str, Any], _prefix: str = "") -> None:
+        self._prefix: str = _prefix
         self._kwargs: Dict[str, Any] = kwargs
 
         for key, value in self._kwargs.items():
-            tp = TypeMap.get(key=key)
+            tp = TypeMap.get(key=self._prefix + key)
             if tp is not None and isinstance(value, dict):
-                value = tp(kwargs=value)
+                value = tp(kwargs=value, _prefix=self._prefix + key + "::")
             setattr(self, key, value)
 
     def get(self, key: str, default: Any = None) -> Any:
