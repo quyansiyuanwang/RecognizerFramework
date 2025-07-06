@@ -135,7 +135,6 @@ RecogniorFramework 是一个模块化的工作流引擎框架，支持通过 JSO
 - main.py：项目主入口。
 - environment.yml：conda 环境依赖配置。
 - requirement.txt：pip 依赖包列表。
-- test.py：测试脚本。
 
 ### doc/
 
@@ -144,7 +143,7 @@ RecogniorFramework 是一个模块化的工作流引擎框架，支持通过 JSO
 
 ### script/
 
-- **main**.py：脚本主入口。
+- **main.py**：脚本主入口。
 - check_type.py、format.py、import_sort.py、schema.py：开发辅助工具。
 - workflows.json：脚本工作流配置。
 - util/：通用工具函数。
@@ -160,7 +159,6 @@ RecogniorFramework 是一个模块化的工作流引擎框架，支持通过 JSO
 
 - 各类工作流配置文件（\*.json）。
 - schema/：JSON Schema 文件夹。
-- tests/：工作流相关测试用例。
 
 ### images/
 
