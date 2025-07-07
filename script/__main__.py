@@ -4,7 +4,7 @@ import os
 import subprocess
 from typing import Dict, List
 
-from .util import Color  # type: ignore[import-not-found]
+from .util import Color
 
 scripts: Dict[str, str] = {}
 workflows: Dict[str, List[str]] = {}
