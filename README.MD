@@ -1,6 +1,6 @@
-# RecogniorFramework
+# RecognizerFramework
 
-RecogniorFramework 是一个模块化的工作流引擎框架，支持通过 JSON 配置文件定义自动化任务流，涵盖区域识别、输入操作、系统操作等多种任务类型，并具备良好的扩展性和可维护性。
+RecognizerFramework 是一个模块化的工作流引擎框架，支持通过 JSON 配置文件定义自动化任务流，涵盖区域识别、输入操作、系统操作等多种任务类型，并具备良好的扩展性和可维护性。
 
 ---
 
@@ -23,7 +23,7 @@ RecogniorFramework 是一个模块化的工作流引擎框架，支持通过 JSO
 
    ```bash
    conda env create -f environment.yml
-   conda activate RecogniorFramework
+   conda activate RecognizerFramework
    ```
 
 2. 或使用 pip 安装：
