@@ -32,9 +32,11 @@ class WorkflowManager:
         with open(self.path, "r", encoding="utf-8") as f:
             return json.load(f)
 
+    @cached_property
     def names(self) -> Iterable[str]:
         return self.workflow["jobs"].keys()
 
+    @cached_property
     def jobs(self) -> List[Job]:
         jobs: List[Job] = []
         for name in self.workflow["jobs"]:
@@ -52,7 +54,7 @@ class WorkflowManager:
         return name in self.workflow["jobs"]
 
     def get_flow_pairs(self) -> Generator[Tuple[str, Job], None, None]:
-        for name in self.names():
+        for name in self.names:
             job: Job = Job(name=name, kwargs=self.workflow["jobs"][name])
             yield name, job
         return None
@@ -176,5 +178,5 @@ class WorkflowManager:
         raise StopIteration
 
     def __repr__(self) -> str:
-        jobs = "\n" + ", \n".join([f"{job.get('name')}: {job}" for job in self.jobs()])
+        jobs = "\n" + ", \n".join([f"{job.get('name')}: {job}" for job in self.jobs])
         return f"WorkflowManager(path={self.path}, jobs={{ {jobs} }})"

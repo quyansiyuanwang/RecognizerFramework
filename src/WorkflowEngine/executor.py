@@ -288,6 +288,11 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
     def __pre_works(
         self, *_: Any, job: Job, globals: IdentifiedGlobalsDict, **kwargs: Any
     ) -> None:
+        jn = job.get("name", None)
+        if jn is None:
+            raise JobNotFoundError("Job name is not specified in the job definition.")
+        self.work_chain.append(jn)
+
         # delay
         delay: Optional[Delay] = job.get("delay", None)
         if delay is not None:
@@ -304,11 +309,13 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
     def run(self) -> Generator[_EXEC_YT, _EXEC_ST, List[_CB_SF_V]]:
         results: Dict[str, _EXEC_YT] = {}
         cur_job_name: str = self.workflow.get_begin()
-        work_chain: List[str] = []
-        while cur_job_name in self.workflow:
-            # var init
+        self.work_chain: List[str] = []
+        while True:
+            # var init & early return
+            if cur_job_name not in self.workflow.names:
+                raise JobNotFoundError(f"Job '{cur_job_name}' not found in workflow.")
             job: Optional[Job] = self.workflow.get_job(cur_job_name)
-            if job is None:  # early return
+            if job is None:
                 return [self.callback(result) for result in results.values()]
             success: bool = False
             attempts: TaskAttemptDict = self._get_task_attempts(cur_job_name, 0)
@@ -336,7 +343,6 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                 results[cur_job_name] = result
                 attempts["success"] += 1
                 self._tries[cur_job_name] = attempts
-                work_chain.append(cur_job_name)
                 success = True
                 yield result
 
@@ -398,7 +404,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
             if nxt is None:
                 self._log_event(
                     "JobsCompletion",
-                    jobs_chain=" -> ".join(work_chain),
+                    jobs_chain=" -> ".join(self.work_chain),
                 )
                 break
             self._log_event(
