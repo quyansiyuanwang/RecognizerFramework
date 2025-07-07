@@ -82,3 +82,13 @@ class LogLevelError(CrashException):
         super().__init__(message="Log level error occurred: " + message, job=job)
         self.job: Optional[Job] = job
         self.message: str = message
+
+
+class DebugError(CrashException):
+    def __init__(self, message: str, job: Optional[Job] = None):
+        super().__init__(message="Debug error occurred: " + message, job=job)
+        self.job: Optional[Job] = job
+        self.message: str = message
+
+
+from .execs.roi_crash import *

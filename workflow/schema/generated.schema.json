@@ -677,6 +677,18 @@
           "$ref": "#/$defs/Image",
           "description": "ROI图像定义, 包含路径和置信度"
         },
+        "window": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Window"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ROI窗口定义, 包含标题, 类名和进程名称, 注意: 某些窗口可能反截屏, 而且可能存在截图兼容性问题"
+        },
         "region": {
           "anyOf": [
             {
@@ -701,6 +713,18 @@
           "default": null,
           "description": "鼠标移动时间, 单位为毫秒",
           "title": "Duration"
+        },
+        "debug": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ROI_Debug"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "调试参数"
         }
       },
       "required": [
@@ -708,6 +732,25 @@
         "image"
       ],
       "title": "ROI",
+      "type": "object"
+    },
+    "ROI_Debug": {
+      "properties": {
+        "display_screenshot": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "是否显示截图, 默认为False",
+          "title": "Display Screenshot"
+        }
+      },
+      "title": "ROI_Debug",
       "type": "object"
     },
     "Region": {
@@ -816,6 +859,51 @@
       ],
       "title": "System_Log",
       "type": "object"
+    },
+    "Window": {
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "窗口标题, 可选",
+          "title": "Title"
+        },
+        "class_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "窗口类名, 可选",
+          "title": "Class Name"
+        },
+        "process": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "进程名称, 可选",
+          "title": "Process"
+        }
+      },
+      "title": "Window",
+      "type": "object"
     }
   },
   "properties": {
@@ -830,6 +918,7 @@
           "$ref": "#/$defs/IdentifiedGlobals"
         },
         {
+          "additionalProperties": true,
           "type": "object"
         },
         {

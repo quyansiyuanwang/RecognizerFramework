@@ -7,13 +7,14 @@ from .framework.frame import (
 )
 from .framework.input import InputDict, KeyboardDict, MouseDict, TextDict
 from .framework.job_params import AfterDict, DelayDict, LimitsDict, NextDict
-from .framework.roi import ImageDict, RegionDict, ROIDict
+from .framework.roi import ImageDict, RegionDict, ROI_DebugDict, ROIDict, WindowDict
 from .framework.system import LogDict, LogLevelLiteral, SystemDict
 from .pydantic_pkg.pkg import Workflow
-from .structure import TaskAttemptDict
+from .structure import TaskAttemptDict, WindowLocationDict
 
 __all__ = [
     # structure
+    "WindowLocationDict",
     "TaskAttemptDict",
     # pydantic
     "Workflow",
@@ -26,7 +27,9 @@ __all__ = [
     # framework roi
     "ROIDict",
     "ImageDict",
+    "WindowDict",
     "RegionDict",
+    "ROI_DebugDict",
     # framework input
     "KeyboardDict",
     "TextDict",

@@ -8,8 +8,10 @@ from .job import Job
 from .limits import Limits
 from .next import Next
 from .roi import ROI
+from .roi_debug import ROI_Debug
 from .roi_image import Image
 from .roi_region import Region
+from .roi_window import Window
 from .system import System
 
 __all__ = [
@@ -25,6 +27,8 @@ __all__ = [
     "ROI",
     "Region",
     "Image",
+    "Window",
+    "ROI_Debug",
     # specialized types
     "Job",
 ]
