@@ -94,6 +94,8 @@
 | type     | string | 必填，`MoveMouse`（移动鼠标）、`DetectOnly`（仅检测） |
 | image    | object | 必填，图片定义，见下表。                              |
 | region   | object | 可选，识别区域，见下表。                              |
+| window   | object | 可选，窗口捕获定义，支持窗口级区域识别。              |
+| debug    | object | 可选，调试配置，支持调试和可视化 ROI。                |
 | duration | int    | 可选，鼠标移动时间（毫秒）。                          |
 
 **image 子字段：**
@@ -111,6 +113,20 @@
 | y      | int  | 区域 Y 坐标 |
 | width  | int  | 区域宽度    |
 | height | int  | 区域高度    |
+
+**window 子字段：**
+
+| 字段名     | 类型   | 说明     |
+| ---------- | ------ | -------- |
+| title      | string | 窗口标题 |
+| class_name | string | 窗口类名 |
+| process    | string | 进程名称 |
+
+**debug 子字段：**
+
+| 字段名             | 类型 | 说明                     |
+| ------------------ | ---- | ------------------------ |
+| display_screenshot | bool | 是否显示截图，默认 False |
 
 ---
 
@@ -252,4 +268,4 @@
 
 ---
 
-如需详细字段说明，请查阅 `src/Typehints/pydantic_pkg` 目录下各模型定义。若有疑问请联系开发者。
+如需详细字段说明，请查阅 `src/Typehints/pydantic_pkg` 目录下各模型定义，或以 `workflow/schema/generated.schema.json` 为准。若有疑问请联系开发者。

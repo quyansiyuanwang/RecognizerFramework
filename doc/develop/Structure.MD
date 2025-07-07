@@ -16,7 +16,7 @@
 
 ## script/ 脚本与工具
 
-- **\_\_main\_\_.py**：脚本主入口，支持 `python -m script` 执行批量工具。
+- **\_\_main\_\_.py**：脚本主入口，支持 `python -m script` 执行批量工具（类型注解完善）。
 - **check_type.py**：类型检查工具，辅助开发时类型安全。
 - **format.py**：代码格式化工具，统一代码风格。
 - **import_sort.py**：导入排序工具，自动整理 import 顺序。
@@ -44,22 +44,24 @@
   - **roi.py**：区域识别结构体。
   - **roi_image.py**：区域识别图片结构体。
   - **roi_region.py**：区域识别区域结构体。
+  - **roi_debug.py**：区域调试结构体，用于调试和可视化 ROI。
+  - **roi_window.py**：窗口捕获结构体，支持窗口级区域识别。
   - **system.py**：系统操作结构体。
   - **TypeMap.py/Util.py**：类型映射与结构体工具。
 
 - **Typehints/**：类型提示与 Pydantic 类型定义。
 
   - **structure.py**：结构相关类型定义。
-  - **pydantic_pkg/**：各功能领域的 Pydantic 类型包（如 input、roi、system 等）。
-  - **framework/**：框架相关类型定义。
+  - **pydantic_pkg/**：各功能领域的 Pydantic 类型包（如 input、roi、system 等，含 ROI 相关类型定义）。
+  - **framework/**：框架相关类型定义（含 ROI 相关类型定义）。
 
 - **Util/**：通用工具函数。
 
   - **util.py**：常用工具函数集合。
 
 - **WorkflowEngine/**：工作流引擎。
-  - **executor.py**：执行器基类与注册逻辑。
-  - **manager.py**：工作流管理器，负责任务调度与状态管理。
+  - **executor.py**：执行器基类与注册逻辑（含异常处理和缓存优化）。
+  - **manager.py**：工作流管理器，负责任务调度与状态管理（含异常处理优化）。
   - **Controller/**：控制器子模块。
     - **InputController.py**：输入控制器，封装鼠标/键盘操作。
     - **LogController.py**：日志管理，统一日志输出。
@@ -68,13 +70,13 @@
   - **Executors/**：执行器模块。
     - **InputExecutor.py**：输入任务执行器。
     - **OCRExecutor.py**：OCR 任务执行器。
-    - **ROIExecutor.py**：区域识别任务执行器。
+    - **ROIExecutor.py**：区域识别任务执行器（支持窗口捕获与调试）。
     - **SystemExecutor.py**：系统任务执行器。
   - **Exceptions/**：自定义异常定义。
     - **base/**：基础异常类型，所有自定义异常的父类，便于统一捕获和扩展。
-    - **crash/**：通用异常类型（如 ActionTypeError 等），用于处理执行时的类型错误、参数错误等。
+    - **crash/**：通用异常类型（如 ActionTypeError、ROI 相关崩溃异常等），用于处理执行时的类型错误、参数错误等。
     - **critical/**：关键异常类型，表示必须中断流程的严重错误。
-    - **execs/**：细分的执行异常（如 roi.py、input.py、system.py），分别对应 ROI、输入、系统等模块的专属异常类型。
+    - **execs/**：细分的执行异常（如 roi.py、roi_crash.py、input.py、system.py），分别对应 ROI、输入、系统等模块的专属异常类型。
     - **ignorable/**：可忽略异常类型，遇到时可选择跳过而不中断主流程。
   - **Util/**：引擎相关工具。
 
