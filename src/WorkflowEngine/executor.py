@@ -289,8 +289,6 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
         self, *_: Any, job: Job, globals: IdentifiedGlobalsDict, **kwargs: Any
     ) -> None:
         jn = job.get("name", None)
-        if jn is None:
-            raise JobNotFoundError("Job name is not specified in the job definition.")
         self.work_chain.append(jn)
 
         # delay

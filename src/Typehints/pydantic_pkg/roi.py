@@ -19,6 +19,12 @@ class Window(BaseModel):
     title: Optional[str] = Field(None, description="窗口标题, 可选")
     class_name: Optional[str] = Field(None, description="窗口类名, 可选")
     process: Optional[str] = Field(None, description="进程名称, 可选")
+    allow_overlay: Optional[bool] = Field(
+        True, description="是否允许其他窗口覆盖, 可选"
+    )
+    allow_out_of_screen: Optional[bool] = Field(
+        False, description="是否允许截屏区域超出屏幕, 可选"
+    )
 
 
 class ROI_Debug(BaseModel):

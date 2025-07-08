@@ -900,6 +900,32 @@
           "default": null,
           "description": "进程名称, 可选",
           "title": "Process"
+        },
+        "allow_overlay": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "是否允许其他窗口覆盖, 可选",
+          "title": "Allow Overlay"
+        },
+        "allow_out_of_screen": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "是否允许截屏区域超出屏幕, 可选",
+          "title": "Allow Out Of Screen"
         }
       },
       "title": "Window",

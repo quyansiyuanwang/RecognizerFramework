@@ -17,6 +17,8 @@ class WindowDict(TypedDict):
     title: NotRequired[str]
     class_name: NotRequired[str]
     process: NotRequired[str]
+    allow_overlay: NotRequired[bool]
+    allow_out_of_screen: NotRequired[bool]
 
 
 class ROI_DebugDict(TypedDict):

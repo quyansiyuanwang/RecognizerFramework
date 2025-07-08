@@ -11,7 +11,13 @@ import win32ui
 from PIL import Image
 
 from ...Structure import ROI
-from ...Typehints import GlobalsDict, RegionDict, ROI_DebugDict, WindowLocationDict
+from ...Typehints import (
+    GlobalsDict,
+    RegionDict,
+    ROI_DebugDict,
+    WindowDict,
+    WindowLocationDict,
+)
 from ..Controller import InputController, LogLevel, global_log_manager
 from ..Exceptions.crash import (
     ActionTypeError,
@@ -35,9 +41,27 @@ class ROIExecutor(Executor):
         self.job: Job = job
         self.globals: GlobalsDict = globals
 
-    def __capture(self, roi: ROI) -> WindowLocationDict:
-        # 读取对象窗口参数
-        window = roi.get("window", {})
+    def __capture_screen(self, roi: ROI) -> WindowLocationDict:
+        region: Optional[RegionDict] = roi.get("region", None)
+        if region is None:
+            return WindowLocationDict(
+                left=0,
+                top=0,
+                mat=pyautogui.screenshot(),
+            )
+        cap_x: int = int(region.get("x", 0))
+        cap_y: int = int(region.get("y", 0))
+        cap_width: int = int(region.get("width", pyautogui.size().width))
+        cap_height: int = int(region.get("height", pyautogui.size().height))
+
+        return WindowLocationDict(
+            left=cap_x,
+            top=cap_y,
+            mat=pyautogui.screenshot(region=(cap_x, cap_y, cap_width, cap_height)),
+        )
+
+    def __capture_window(self, roi: ROI) -> WindowLocationDict:
+        window: WindowDict = roi.get("window", {})
         # 匹配条件
         target_title = window.get("title", "")
         target_class_name = window.get("class_name", "")
@@ -109,18 +133,25 @@ class ROIExecutor(Executor):
         cap_height: int = int(min(region.get("height", inf), win_bottom - cap_y))
         cap = (cap_x, cap_y, cap_width, cap_height)
 
+        allow_out_of_screen: bool = window.get("allow_out_of_screen", False)
         screen_size = pyautogui.size()
         if (
-            win_left < 0
-            or win_bottom < 0
-            or win_left > screen_size.width
-            or win_top > screen_size.height
+            cap_x + cap_width < 0
+            or cap_y + cap_height < 0
+            or cap_x > screen_size.width
+            or cap_y > screen_size.height
             or (cap_width <= 0)
             or (cap_height <= 0)
         ):
-            raise IllegalWindowAreaError(
-                job=self.job,
-                message=f"窗口区域无效: {cap}",
+            if not allow_out_of_screen:
+                raise IllegalWindowAreaError(
+                    job=self.job,
+                    message=f"窗口区域无效: {cap}",
+                )
+            global_log_manager.log(
+                f"窗口区域无效: {cap}, 允许超出屏幕: {allow_out_of_screen}",
+                [LogLevel.WARNING],
+                debug=self.globals.get("debug", False),
             )
 
         if window.get("allow_overlay", False):
@@ -151,16 +182,19 @@ class ROIExecutor(Executor):
                 0,
                 1,
             )
-            return WindowLocationDict(
-                left=win_left + region_x,
-                top=win_top + region_y,
-                mat=screenshot,
-            )
         return WindowLocationDict(
-            left=win_left,
-            top=win_top,
+            left=win_left + region_x,
+            top=win_top + region_y,
             mat=screenshot,
         )
+
+    def __capture(self, roi: ROI) -> WindowLocationDict:
+        # 读取对象窗口参数
+        window: Optional[WindowDict] = roi.get("window", None)
+        if window is None:
+            return self.__capture_screen(roi)
+        else:
+            return self.__capture_window(roi)
 
     def __execute_debug(self, roi: ROI, *, mat: PILImage) -> None:
         debug: Optional[ROI_DebugDict] = roi.get("debug", {})
@@ -175,7 +209,9 @@ class ROIExecutor(Executor):
     def main(self, roi: ROI) -> str:
         wld: WindowLocationDict = self.__capture(roi)
         mat = cv2.cvtColor(np.array(wld["mat"]), cv2.COLOR_RGB2BGR)
-        region: RegionDict = roi.get("region", {})
+
+        # debug
+        self.__execute_debug(roi, mat=wld["mat"])
 
         # 目标偏移量
         offset_x: int = wld["left"]
@@ -212,11 +248,9 @@ class ROIExecutor(Executor):
             max_loc[0] + offset_x,
             max_loc[1] + offset_y,
         )
-        region_x: int = region.get("x", 0)
-        region_y: int = region.get("y", 0)
         matched_center = (
-            matched_left_top[0] + region_x + template_gray.shape[1] // 2,
-            matched_left_top[1] + region_y + template_gray.shape[0] // 2,
+            matched_left_top[0] + template_gray.shape[1] // 2,
+            matched_left_top[1] + template_gray.shape[0] // 2,
         )
 
         # log
@@ -225,9 +259,6 @@ class ROIExecutor(Executor):
             [LogLevel.DEBUG],
             debug=self.globals.get("debug", False),
         )
-
-        # debug
-        self.__execute_debug(roi, mat=wld["mat"])
 
         # action Factory
         if roi.get("type") == "DetectOnly":
