@@ -12,6 +12,11 @@ class Delay(BaseModel):
     post: Optional[int] = Field(0, ge=0, description="后置延时(ms), 任务执行后等待时间")
 
 
+class Before(BaseModel):
+    tasks: List[str] = Field(list(), description="使用的任务名列表, 任务开始前逐个执行")
+    ignore_errors: bool = Field(False, description="是否忽略错误")
+
+
 class After(BaseModel):
     success: List[str] = Field(
         list(), description="成功时的任务名列表, 任务完成后逐个执行"
@@ -62,6 +67,9 @@ class Job(BaseModel):
         description="继承的任务名, 仅在type为Overload时有效, 允许继承其他任务的定义",
     )
     description: Optional[str] = Field(str(), description="任务描述, 便于理解用途")
+    before: Optional[Before] = Field(
+        None, description="使用的前置任务名列表, 任务开始前逐个执行"
+    )
     after: Optional[After] = Field(
         None, description="使用的任务名列表, 任务完成后逐个执行"
     )

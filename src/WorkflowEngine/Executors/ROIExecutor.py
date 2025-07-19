@@ -171,11 +171,11 @@ class ROIExecutor(Executor):
                 win32con.SRCCOPY,
             )
 
-            bmpinfo = saveBitMap.GetInfo()  # type: ignore[union-attr]
+            bmpinfo = saveBitMap.GetInfo()  # type: ignore[reportUnknownMemberType]
             bmpstr = saveBitMap.GetBitmapBits(True)
             screenshot = Image.frombuffer(
                 "RGB",
-                (bmpinfo["bmWidth"], bmpinfo["bmHeight"]),  # type: ignore[union-attr]
+                (bmpinfo["bmWidth"], bmpinfo["bmHeight"]),  # type: ignore[reportUnknownArgumentType]
                 bmpstr,
                 "raw",
                 "BGRX",

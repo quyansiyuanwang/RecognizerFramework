@@ -11,12 +11,13 @@ from typing import (
     Literal,
     NoReturn,
     Optional,
-    Set,
     Tuple,
     Type,
     TypeVar,
     Union,
 )
+
+from src.Typehints.framework.job_params import BeforeDict
 
 from ..Structure import Delay, Job, Limits
 from ..Typehints import AfterDict, GlobalsDict, IdentifiedGlobalsDict, TaskAttemptDict
@@ -32,7 +33,7 @@ from ..WorkflowEngine.Exceptions.crash import (
 )
 from ..WorkflowEngine.Exceptions.critical import RetryError
 from .Controller import LogController, LogLevel, global_log_manager
-from .Exceptions.ignorable import AfterJobRunError
+from .Exceptions.ignorable import AfterJobRunError, BeforeJobRunError
 from .manager import WorkflowManager
 from .Util.executor_works import delay as task_delay
 
@@ -48,6 +49,7 @@ class Executor(ABC):
         pass
 
 
+"""Generic TypeVars"""
 _EXEC_YT = TypeVar("_EXEC_YT")
 _EXEC_ST = TypeVar("_EXEC_ST", bound=None, default=None)
 _EXEC_RT = TypeVar("_EXEC_RT", bound=None, default=None)
@@ -108,6 +110,11 @@ _CB_SF_V = TypeVar("_CB_SF_V", bound=Any, default=None)
 
 
 class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
+    __JOB_RESULT_MAP: Dict[bool, str] = {
+        True: "Success",
+        False: "Failure",
+    }
+
     @staticmethod
     def __self_callback(args: _CB_SF_V) -> _CB_SF_V:
         return args
@@ -219,6 +226,18 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                 "All jobs completed successfully. Jobs Chain: {jobs_chain}",
                 [LogLevel.INFO, LogLevel.DEBUG],
             ),
+            "BeforeJobTip": (
+                "Before '{job_name}' job run: '{bef_job}'",
+                [LogLevel.INFO, LogLevel.DEBUG],
+            ),
+            "BeforeJobResult": (
+                "Before job '{job_name}' Execute {result}",
+                (
+                    [LogLevel.INFO, LogLevel.DEBUG]
+                    if kwargs.get("success")
+                    else [LogLevel.WARNING, LogLevel.DEBUG]
+                ),
+            ),
             "AfterJobTip": (
                 "After '{job_name}' job run: '{aft_job}'",
                 [LogLevel.INFO, LogLevel.DEBUG],
@@ -240,10 +259,6 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
             assert False, f"Unknown event type: {event}"
         fmt, levels = templates[event]
 
-        if event in {"JobResult", "AfterJobResult"}:
-            kwargs = dict(kwargs)
-            kwargs["result"] = "success" if kwargs.get("success") else "failure"
-
         global_log_manager.log(
             fmt.format(**kwargs),
             levels,
@@ -251,31 +266,59 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
             log_config=self.globals.get("logConfig"),
         )
 
+    def _before_run(self, job: Job, globals: IdentifiedGlobalsDict) -> None:
+        before: Optional[BeforeDict] = job.get("before", None)
+        if before is None:
+            return
+        ignore: bool = before.get("ignore_errors", False)
+        tasks: List[str] = before.get("tasks", [])
+        for task in tasks:
+            bef_job = self.workflow.get_job(task)
+            if bef_job is None:
+                raise JobNotFoundError(f"Job '{task}' not found in workflow.")
+
+            self._log_event(
+                "BeforeJobTip", job_name=job.get("name"), bef_job=bef_job.get("name")
+            )
+            success = False
+            try:
+                JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT](bef_job).execute()
+                success = True
+            except IgnorableError as e:
+                if not ignore:
+                    raise BeforeJobRunError(job=bef_job, message=str(e)) from e
+
+            except CrashException as e:
+                self._log_event("Error", job_name=task, error=e)
+                raise CrashException("Crash occurred", bef_job) from e
+            finally:
+                self._log_event(
+                    "BeforeJobResult",
+                    job_name=task,
+                    result=ExecutorManager.__JOB_RESULT_MAP.get(success),
+                )
+
     def _after_run(self, job: Job, run_status: bool) -> None:
         after: Optional[AfterDict] = job.get("after", None)
         if after is None:
             return
         ignore: bool = after.get("ignore_errors", False)
         always: List[str] = after.get("always", [])
-        executed: Set[str] = set()
         tasks: List[str] = always + (
             after.get("success", []) if run_status else after.get("failure", [])
         )
         for task in tasks:
-            if task in executed:
-                continue
-
             aft_job = self.workflow.get_job(task)
             if aft_job is None:
                 raise JobNotFoundError(f"Job '{task}' not found in workflow.")
 
-            executed.add(aft_job.get("name"))
             self._log_event(
                 "AfterJobTip", job_name=job.get("name"), aft_job=aft_job.get("name")
             )
-
+            success = False
             try:
                 JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT](aft_job).execute()
+                success = True
             except IgnorableError as e:
                 if not ignore:
                     raise AfterJobRunError(job=aft_job, message=str(e)) from e
@@ -283,7 +326,11 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                 self._log_event("Error", job_name=task, error=e)
                 raise CrashException("Crash occurred", aft_job) from e
             finally:
-                self._log_event("AfterJobResult", job_name=task, success=True)
+                self._log_event(
+                    "AfterJobResult",
+                    job_name=task,
+                    result=ExecutorManager.__JOB_RESULT_MAP.get(success),
+                )
 
     def __pre_works(
         self, *_: Any, job: Job, globals: IdentifiedGlobalsDict, **kwargs: Any
@@ -333,6 +380,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
 
                 # exec
                 self.__pre_works(job=job, globals=self.globals, prefix=job["type"])
+                self._before_run(job=job, globals=self.globals)
                 result: _EXEC_YT = JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT](
                     job=job, globals=self.workflow.get_globals({})
                 ).execute()
@@ -398,7 +446,11 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
 
             nxt = self.workflow.get_next(cur_job_name, success)
             # log event
-            self._log_event("JobResult", job_name=cur_job_name, success=success)
+            self._log_event(
+                "JobResult",
+                job_name=cur_job_name,
+                result=ExecutorManager.__JOB_RESULT_MAP.get(success),
+            )
             if nxt is None:
                 self._log_event(
                     "JobsCompletion",

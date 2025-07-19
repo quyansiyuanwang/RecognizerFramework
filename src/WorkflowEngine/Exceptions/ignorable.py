@@ -12,3 +12,10 @@ class AfterJobRunError(IgnorableError):
         super().__init__(message="After job run error occurred: " + message, job=job)
         self.job: Optional[Job] = job
         self.message: str = message
+
+
+class BeforeJobRunError(IgnorableError):
+    def __init__(self, message: str, job: Optional[Job] = None):
+        super().__init__(message="Before job run error occurred: " + message, job=job)
+        self.job: Optional[Job] = job
+        self.message: str = message

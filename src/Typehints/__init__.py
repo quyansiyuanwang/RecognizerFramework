@@ -6,7 +6,7 @@ from .framework.frame import (
     WorkflowDict,
 )
 from .framework.input import InputDict, KeyboardDict, MouseDict, TextDict
-from .framework.job_params import AfterDict, DelayDict, LimitsDict, NextDict
+from .framework.job_params import AfterDict, BeforeDict, DelayDict, LimitsDict, NextDict
 from .framework.roi import ImageDict, RegionDict, ROI_DebugDict, ROIDict, WindowDict
 from .framework.system import LogDict, LogLevelLiteral, SystemDict
 from .pydantic_pkg.pkg import Workflow
@@ -44,4 +44,5 @@ __all__ = [
     "LimitsDict",
     "NextDict",
     "AfterDict",
+    "BeforeDict",
 ]

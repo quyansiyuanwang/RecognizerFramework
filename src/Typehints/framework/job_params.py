@@ -23,3 +23,8 @@ class AfterDict(TypedDict):
     failure: NotRequired[List[str]]
     always: NotRequired[List[str]]
     ignore_errors: NotRequired[bool]
+
+
+class BeforeDict(TypedDict):
+    tasks: List[str]
+    ignore_errors: NotRequired[bool]

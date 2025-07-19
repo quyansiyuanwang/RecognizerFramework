@@ -39,6 +39,27 @@
       "title": "After",
       "type": "object"
     },
+    "Before": {
+      "properties": {
+        "tasks": {
+          "default": [],
+          "description": "使用的任务名列表, 任务开始前逐个执行",
+          "items": {
+            "type": "string"
+          },
+          "title": "Tasks",
+          "type": "array"
+        },
+        "ignore_errors": {
+          "default": false,
+          "description": "是否忽略错误",
+          "title": "Ignore Errors",
+          "type": "boolean"
+        }
+      },
+      "title": "Before",
+      "type": "object"
+    },
     "Delay": {
       "properties": {
         "pre": {
@@ -414,6 +435,18 @@
           "default": "",
           "description": "任务描述, 便于理解用途",
           "title": "Description"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Before"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "使用的前置任务名列表, 任务开始前逐个执行"
         },
         "after": {
           "anyOf": [
