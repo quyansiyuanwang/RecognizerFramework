@@ -56,10 +56,15 @@ class InputExecutor(Executor):
         x = mouse.get("x", 0)
         y = mouse.get("y", 0)
         move_type = mouse.get("type", "Move")
+        duration = mouse.get("duration", 0)
         if move_type == "Move":
-            InputController.move(x, y, debug=self.globals.get("debug", False))
+            InputController.move(
+                x, y, duration=duration, debug=self.globals.get("debug", False)
+            )
         elif move_type == "MoveTo":
-            InputController.move_to(x, y, debug=self.globals.get("debug", False))
+            InputController.move_to(
+                x, y, duration=duration, debug=self.globals.get("debug", False)
+            )
         else:
             raise MouseMoveError(f"Unsupported mouse move type: {move_type}", self.job)
         return f"Mouse moved to ({x}, {y})"
