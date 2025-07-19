@@ -1,9 +1,9 @@
-from typing import List, Literal, Optional
+from typing import Callable, Dict, List, Literal, Optional, Tuple
 
 import keyboard
 import pyautogui
 import pyperclip  # type: ignore[import-untyped]
-import pywinauto  # type: ignore[import-not-found]
+import pywinauto  # type: ignore[import-untyped]
 
 from .Runner import SafeRunner
 from .SystemController import SystemController
@@ -13,89 +13,8 @@ pyautogui.PAUSE = 0  # Disable default pause between actions
 
 class InputController:
     @staticmethod
-    def move_to(
-        x: int,
-        y: int,
-        duration: int = 0,
-        debug: bool = True,
-        ignore: bool = False,
-    ) -> None:
-        SafeRunner.run(
-            pyautogui.moveTo,
-            (x, y),
-            {"duration": duration / 1000},
-            ignore=ignore,
-            debug=debug,
-            # logger
-            debug_msg=f"Moving mouse to ({x}, {y}) with duration {duration} ms",
-            warn_msg=f"Failed to move mouse to ({x}, {y}) with duration {duration} ms",
-            err_msg=f"Error moving mouse to ({x}, {y}) with duration {duration} ms: {{error}}",
-        )
-
-    @staticmethod
-    def move(
-        x: int, y: int, duration: int = 0, debug: bool = True, ignore: bool = False
-    ) -> None:
-        SafeRunner.run(
-            pyautogui.move,
-            (x, y),
-            {"duration": duration / 1000},
-            ignore=ignore,
-            debug=debug,
-            # logger
-            debug_msg=f"Moving mouse to ({x}, {y}) with duration {duration} ms",
-            warn_msg=f"Failed to move mouse to ({x}, {y}) with duration {duration} ms",
-            err_msg=f"Error moving mouse to ({x}, {y}) with duration {duration} ms: {{error}}",
-        )
-
-    @staticmethod
-    def only_click(
-        duration: int = 0,
-        debug: bool = True,
-        ignore: bool = False,
-        click_type: Literal["LEFT", "RIGHT", "MIDDLE"] = "LEFT",
-    ) -> None:
-        if click_type not in ["LEFT", "RIGHT", "MIDDLE"]:
-            raise ValueError(
-                f"Invalid click type: {click_type}. Must be 'LEFT', 'RIGHT', or 'MIDDLE'."
-            )
-        # duration是点击的持续时间
-        SafeRunner.run(
-            pyautogui.click,
-            (),
-            {"button": click_type, "duration": duration / 1000},
-            ignore=ignore,
-            debug=debug,
-            # logger
-            debug_msg=f"Clicking with duration {duration} ms using {click_type} click",
-            warn_msg=f"Failed to click with duration {duration} ms using {click_type} click",
-            err_msg=f"Error clicking with duration {duration} ms using {click_type} click: {{error}}",
-        )
-
-    @staticmethod
-    def click(
-        x: Optional[int] = None,
-        y: Optional[int] = None,
-        delay_ms: int = 0,
-        debug: bool = True,
-        ignore: bool = False,
-        click_type: Literal["LEFT", "RIGHT", "MIDDLE"] = "LEFT",
-    ) -> None:
-        if click_type not in ["LEFT", "RIGHT", "MIDDLE"]:
-            raise ValueError(
-                f"Invalid click type: {click_type}. Must be 'LEFT', 'RIGHT', or 'MIDDLE'."
-            )
-        SafeRunner.run(
-            pyautogui.click,
-            (x, y),
-            {"button": click_type, "interval": delay_ms / 1000},
-            ignore=ignore,
-            debug=debug,
-            # logger
-            debug_msg=f"Clicking at ({x}, {y}) with delay {delay_ms} ms using {click_type} click",
-            warn_msg=f"Failed to click at ({x}, {y}) with delay {delay_ms} ms using {click_type} click",
-            err_msg=f"Error clicking at ({x}, {y}) with delay {delay_ms} ms using {click_type} click: {{error}}",
-        )
+    def get_mouse_position() -> Tuple[int, int]:
+        return pyautogui.position()
 
     @staticmethod
     def typewrite(
@@ -204,3 +123,88 @@ class InputController:
         )
         for k in reversed(keys):
             InputController.keyboard_release(k, debug=debug, ignore=ignore)
+
+    @staticmethod
+    def mouse_move_to(
+        x: int,
+        y: int,
+        duration: int = 0,
+        debug: bool = True,
+        ignore: bool = False,
+    ) -> None:
+        SafeRunner.run(
+            pyautogui.moveTo,
+            (x, y),
+            {"duration": duration / 1000},
+            ignore=ignore,
+            debug=debug,
+            # logger
+            debug_msg=f"Moving mouse to ({x}, {y}) with delay {duration} ms",
+            warn_msg=f"Failed to move mouse to ({x}, {y}) with delay {duration} ms",
+            err_msg=f"Error moving mouse to ({x}, {y}) with delay {duration} ms: {{error}}",
+        )
+
+    @staticmethod
+    def mouse_event(
+        event_type: Literal["Press", "Release"],
+        button: Literal["LEFT", "RIGHT", "MIDDLE"] = "LEFT",
+        debug: bool = True,
+        ignore: bool = False,
+    ):
+        fnc_map: Dict[str, Callable[..., None]] = {
+            "Press": pyautogui.mouseDown,
+            "Release": pyautogui.mouseUp,
+        }
+        SafeRunner.run(
+            fnc_map[event_type],
+            (),
+            {"button": button.lower()},
+            ignore=ignore,
+            debug=debug,
+            # logger
+            debug_msg=f"{event_type.capitalize()} mouse button: {button}",
+            warn_msg=f"Failed to {event_type.lower()} mouse button: {button}",
+            err_msg=f"Error {event_type.lower()} mouse button: {button}: {{error}}",
+        )
+
+    @staticmethod
+    def mouse_click_at(
+        button: Literal["LEFT", "RIGHT", "MIDDLE"] = "LEFT",
+        x: Optional[int] = None,
+        y: Optional[int] = None,
+        duration: int = 0,
+        debug: bool = True,
+        ignore: bool = False,
+    ) -> None:
+        SafeRunner.run(
+            pyautogui.click,
+            (x, y) if x is not None and y is not None else (),
+            {"button": button.lower(), "duration": duration / 1000},
+            ignore=ignore,
+            debug=debug,
+            # logger
+            debug_msg=f"Clicking mouse button {button} at ({x}, {y}) with delay {duration} ms",
+            warn_msg=f"Failed to click mouse button {button} at ({x}, {y}) with delay {duration} ms",
+            err_msg=f"Error clicking mouse button {button} at ({x}, {y}) with delay {duration} ms: {{error}}",
+        )
+
+    @staticmethod
+    def mouse_drag_to(
+        button: Literal["LEFT", "RIGHT", "MIDDLE"] = "LEFT",
+        x: Optional[int] = None,
+        y: Optional[int] = None,
+        duration: int = 0,
+        debug: bool = True,
+        ignore: bool = False,
+    ):
+        SafeRunner.run(
+            pyautogui.dragTo,
+            (x, y) if x is not None and y is not None else (),
+            {"button": button.lower(), "duration": duration / 1000},
+            ignore=ignore,
+            debug=debug,
+            # logger
+            debug_msg=f"Dragging mouse to ({x}, {y}) with button {button} and delay {duration} ms",
+            warn_msg=f"Failed to drag mouse to ({x}, {y}) with button {button} and delay {duration} ms",
+            err_msg=f"Error dragging mouse to ({x}, {y}) with button {button} and delay {duration} ms: {{error}}",
+        )

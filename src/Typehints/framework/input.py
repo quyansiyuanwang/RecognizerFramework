@@ -12,10 +12,18 @@ class KeyboardDict(TypedDict):
 
 class MouseDict(TypedDict):
     # Required fields
-    type: Literal["LClick", "RClick", "MClick", "Move", "MoveTo"]
+    type: Literal[
+        "Press",
+        "Release",
+        "Click",
+        "Move",
+        "Drag",
+    ]
+    button: Literal["LEFT", "RIGHT", "MIDDLE"]
 
     # Optional fields
     duration: NotRequired[int]
+    relative: NotRequired[bool]
     x: NotRequired[int]
     y: NotRequired[int]
 

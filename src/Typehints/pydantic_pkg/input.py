@@ -4,13 +4,31 @@ from pydantic import BaseModel, Field
 
 
 class Input_Mouse(BaseModel):
-    type: Literal["LClick", "RClick", "MClick", "Move", "MoveTo"] = Field(
+    type: Literal[
+        "Press",
+        "Release",
+        "Click",
+        "Move",
+        "Drag",
+    ] = Field(
         ...,
-        description="鼠标输入类型, 可选: LClick(左键点击), RClick(右键点击), MClick(中键点击), Move(移动鼠标), MoveTo(移动到指定位置)",
+        description=(
+            "鼠标输入类型, 可选: Press(按下), Release(释放), Click(点击), "
+            "Move(移动),  Drag(拖动)"
+        ),
+    )
+    button: Optional[Literal["LEFT", "RIGHT", "MIDDLE"]] = Field(
+        None, description="鼠标按钮类型, 可选: LEFT(左键), RIGHT(右键), MIDDLE(中键)"
     )
     x: Optional[int] = Field(None, description="X坐标, 像素值")
     y: Optional[int] = Field(None, description="Y坐标, 像素值")
     duration: Optional[int] = Field(0, ge=0, description="延时(ms), 鼠标操作时间")
+    relative: Optional[bool] = Field(
+        False,
+        description=(
+            "是否相对当前位置移动, 默认为False, 如果为True, 则x和y表示相对偏移量"
+        ),
+    )
 
 
 class Input_Keyboard(BaseModel):

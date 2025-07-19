@@ -267,7 +267,7 @@ class ROIExecutor(Executor):
         elif roi.get("type") == "MoveMouse":
             # 移动鼠标
             duration: int = roi.get("duration", 0)
-            InputController.move_to(
+            InputController.mouse_move_to(
                 x=matched_center[0],
                 y=matched_center[1],
                 duration=duration,
