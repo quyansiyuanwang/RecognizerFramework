@@ -1,4 +1,6 @@
 import time
+import pyautogui
+import pyperclip
 from typing import List
 
 from ...WorkflowEngine.Controller.LogController import LogLevel
@@ -31,3 +33,24 @@ class SystemController:
             err_msg=f"{prefix} Error sleeping for {ms} ms: {{error}}",
             log_lvl=levels,
         )
+
+    @staticmethod
+    def paste() -> str:
+        content = pyperclip.paste()
+
+        def perform_paste() -> None:
+            pyperclip.copy(content)
+            pyautogui.hotkey("ctrl", "v")
+
+        SafeRunner.run(
+            perform_paste,
+            (),
+            debug=True,
+            ignore=False,
+            context={"text": pyperclip.paste()},
+            debug_msg=f"Pasting text: {pyperclip.paste()}",
+            warn_msg=f"Failed to paste text: {pyperclip.paste()}",
+            err_msg=f"Error pasting text: {pyperclip.paste()}: {{error}}",
+            log_lvl=[LogLevel.INFO, LogLevel.DEBUG],
+        )
+        return content

@@ -2,7 +2,6 @@ from typing import Callable, Dict, List, Literal, Optional, Tuple
 
 import keyboard
 import pyautogui
-import pyperclip  # type: ignore[import-untyped]
 import pywinauto  # type: ignore[import-untyped]
 
 from .Runner import SafeRunner
@@ -38,29 +37,6 @@ class InputController:
         except Exception as e:
             if not ignore:
                 raise RuntimeError(f"Failed to typewrite '{text}': {e}") from e
-
-            SafeRunner.run(
-                pyperclip.copy,
-                (text,),
-                {},
-                ignore=ignore,
-                debug=debug,
-                # logger
-                debug_msg=f"Falling back to clipboard paste for text: '{text}'",
-                warn_msg=f"Failed to copy text '{text}' to clipboard",
-                err_msg=f"Error copying text '{text}' to clipboard: {{error}}",
-            )
-            SafeRunner.run(
-                pyautogui.hotkey,
-                ("ctrl", "v"),
-                {},
-                ignore=ignore,
-                debug=debug,
-                # logger
-                debug_msg=f"Pasting text from clipboard: '{text}'",
-                warn_msg=f"Failed to paste text from clipboard: '{text}'",
-                err_msg=f"Error pasting text from clipboard: {{error}}",
-            )
 
     @staticmethod
     def keyboard_press(
