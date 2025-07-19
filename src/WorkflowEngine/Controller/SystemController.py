@@ -1,5 +1,6 @@
+import subprocess
 import time
-from typing import List
+from typing import Dict, List, Optional
 
 import pyautogui
 import pyperclip  # type: ignore[import-untyped]
@@ -55,3 +56,37 @@ class SystemController:
             log_lvl=[LogLevel.INFO, LogLevel.DEBUG],
         )
         return content
+
+    @staticmethod
+    def run_command(
+        command: str,
+        args: Optional[List[str]],
+        env: Optional[Dict[str, str]] = None,
+        cwd: Optional[str] = None,
+        shell: bool = True,
+        wait: bool = True,
+        debug: bool = False,
+        prefix: str = "",
+    ):
+        cmd = [command] + (args or [])
+        process = SafeRunner.run(
+            subprocess.Popen,
+            (cmd,),
+            {
+                "env": env,
+                "cwd": cwd,
+                "shell": shell,
+                "stdout": subprocess.PIPE,
+                "stderr": subprocess.PIPE,
+                "text": True,
+            },
+            debug_msg=f"Running command '{command}' with args {args}",
+            warn_msg=f"{prefix} Failed to run command '{command}' with args {args}",
+            err_msg=f"{prefix} Error running command '{command}' with args {args}",
+            log_lvl=[LogLevel.INFO, LogLevel.DEBUG],
+        )
+
+        if process and wait:
+            stdout, stderr = process.communicate()
+            print(stdout)
+            print(stderr)

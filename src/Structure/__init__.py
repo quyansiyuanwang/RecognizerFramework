@@ -14,6 +14,7 @@ from .roi_image import Image
 from .roi_region import Region
 from .roi_window import Window
 from .system import System
+from .system_command import System_Command
 
 __all__ = [
     "After",
@@ -31,6 +32,7 @@ __all__ = [
     "Image",
     "Window",
     "ROI_Debug",
+    "System_Command",
     # specialized types
     "Job",
 ]

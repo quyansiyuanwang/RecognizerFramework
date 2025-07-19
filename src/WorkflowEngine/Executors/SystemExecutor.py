@@ -1,5 +1,7 @@
 from typing import Any, List, Optional
 
+from src.WorkflowEngine.Exceptions.execs.system_crash import CommandCrash
+
 from ...Structure import System
 from ...Typehints import GlobalsDict, LogLevelLiteral
 from ..Controller import Logger, LogLevel, SystemController
@@ -12,6 +14,34 @@ class SystemExecutor(Executor):
     def __init__(self, job: Job, globals: GlobalsDict) -> None:
         self.job: Job = job
         self.globals: GlobalsDict = globals
+
+    def execute_Command(self, system: System) -> str:
+        command_pkg = system.get("command")
+        command = command_pkg.get("command", "")
+        args = command_pkg.get("args", [])
+        env = command_pkg.get("env", None)
+        cwd = command_pkg.get("cwd", None)
+        shell = command_pkg.get("shell", True)
+        wait = command_pkg.get("wait", True)
+        full = f"{command} {' '.join(args)}"
+        try:
+            SystemController.run_command(
+                command,
+                args=args,
+                env=env,
+                cwd=cwd,
+                shell=shell,
+                wait=wait,
+                debug=self.globals.get("debug", False),
+            )
+            return f"Executed command: {full}"
+        except Exception as e:
+
+            if command_pkg.get("ignore", False):
+                return f"Failed to execute command: {full}, but ignored."
+            raise CommandCrash(
+                f"Failed to execute command: {full}, error: {e}", self.job
+            )
 
     def execute_Paste(self, system: System) -> str:
         content = SystemController.paste()
@@ -48,4 +78,6 @@ class SystemExecutor(Executor):
             return self.execute_Log(system)
         elif system.get("type") == "Paste":
             return self.execute_Paste(system)
+        elif system.get("type") == "Command":
+            return self.execute_Command(system)
         raise ActionTypeError(f"Unsupported action: {system.get('type')}", self.job)
