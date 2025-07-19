@@ -147,9 +147,26 @@ class InputExecutor(Executor):
             raise ActionTypeError(f"Unsupported mouse action type: {mt}", self.job)
 
     def execute_KeyboardInput(self, keyboard: Keyboard) -> str:
+        tp = keyboard.get("type")
+        if tp not in {"Press", "Release", "Type"}:
+            raise ActionTypeError(f"Unsupported keyboard action type: {tp}", self.job)
+
+        keys = keyboard.get("keys", None)
+        if tp == "Press":
+            InputController.keyboard_press(
+                keys,
+                debug=self.globals.get("debug", False),
+            )
+            return f"Keyboard pressed: {keyboard.get('keys', [])}"
+        elif tp == "Release":
+            InputController.keyboard_release(
+                keys,
+                debug=self.globals.get("debug", False),
+            )
+            return f"Keyboard released: {keyboard.get('keys', [])}"
+        # tp == Type
         duration = keyboard.get("duration", 0)
         sep_time = keyboard.get("sep_time", 0)
-        keys = keyboard.get("keys", None)
 
         InputController.keyboard_press_and_release(
             keys,
@@ -157,7 +174,7 @@ class InputExecutor(Executor):
             sep_time=sep_time,
             debug=self.globals.get("debug", False),
         )
-        return f"Keyboard input: {keys} with duration {duration} ms"
+        return f"Keyboard typed: {keys} with duration {duration} ms"
 
     def execute(self, *args: Any, **kwargs: Any) -> str:
         inp = self.job.get("input", None)

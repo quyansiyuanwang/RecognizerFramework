@@ -1,7 +1,6 @@
 from typing import Any, List, Optional
 
 from ...Structure import System
-
 from ...Typehints import GlobalsDict, LogLevelLiteral
 from ..Controller import Logger, LogLevel, SystemController
 from ..Exceptions.crash import ActionTypeError, LogLevelError, MissingRequiredError

@@ -32,6 +32,9 @@ class Input_Mouse(BaseModel):
 
 
 class Input_Keyboard(BaseModel):
+    type: Literal["Press", "Release", "Type"] = Field(
+        ..., description="键盘输入类型, 可选: Press(按下), Release(释放), Type(输入)"
+    )
     keys: List[str] = Field(
         ...,
         description="键盘输入的按键列表, 如['ctrl', 'v'], 支持组合键",

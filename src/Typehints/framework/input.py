@@ -3,6 +3,7 @@ from typing import List, Literal, NotRequired, TypedDict
 
 class KeyboardDict(TypedDict):
     # Required fields
+    type: Literal["Press", "Release", "Type"]
     keys: List[str]
 
     # Optional fields

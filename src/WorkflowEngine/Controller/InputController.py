@@ -40,39 +40,45 @@ class InputController:
 
     @staticmethod
     def keyboard_press(
-        key: str,
+        keys: List[str],
+        sep_time: int = 0,
         debug: bool = True,
         ignore: bool = False,
     ) -> None:
-        SafeRunner.run(
-            keyboard.press,
-            (key,),
-            {},
-            ignore=ignore,
-            debug=debug,
-            # logger
-            debug_msg=f"Keyboard input: '{key}'",
-            warn_msg=f"Failed to keyboard input '{key}'",
-            err_msg=f"Error keyboard input '{key}': {{error}}",
-        )
+        for key in keys:
+            SafeRunner.run(
+                keyboard.press,
+                (key,),
+                {},
+                ignore=ignore,
+                debug=debug,
+                # logger
+                debug_msg=f"Keyboard input: '{key}'",
+                warn_msg=f"Failed to keyboard input '{key}'",
+                err_msg=f"Error keyboard input '{key}': {{error}}",
+            )
+            SystemController.sleep(sep_time, debug=debug, ignore=ignore)
 
     @staticmethod
     def keyboard_release(
-        key: str,
+        keys: List[str],
+        sep_time: int = 0,
         debug: bool = True,
         ignore: bool = False,
     ) -> None:
-        SafeRunner.run(
-            keyboard.release,
-            (key,),
-            {},
-            ignore=ignore,
-            debug=debug,
-            # logger
-            debug_msg=f"Keyboard release: '{key}'",
-            warn_msg=f"Failed to release keyboard '{key}'",
-            err_msg=f"Error releasing keyboard '{key}': {{error}}",
-        )
+        for key in keys:
+            SafeRunner.run(
+                keyboard.release,
+                (key,),
+                {},
+                ignore=ignore,
+                debug=debug,
+                # logger
+                debug_msg=f"Keyboard release: '{key}'",
+                warn_msg=f"Failed to release keyboard '{key}'",
+                err_msg=f"Error releasing keyboard '{key}': {{error}}",
+            )
+            SystemController.sleep(sep_time, debug=debug, ignore=ignore)
 
     @staticmethod
     def keyboard_press_and_release(
@@ -82,14 +88,9 @@ class InputController:
         debug: bool = True,
         ignore: bool = False,
     ) -> None:
-        for k in keys:
-            InputController.keyboard_press(k, debug=debug, ignore=ignore)
-            SystemController.sleep(
-                sep_time,
-                debug=debug,
-                ignore=ignore,
-                prefix="InputControllerPressSepDelay",
-            )
+        InputController.keyboard_press(
+            keys, sep_time=sep_time, debug=debug, ignore=ignore
+        )
 
         SystemController.sleep(
             duration,
@@ -97,8 +98,9 @@ class InputController:
             ignore=ignore,
             prefix="InputControllerPressDurationDelay",
         )
-        for k in reversed(keys):
-            InputController.keyboard_release(k, debug=debug, ignore=ignore)
+        InputController.keyboard_release(
+            list(reversed(keys)), sep_time=sep_time, debug=debug, ignore=ignore
+        )
 
     @staticmethod
     def mouse_move_to(

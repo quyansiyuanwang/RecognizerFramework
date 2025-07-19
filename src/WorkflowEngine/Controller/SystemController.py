@@ -1,7 +1,8 @@
 import time
-import pyautogui
-import pyperclip
 from typing import List
+
+import pyautogui
+import pyperclip  # type: ignore[import-untyped]
 
 from ...WorkflowEngine.Controller.LogController import LogLevel
 from .Runner import SafeRunner

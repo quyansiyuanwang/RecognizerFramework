@@ -228,6 +228,16 @@
     },
     "Input_Keyboard": {
       "properties": {
+        "type": {
+          "description": "键盘输入类型, 可选: Press(按下), Release(释放), Type(输入)",
+          "enum": [
+            "Press",
+            "Release",
+            "Type"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
         "keys": {
           "description": "键盘输入的按键列表, 如['ctrl', 'v'], 支持组合键",
           "items": {
@@ -266,6 +276,7 @@
         }
       },
       "required": [
+        "type",
         "keys"
       ],
       "title": "Input_Keyboard",
