@@ -266,7 +266,9 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
             log_config=self.globals.get("logConfig"),
         )
 
-    def _before_run(self, job: Job, globals: IdentifiedGlobalsDict) -> None:
+    def _before_run(
+        self, job: Job, globals: IdentifiedGlobalsDict, results: Dict[str, _EXEC_YT]
+    ) -> None:
         before: Optional[BeforeDict] = job.get("before", None)
         if before is None:
             return
@@ -282,7 +284,16 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
             )
             success = False
             try:
-                JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT](bef_job).execute()
+                self.check_needed(bef_job, needs=bef_job["needs"], results=results)
+
+                self.__pre_works(
+                    job=bef_job, globals=self.globals, prefix=bef_job["type"]
+                )
+                self._before_run(job=bef_job, globals=self.globals, results=results)
+
+                results[task] = JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT](
+                    bef_job
+                ).execute()
                 success = True
             except IgnorableError as e:
                 if not ignore:
@@ -297,8 +308,15 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                     job_name=task,
                     result=ExecutorManager.__JOB_RESULT_MAP.get(success),
                 )
+            if not self.crashed:
+                self._after_run(job=bef_job, run_status=success, results=results)
+                self.__post_works(
+                    job=bef_job, globals=self.globals, prefix=bef_job["type"]
+                )
 
-    def _after_run(self, job: Job, run_status: bool) -> None:
+    def _after_run(
+        self, job: Job, run_status: bool, results: Dict[str, _EXEC_YT]
+    ) -> None:
         after: Optional[AfterDict] = job.get("after", None)
         if after is None:
             return
@@ -317,7 +335,16 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
             )
             success = False
             try:
-                JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT](aft_job).execute()
+                self.check_needed(aft_job, needs=job["needs"], results=results)
+
+                self.__pre_works(
+                    job=aft_job, globals=self.globals, prefix=aft_job["type"]
+                )
+                self._before_run(job=aft_job, globals=self.globals, results=results)
+
+                results[task] = JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT](
+                    aft_job
+                ).execute()
                 success = True
             except IgnorableError as e:
                 if not ignore:
@@ -330,6 +357,11 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                     "AfterJobResult",
                     job_name=task,
                     result=ExecutorManager.__JOB_RESULT_MAP.get(success),
+                )
+            if not self.crashed:
+                self._after_run(job=aft_job, run_status=success, results=results)
+                self.__post_works(
+                    job=aft_job, globals=self.globals, prefix=aft_job["type"]
                 )
 
     def __pre_works(
@@ -380,7 +412,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
 
                 # exec
                 self.__pre_works(job=job, globals=self.globals, prefix=job["type"])
-                self._before_run(job=job, globals=self.globals)
+                self._before_run(job=job, globals=self.globals, results=results)
                 result: _EXEC_YT = JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT](
                     job=job, globals=self.workflow.get_globals({})
                 ).execute()
@@ -438,10 +470,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
 
             finally:
                 if not self.crashed:
-                    self._after_run(
-                        job=job,
-                        run_status=success,
-                    )
+                    self._after_run(job=job, run_status=success, results=results)
                     self.__post_works(job=job, globals=self.globals, prefix=job["type"])
 
             nxt = self.workflow.get_next(cur_job_name, success)
