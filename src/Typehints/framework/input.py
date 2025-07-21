@@ -1,4 +1,4 @@
-from typing import List, Literal, NotRequired, TypedDict
+from typing import Dict, List, Literal, NotRequired, TypedDict
 
 
 class KeyboardDict(TypedDict):
@@ -9,6 +9,8 @@ class KeyboardDict(TypedDict):
     # Optional fields
     duration: NotRequired[int]
     sep_time: NotRequired[int]
+
+    returns: NotRequired[Dict[str, Literal["keys", "type", "duration"]]]
 
 
 class MouseDict(TypedDict):
@@ -28,6 +30,21 @@ class MouseDict(TypedDict):
     x: NotRequired[int]
     y: NotRequired[int]
 
+    returns: NotRequired[
+        Dict[
+            str,
+            Literal[
+                "origin_x",
+                "origin_y",
+                "x",
+                "y",
+                "duration",
+                "button",
+                "type",
+            ],
+        ]
+    ]
+
 
 class TextDict(TypedDict):
     # Required fields
@@ -35,6 +52,8 @@ class TextDict(TypedDict):
 
     # Optional fields
     duration: NotRequired[int]
+
+    returns: NotRequired[Dict[str, Literal["type", "message", "duration"]]]
 
 
 class InputDict(TypedDict):

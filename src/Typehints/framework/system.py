@@ -7,6 +7,8 @@ class LogDict(TypedDict):
     message: str
     levels: List[LogLevelLiteral]
 
+    returns: NotRequired[Dict[str, Literal["type", "message", "levels"]]]
+
 
 class CommandDict(TypedDict):
     command: str
@@ -16,6 +18,22 @@ class CommandDict(TypedDict):
     cwd: NotRequired[str]
     wait: NotRequired[bool]
     ignore: NotRequired[bool]
+
+    returns: NotRequired[
+        Dict[
+            str,
+            Literal[
+                "command",
+                "args",
+                "env",
+                "shell",
+                "cwd",
+                "wait",
+                "full_command",
+                "type",
+            ],
+        ]
+    ]
 
 
 class SystemDict(TypedDict):
@@ -27,3 +45,5 @@ class SystemDict(TypedDict):
 
     log: NotRequired[LogDict]
     command: NotRequired[CommandDict]
+
+    returns: NotRequired[Dict[str, Literal["type", "duration", "content"]]]

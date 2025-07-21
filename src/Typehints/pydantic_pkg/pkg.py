@@ -83,6 +83,10 @@ class Job(BaseModel):
     needs: Optional[List[str]] = Field(
         list(), description="依赖的前置任务名, 只有全部完成后才会执行本任务"
     )
+    use: Optional[str] = Field(
+        None,
+        description=("指定一个Job, 可使用=该job返回的参数"),
+    )
 
 
 class LogConfig(BaseModel):

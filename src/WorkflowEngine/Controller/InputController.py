@@ -126,6 +126,7 @@ class InputController:
     def mouse_event(
         event_type: Literal["Press", "Release"],
         button: Literal["LEFT", "RIGHT", "MIDDLE"] = "LEFT",
+        duration: int = 0,
         debug: bool = True,
         ignore: bool = False,
     ):
@@ -136,7 +137,7 @@ class InputController:
         SafeRunner.run(
             fnc_map[event_type],
             (),
-            {"button": button.lower()},
+            {"button": button.lower(), "duration": duration / 1000},
             ignore=ignore,
             debug=debug,
             # logger

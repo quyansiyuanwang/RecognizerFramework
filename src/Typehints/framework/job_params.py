@@ -25,6 +25,9 @@ class AfterDict(TypedDict):
     ignore_errors: NotRequired[bool]
 
 
+class UseDict(TypedDict): ...
+
+
 class BeforeDict(TypedDict):
     tasks: List[str]
     ignore_errors: NotRequired[bool]

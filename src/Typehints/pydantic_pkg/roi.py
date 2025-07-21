@@ -1,4 +1,4 @@
-from typing import Literal, Optional
+from typing import Dict, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -58,4 +58,28 @@ class ROI(BaseModel):
     debug: Optional[ROI_Debug] = Field(
         None,
         description="调试参数",
+    )
+    returns: Optional[
+        Dict[
+            str,
+            Literal[
+                "center_x",
+                "center_y",
+                "confidence",
+                "left",
+                "top",
+                "right",
+                "bottom",
+                "width",
+                "height",
+                "template_height",
+                "template_width",
+            ],
+        ]
+    ] = Field(
+        None,
+        description=(
+            "返回值变量字典, 包含['center_x', 'center_y', 'confidence', 'left', 'top', 'right', 'bottom', 'width', 'height', 'template_height', 'template_width'], "
+            "以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数"
+        ),
     )

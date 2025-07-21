@@ -10,6 +10,13 @@ class System_Log(BaseModel):
     levels: List[LogLevelLiteral] = Field(
         ..., description="日志级别, 可选: LOG, DEBUG, INFO, WARNING, ERROR, CRITICAL"
     )
+    returns: Optional[Dict[str, Literal["type", "message", "levels"]]] = Field(
+        None,
+        description=(
+            "返回值变量字典, 包含['type', 'message', 'levels'], 以键为变量, 值指定返回参数"
+            "以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数"
+        ),
+    )
 
 
 class System_Command(BaseModel):
@@ -24,6 +31,27 @@ class System_Command(BaseModel):
     ignore: Optional[bool] = Field(
         False,
         description="是否忽略命令执行错误, 可选, 默认为False表示不忽略",
+    )
+    returns: Optional[
+        Dict[
+            str,
+            Literal[
+                "command",
+                "args",
+                "env",
+                "shell",
+                "cwd",
+                "wait",
+                "full_command",
+                "type",
+            ],
+        ]
+    ] = Field(
+        None,
+        description=(
+            "返回值变量字典, 包含['command', 'args', 'env', 'shell', 'cwd', 'wait', 'full_command', 'type'], "
+            "以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数"
+        ),
     )
 
 
@@ -42,4 +70,11 @@ class System(BaseModel):
     command: Optional[System_Command] = Field(
         None,
         description="命令执行定义, 仅在type为Command时有效, 包含命令、参数、环境变量等",
+    )
+    returns: Optional[Dict[str, Literal["type", "duration", "content"]]] = Field(
+        None,
+        description=(
+            "返回值变量字典, 包含['type', 'duration', 'content'], 以键为变量, 值指定返回参数"
+            "可在其他Job中使用use指定该job返回的参数"
+        ),
     )

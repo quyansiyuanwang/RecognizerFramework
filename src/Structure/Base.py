@@ -24,5 +24,9 @@ class Base:
     def __getitem__(self, key: str) -> Any:
         return getattr(self, key, None)
 
+    def update(self, kwargs: Dict[str, Any]) -> None:
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
     def __repr__(self, indent: int = 0, _name: Optional[str] = None) -> str:
         return repr_indent(self, _name or self.__class__.__name__, indent=indent)

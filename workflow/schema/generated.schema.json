@@ -273,6 +273,27 @@
           "default": 0,
           "description": "按键间隔时间(ms), 用于按键间的延时",
           "title": "Sep Time"
+        },
+        "returns": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "enum": [
+                  "keys",
+                  "type",
+                  "duration"
+                ],
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "返回值变量字典, 包含['keys', 'type', 'duration'],以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数",
+          "title": "Returns"
         }
       },
       "required": [
@@ -366,6 +387,31 @@
           "default": false,
           "description": "是否相对当前位置移动, 默认为False, 如果为True, 则x和y表示相对偏移量",
           "title": "Relative"
+        },
+        "returns": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "enum": [
+                  "origin_x",
+                  "origin_y",
+                  "x",
+                  "y",
+                  "duration",
+                  "button",
+                  "type"
+                ],
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "返回值变量字典, 包含['origin_x', 'origin_y', 'x', 'y', 'duration', 'button', 'type'], 以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数",
+          "title": "Returns"
         }
       },
       "required": [
@@ -394,6 +440,27 @@
           "default": 0,
           "description": "延时(ms), 文本输入时间",
           "title": "Duration"
+        },
+        "returns": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "enum": [
+                  "type",
+                  "message",
+                  "duration"
+                ],
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "返回值变量字典, 包含['type', 'message', 'duration']以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数",
+          "title": "Returns"
         }
       },
       "required": [
@@ -557,6 +624,19 @@
           "default": [],
           "description": "依赖的前置任务名, 只有全部完成后才会执行本任务",
           "title": "Needs"
+        },
+        "use": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "指定一个Job, 可使用=该job返回的参数",
+          "title": "Use"
         }
       },
       "required": [
@@ -800,6 +880,35 @@
           ],
           "default": null,
           "description": "调试参数"
+        },
+        "returns": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "enum": [
+                  "center_x",
+                  "center_y",
+                  "confidence",
+                  "left",
+                  "top",
+                  "right",
+                  "bottom",
+                  "width",
+                  "height",
+                  "template_height",
+                  "template_width"
+                ],
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "返回值变量字典, 包含['center_x', 'center_y', 'confidence', 'left', 'top', 'right', 'bottom', 'width', 'height', 'template_height', 'template_width'], 以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数",
+          "title": "Returns"
         }
       },
       "required": [
@@ -909,6 +1018,27 @@
           ],
           "default": null,
           "description": "命令执行定义, 仅在type为Command时有效, 包含命令、参数、环境变量等"
+        },
+        "returns": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "enum": [
+                  "type",
+                  "duration",
+                  "content"
+                ],
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "返回值变量字典, 包含['type', 'duration', 'content'], 以键为变量, 值指定返回参数可在其他Job中使用use指定该job返回的参数",
+          "title": "Returns"
         }
       },
       "required": [
@@ -1007,6 +1137,32 @@
           "default": false,
           "description": "是否忽略命令执行错误, 可选, 默认为False表示不忽略",
           "title": "Ignore"
+        },
+        "returns": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "enum": [
+                  "command",
+                  "args",
+                  "env",
+                  "shell",
+                  "cwd",
+                  "wait",
+                  "full_command",
+                  "type"
+                ],
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "返回值变量字典, 包含['command', 'args', 'env', 'shell', 'cwd', 'wait', 'full_command', 'type'], 以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数",
+          "title": "Returns"
         }
       },
       "required": [
@@ -1037,6 +1193,27 @@
           },
           "title": "Levels",
           "type": "array"
+        },
+        "returns": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "enum": [
+                  "type",
+                  "message",
+                  "levels"
+                ],
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "返回值变量字典, 包含['type', 'message', 'levels'], 以键为变量, 值指定返回参数以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数",
+          "title": "Returns"
         }
       },
       "required": [

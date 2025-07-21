@@ -1,4 +1,4 @@
-from typing import List, Literal, Optional
+from typing import Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -29,6 +29,26 @@ class Input_Mouse(BaseModel):
             "是否相对当前位置移动, 默认为False, 如果为True, 则x和y表示相对偏移量"
         ),
     )
+    returns: Optional[
+        Dict[
+            str,
+            Literal[
+                "origin_x",
+                "origin_y",
+                "x",
+                "y",
+                "duration",
+                "button",
+                "type",
+            ],
+        ]
+    ] = Field(
+        None,
+        description=(
+            "返回值变量字典, 包含['origin_x', 'origin_y', 'x', 'y', 'duration', 'button', 'type'], "
+            "以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数"
+        ),
+    )
 
 
 class Input_Keyboard(BaseModel):
@@ -45,11 +65,26 @@ class Input_Keyboard(BaseModel):
     sep_time: Optional[int] = Field(
         0, ge=0, description="按键间隔时间(ms), 用于按键间的延时"
     )
+    returns: Optional[Dict[str, Literal["keys", "type", "duration"]]] = Field(
+        None,
+        description=(
+            "返回值变量字典, 包含['keys', 'type', 'duration'],"
+            "以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数"
+        ),
+    )
 
 
 class Input_Text(BaseModel):
     message: str = Field(..., description="要输入的文本内容")
     duration: Optional[int] = Field(0, ge=0, description="延时(ms), 文本输入时间")
+
+    returns: Optional[Dict[str, Literal["type", "message", "duration"]]] = Field(
+        None,
+        description=(
+            "返回值变量字典, 包含['type', 'message', 'duration']"
+            "以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数"
+        ),
+    )
 
 
 class Input(BaseModel):

@@ -11,7 +11,7 @@ from typing import (
 )
 
 from .input import InputDict
-from .job_params import DelayDict, LimitsDict, NextDict
+from .job_params import DelayDict, LimitsDict, NextDict, UseDict
 from .roi import ROIDict
 from .system import LogLevelLiteral, SystemDict
 
@@ -28,6 +28,7 @@ class JobDict(TypedDict):
     needs: NotRequired[List[str]]
     next: NotRequired[Union[str, NextDict]]
     overload: NotRequired[str]
+    use: NotRequired[UseDict]
 
     # Action fields
     roi: NotRequired[ROIDict]

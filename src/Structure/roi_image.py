@@ -6,7 +6,7 @@ from .TypeMap import TypeMap
 
 
 @TypeMap.register("roi::image")
-class Image(Base):
+class ROI_Image(Base):
     def __init__(self, *, kwargs: ImageDict, _prefix: str = "") -> None:
         super().__init__(kwargs=dict(kwargs), _prefix=_prefix)
 

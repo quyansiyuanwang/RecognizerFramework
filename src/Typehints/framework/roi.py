@@ -1,4 +1,4 @@
-from typing import Literal, NotRequired, TypedDict
+from typing import Dict, Literal, NotRequired, TypedDict
 
 
 class ImageDict(TypedDict):
@@ -32,3 +32,22 @@ class ROIDict(TypedDict):
     region: NotRequired[RegionDict]
     duration: NotRequired[int]
     debug: NotRequired[ROI_DebugDict]
+
+    returns: NotRequired[
+        Dict[
+            str,
+            Literal[
+                "center_x",
+                "center_y",
+                "confidence",
+                "left",
+                "top",
+                "right",
+                "bottom",
+                "width",
+                "height",
+                "template_height",
+                "template_width",
+            ],
+        ]
+    ]

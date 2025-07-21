@@ -17,10 +17,15 @@ from typing import (
     Union,
 )
 
-from src.Typehints.framework.job_params import BeforeDict
-
-from ..Structure import Delay, Job, Limits
-from ..Typehints import AfterDict, GlobalsDict, IdentifiedGlobalsDict, TaskAttemptDict
+from ..Structure import Delay, Job, Limits, Use
+from ..Typehints import (
+    AfterDict,
+    BeforeDict,
+    GlobalsDict,
+    IdentifiedGlobalsDict,
+    TaskAttemptDict,
+    TaskReturnsDict,
+)
 from ..WorkflowEngine.Exceptions.base import (
     CrashException,
     CriticalException,
@@ -29,6 +34,7 @@ from ..WorkflowEngine.Exceptions.base import (
 from ..WorkflowEngine.Exceptions.crash import (
     JobNotFoundError,
     JobTypeError,
+    MissingRequiredError,
     NeededError,
 )
 from ..WorkflowEngine.Exceptions.critical import RetryError
@@ -45,7 +51,7 @@ class Executor(ABC):
         pass
 
     @abstractmethod
-    def execute(self, *args: Any, **kwargs: Any) -> Any:
+    def execute(self, *args: Any, **kwargs: Any) -> TaskReturnsDict[Any]:
         pass
 
 
@@ -94,15 +100,30 @@ class JobExecutor(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT]):
 
         return decorator
 
-    def execute(self, *args: Any, **kwargs: Any) -> _EXEC_YT:
+    def execute(self, *args: Any, **kwargs: Any) -> TaskReturnsDict[_EXEC_YT]:
         if self.job["type"] in self.executors:
             executor_class = self.executors[self.job["type"]]
             executor_instance = executor_class(self.job, self.globals)
-            return executor_instance.execute(*args, **kwargs)
+            ret: TaskReturnsDict[_EXEC_YT] = executor_instance.execute(*args, **kwargs)
+
+            returns: Dict[str, str] = ret["returns"]
+            variables: Dict[str, Any] = ret["variables"]
+            for key, value in returns.items():
+                if value in variables:
+                    returns[key] = variables[value]
+                else:
+                    raise MissingRequiredError(
+                        job=self.job,
+                        message=f"Missing required return variable: {value}",
+                    )
+
+            return TaskReturnsDict[_EXEC_YT](
+                result=ret["result"], returns=returns, variables=variables
+            )
         else:
             raise JobTypeError(f"Unknown job type: {self.job['type']}")
 
-    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+    def __call__(self, *args: Any, **kwargs: Any) -> TaskReturnsDict[_EXEC_YT]:
         return self.execute(*args, **kwargs)
 
 
@@ -141,19 +162,102 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
 
         # global flag
         self.crashed: bool = False
+        self.run_status: bool = False
+        self.success: bool = False
+
+        # global job instance & variables init
+        self.cur_job_name: str = self.workflow.get_begin()
+        cur_job: Optional[Job] = self.workflow.get_job(self.cur_job_name or "")
+        if cur_job is None:
+            raise JobNotFoundError(f"Job '{self.cur_job_name}' not found in workflow.")
+        self.cur_job: Job = cur_job
+
+        # global instance & variables below
+        self.task_vars: Dict[str, Dict[str, Any]] = {}
+        self.results: Dict[str, TaskReturnsDict[_EXEC_YT]] = {}
+        self.work_chain: List[str] = []
+        self.load_params()
+
+    def load_params(self):
+        self.attempts: TaskAttemptDict = self._get_task_attempts(self.cur_job_name, 0)
+        self.limits: Limits = self._get_task_limits(self.cur_job)
+        self.use: Use = self.cur_job.get("use", {})
 
     def set_callback(self, callback: Callable[..., Any]) -> None:
         self.callback = callback
 
-    def check_needed(
-        self, job: Job, needs: Optional[List[str]], results: Dict[str, _EXEC_YT]
-    ) -> Union[NoReturn, None]:
-        if needs is None or all(name in results for name in needs):
+    def switch_next_job(self) -> Optional[Job]:
+        """Switch to the next job in the workflow.
+
+        Raises:
+            JobNotFoundError: If the next job is not found in the workflow.
+
+        Returns:
+            Job: The next job in the workflow.
+        """
+        self._log_event(
+            "JobResult",
+            job_name=self.cur_job_name,
+            result=ExecutorManager.__JOB_RESULT_MAP.get(self.success),
+        )
+        nxt = self.workflow.get_next(self.cur_job_name, self.success)
+        nxt_job = self.workflow.get_job(nxt or "")
+        if nxt is None or nxt_job is None:
             return None
-        missing: List[str] = [name for name in needs if name not in results]
+        self.cur_job_name = nxt
+        self.cur_job = nxt_job
+
+        self.load_params()
+
+        self._log_event(
+            event="TaskStatus",
+            job_name=self.cur_job_name,
+            attempts=sum(v for v in self.attempts.values() if isinstance(v, int)) + 1,
+            limits=self.limits,
+        )
+        self._log_event(
+            "NextJob",
+            nxt_job=nxt,
+            cur_job=self.cur_job_name,
+        )
+        return nxt_job
+
+    def switch_exit_job(self) -> Optional[Job]:
+        """Call the function means the task reached max attempts for exit.
+
+        Returns:
+            Optional[Job]: The exit job if it exists, otherwise None.
+        """
+        exit_job_name: Optional[str] = self.cur_job.get("limits", {}).get("exit")
+        exit_job = self.workflow.get_job(self.cur_job_name)
+        if exit_job_name is None or exit_job is None:
+            self.crashed = True
+            self._log_event(
+                "MaxAttemptsForExit",
+                job_name=self.cur_job_name,
+                attempts=self.attempts.get("success", 0)
+                + self.attempts.get("failure", 0),
+            )
+            return None
+        self.cur_job_name = exit_job_name
+        self.cur_job = exit_job
+        self._log_event(
+            "MaxAttemptsForSwitch",
+            job_name=self.cur_job_name,
+            attempts=self.attempts.get("success", 0) + self.attempts.get("failure", 0),
+            exit_job=exit_job,
+        )
+
+        return exit_job
+
+    def check_needed(self, job: Job) -> Union[NoReturn, None]:
+        needs = job.get("needs", None)
+        if needs is None or all(name in self.results for name in needs):
+            return None
+        missing: List[str] = [name for name in needs if name not in self.results]
         raise NeededError(
             f"Not all needed tasks are completed. Missing: {missing}. "
-            f"Available results: {list(results.keys())}",
+            f"Available results: {list(self.results.keys())}",
             job=job,
         )
 
@@ -194,11 +298,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
             ),
             "JobResult": (
                 "Job '{job_name}' Execute {result}",
-                (
-                    [LogLevel.INFO, LogLevel.DEBUG]
-                    if kwargs.get("success")
-                    else [LogLevel.WARNING, LogLevel.DEBUG]
-                ),
+                ([LogLevel.INFO if self.success else LogLevel.WARNING, LogLevel.DEBUG]),
             ),
             "NextJob": (
                 "Directing to next job: '{nxt_job}' after job '{cur_job}'",
@@ -232,11 +332,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
             ),
             "BeforeJobResult": (
                 "Before job '{job_name}' Execute {result}",
-                (
-                    [LogLevel.INFO, LogLevel.DEBUG]
-                    if kwargs.get("success")
-                    else [LogLevel.WARNING, LogLevel.DEBUG]
-                ),
+                ([LogLevel.INFO if self.success else LogLevel.WARNING, LogLevel.DEBUG]),
             ),
             "AfterJobTip": (
                 "After '{job_name}' job run: '{aft_job}'",
@@ -244,11 +340,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
             ),
             "AfterJobResult": (
                 "After job '{job_name}' Execute {result}",
-                (
-                    [LogLevel.INFO, LogLevel.DEBUG]
-                    if kwargs.get("success")
-                    else [LogLevel.WARNING, LogLevel.DEBUG]
-                ),
+                ([LogLevel.INFO if self.success else LogLevel.WARNING, LogLevel.DEBUG]),
             ),
             "Crash": (
                 "Crash occurred in job '{job_name}': {error}",
@@ -266,9 +358,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
             log_config=self.globals.get("logConfig"),
         )
 
-    def _before_run(
-        self, job: Job, globals: IdentifiedGlobalsDict, results: Dict[str, _EXEC_YT]
-    ) -> None:
+    def _before_run(self, job: Job) -> None:
         before: Optional[BeforeDict] = job.get("before", None)
         if before is None:
             return
@@ -284,14 +374,12 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
             )
             success = False
             try:
-                self.check_needed(bef_job, needs=bef_job["needs"], results=results)
+                self.check_needed(bef_job)
 
-                self.__pre_works(
-                    job=bef_job, globals=self.globals, prefix=bef_job["type"]
-                )
-                self._before_run(job=bef_job, globals=self.globals, results=results)
+                self.__pre_works(job=bef_job)
+                self._before_run(job=bef_job)
 
-                results[task] = JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT](
+                self.results[task] = JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT](
                     bef_job
                 ).execute()
                 success = True
@@ -309,21 +397,17 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                     result=ExecutorManager.__JOB_RESULT_MAP.get(success),
                 )
             if not self.crashed:
-                self._after_run(job=bef_job, run_status=success, results=results)
-                self.__post_works(
-                    job=bef_job, globals=self.globals, prefix=bef_job["type"]
-                )
+                self._after_run(job=bef_job)
+                self.__post_works(job=bef_job)
 
-    def _after_run(
-        self, job: Job, run_status: bool, results: Dict[str, _EXEC_YT]
-    ) -> None:
+    def _after_run(self, job: Job) -> None:
         after: Optional[AfterDict] = job.get("after", None)
         if after is None:
             return
         ignore: bool = after.get("ignore_errors", False)
         always: List[str] = after.get("always", [])
         tasks: List[str] = always + (
-            after.get("success", []) if run_status else after.get("failure", [])
+            after.get("success", []) if self.success else after.get("failure", [])
         )
         for task in tasks:
             aft_job = self.workflow.get_job(task)
@@ -335,14 +419,12 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
             )
             success = False
             try:
-                self.check_needed(aft_job, needs=job["needs"], results=results)
+                self.check_needed(aft_job)
 
-                self.__pre_works(
-                    job=aft_job, globals=self.globals, prefix=aft_job["type"]
-                )
-                self._before_run(job=aft_job, globals=self.globals, results=results)
+                self.__pre_works(job=aft_job)
+                self._before_run(job=aft_job)
 
-                results[task] = JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT](
+                self.results[task] = JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT](
                     aft_job
                 ).execute()
                 success = True
@@ -359,142 +441,84 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                     result=ExecutorManager.__JOB_RESULT_MAP.get(success),
                 )
             if not self.crashed:
-                self._after_run(job=aft_job, run_status=success, results=results)
-                self.__post_works(
-                    job=aft_job, globals=self.globals, prefix=aft_job["type"]
-                )
+                self._after_run(job=aft_job)
+                self.__post_works(job=aft_job)
 
-    def __pre_works(
-        self, *_: Any, job: Job, globals: IdentifiedGlobalsDict, **kwargs: Any
-    ) -> None:
+    def __pre_works(self, *_: Any, job: Job) -> None:
         jn = job.get("name", None)
         self.work_chain.append(jn)
 
         # delay
         delay: Optional[Delay] = job.get("delay", None)
         if delay is not None:
-            task_delay(delay, mode="pre", globals=globals, **kwargs)
+            task_delay(delay, mode="pre", globals=self.globals, prefix=job["type"])
 
-    def __post_works(
-        self, *_: Any, job: Job, globals: IdentifiedGlobalsDict, **kwargs: Any
-    ) -> None:
+    def __post_works(self, *_: Any, job: Job) -> None:
         # delay
         delay: Optional[Delay] = job.get("delay", None)
         if delay is not None:
-            task_delay(delay, mode="post", globals=globals, **kwargs)
+            task_delay(delay, mode="post", globals=self.globals, prefix=job["type"])
 
     def run(self) -> Generator[_EXEC_YT, _EXEC_ST, List[_CB_SF_V]]:
-        results: Dict[str, _EXEC_YT] = {}
-        cur_job_name: str = self.workflow.get_begin()
-        self.work_chain: List[str] = []
-        while True:
-            # var init & early return
-            if cur_job_name not in self.workflow.names:
-                raise JobNotFoundError(f"Job '{cur_job_name}' not found in workflow.")
-            job: Optional[Job] = self.workflow.get_job(cur_job_name)
-            if job is None:
-                return [self.callback(result) for result in results.values()]
-            success: bool = False
-            attempts: TaskAttemptDict = self._get_task_attempts(cur_job_name, 0)
-            limits: Limits = self._get_task_limits(job)
+        self.run_status = True
+        while self.run_status:
+            self.success = False
+            use_vars: Dict[str, Any] = self.task_vars.get(self.cur_job.get("use"), {})
 
-            # log event
-            self._log_event(
-                event="TaskStatus",
-                job_name=cur_job_name,
-                attempts=sum(v for v in attempts.values() if isinstance(v, int)) + 1,
-                limits=limits,
-            )
             try:
                 # legal check
-                self.check_attempts(job, attempts, limits)
-                self.check_needed(job, needs=job["needs"], results=results)
+                self.check_attempts(job=self.cur_job, ta=self.attempts, tl=self.limits)
+                self.check_needed(job=self.cur_job)
 
                 # exec
-                self.__pre_works(job=job, globals=self.globals, prefix=job["type"])
-                self._before_run(job=job, globals=self.globals, results=results)
-                result: _EXEC_YT = JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT](
-                    job=job, globals=self.workflow.get_globals({})
-                ).execute()
+                self.__pre_works(job=self.cur_job)
+                self._before_run(job=self.cur_job)
 
+                result: TaskReturnsDict[_EXEC_YT] = JobExecutor[
+                    _EXEC_YT, _EXEC_ST, _EXEC_RT
+                ](job=self.cur_job, globals=self.workflow.get_globals({})).execute(
+                    **use_vars
+                )
                 # record results
-                results[cur_job_name] = result
-                attempts["success"] += 1
-                self._tries[cur_job_name] = attempts
-                success = True
-                yield result
+                self.success = True
+                self.results[self.cur_job_name] = result
+                self.task_vars[self.cur_job_name] = result["returns"]
+                self.attempts["success"] += 1
+                self._tries[self.cur_job_name] = self.attempts
+                yield result["result"]
 
             except IgnorableError as e:
                 # handle error
-                attempts["failure"] += 1
-                self._tries[cur_job_name] = attempts
-                self._log_event("Warn", job_name=cur_job_name, error=e)
+                self.attempts["failure"] += 1
+                self._tries[self.cur_job_name] = self.attempts
+                self._log_event("Warn", job_name=self.cur_job_name, error=e)
 
             except CriticalException as e:
-                exit_job: Optional[str] = limits.get("exit")
-                if exit_job is None:
-                    self._log_event(
-                        "MaxAttemptsForExit",
-                        job_name=cur_job_name,
-                        attempts=attempts.get("success", 0)
-                        + attempts.get("failure", 0),
-                    )
-                    self.crashed = True
+                if self.switch_exit_job() is None:
                     raise CrashException(
-                        f"Critical exception in job '{cur_job_name}': {e.message}",
-                        job=job,
+                        f"Critical exception in job '{self.cur_job_name}': {e.message}",
+                        job=self.cur_job,
                     ) from e
-                self._log_event(
-                    "MaxAttemptsForSwitch",
-                    job_name=cur_job_name,
-                    attempts=attempts.get("success", 0) + attempts.get("failure", 0),
-                    exit_job=exit_job,
-                )
-                if self.workflow.get_job(exit_job) is None:
-                    raise JobNotFoundError(f"Exit job '{exit_job}' not found.")
-                self._log_event(
-                    "NextJob",
-                    nxt_job=exit_job,
-                    cur_job=cur_job_name,
-                )
-                cur_job_name = exit_job
                 continue
 
             except CrashException as e:
-                self._log_event("Crash", job_name=cur_job_name, error=e)
+                self._log_event("Crash", job_name=self.cur_job_name, error=e)
                 self.crashed = True
+                self.run_status = False
                 raise CrashException(
-                    f"Crash occurred in job '{cur_job_name}': {e.message}",
-                    job=job,
+                    f"Crash occurred in job '{self.cur_job_name}': {e.message}",
+                    job=self.cur_job,
                 ) from e
 
             finally:
                 if not self.crashed:
-                    self._after_run(job=job, run_status=success, results=results)
-                    self.__post_works(job=job, globals=self.globals, prefix=job["type"])
+                    self._after_run(job=self.cur_job)
+                    self.__post_works(job=self.cur_job)
 
-            nxt = self.workflow.get_next(cur_job_name, success)
-            # log event
-            self._log_event(
-                "JobResult",
-                job_name=cur_job_name,
-                result=ExecutorManager.__JOB_RESULT_MAP.get(success),
-            )
-            if nxt is None:
-                self._log_event(
-                    "JobsCompletion",
-                    jobs_chain=" -> ".join(self.work_chain),
-                )
+            if self.switch_next_job() is None:
                 break
-            self._log_event(
-                "NextJob",
-                nxt_job=nxt,
-                cur_job=cur_job_name,
-            )
 
-            cur_job_name = nxt
-
-        return [self.callback(result) for result in results.values()]
+        return [self.callback(result["result"]) for result in self.results.values()]
 
     def await_run_all(self) -> List[_CB_SF_V]:
         results: List[_CB_SF_V] = []

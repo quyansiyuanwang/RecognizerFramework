@@ -6,7 +6,7 @@ from .TypeMap import TypeMap
 
 
 @TypeMap.register("roi::window")
-class Window(Base):
+class ROI_Window(Base):
     def __init__(self, *, kwargs: WindowDict, _prefix: str = "") -> None:
         super().__init__(kwargs=dict(kwargs), _prefix=_prefix)
 

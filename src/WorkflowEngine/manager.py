@@ -6,7 +6,6 @@ from typing import Any, Dict, Iterable, List, Optional, Self, Set, Tuple, TypeVa
 from ..Structure import Job
 from ..Typehints import IdentifiedGlobalsDict, JobDict, NextDict, WorkflowDict
 from ..WorkflowEngine.Exceptions.crash import (
-    JobNotFoundError,
     OverloadError,
     RecursiveError,
     WorkflowBeginError,
@@ -136,8 +135,7 @@ class WorkflowManager:
             elif isinstance(nxt, dict):
                 value = nxt.get("success" if status else "failure", None)
                 return value if isinstance(value, str) or value is None else None
-        else:
-            raise JobNotFoundError(f"Job '{name}' not found in workflow.")
+
         return None
 
     def get_job(self, name: str) -> Optional[Job]:

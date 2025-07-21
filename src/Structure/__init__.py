@@ -10,11 +10,13 @@ from .limits import Limits
 from .next import Next
 from .roi import ROI
 from .roi_debug import ROI_Debug
-from .roi_image import Image
-from .roi_region import Region
-from .roi_window import Window
+from .roi_image import ROI_Image
+from .roi_region import ROI_Region
+from .roi_window import ROI_Window
 from .system import System
 from .system_command import System_Command
+from .system_log import System_Log
+from .use import Use
 
 __all__ = [
     "After",
@@ -28,11 +30,13 @@ __all__ = [
     "Input",
     "System",
     "ROI",
-    "Region",
-    "Image",
-    "Window",
+    "ROI_Region",
+    "ROI_Image",
+    "ROI_Window",
     "ROI_Debug",
     "System_Command",
+    "System_Log",
+    "Use",
     # specialized types
     "Job",
 ]

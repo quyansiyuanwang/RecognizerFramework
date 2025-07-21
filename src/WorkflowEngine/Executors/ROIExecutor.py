@@ -1,4 +1,4 @@
-from typing import Any, List, Optional, TypeAlias
+from typing import Any, Dict, List, Optional, TypeAlias
 
 import cv2
 import numpy as np
@@ -10,11 +10,11 @@ import win32process
 import win32ui
 from PIL import Image
 
-from ...Structure import ROI
+from ...Structure import ROI, ROI_Image, ROI_Region
 from ...Typehints import (
     GlobalsDict,
-    RegionDict,
     ROI_DebugDict,
+    TaskReturnsDict,
     WindowDict,
     WindowLocationDict,
 )
@@ -40,10 +40,12 @@ class ROIExecutor(Executor):
     def __init__(self, job: Job, globals: GlobalsDict) -> None:
         self.job: Job = job
         self.globals: GlobalsDict = globals
+        self.use_vars: Dict[str, Any] = {}
 
     def __capture_screen(self, roi: ROI) -> WindowLocationDict:
-        region: Optional[RegionDict] = roi.get("region", None)
-        if region is None:
+        region: ROI_Region = roi.get("region", {})
+        region.update(self.use_vars)
+        if not region:
             return WindowLocationDict(
                 left=0,
                 top=0,
@@ -124,7 +126,8 @@ class ROIExecutor(Executor):
 
         # region
         inf = float("inf")
-        region: RegionDict = roi.get("region", {})
+        region: ROI_Region = roi.get("region", {})
+        region.update(self.use_vars)
         region_x: int = int(max(region.get("x", -inf), 0))
         region_y: int = int(max(region.get("y", -inf), 0))
         cap_x = win_left + region_x
@@ -206,7 +209,8 @@ class ROIExecutor(Executor):
         if debug.get("display_screenshot", False):
             mat.show()
 
-    def main(self, roi: ROI) -> str:
+    def main(self, roi: ROI) -> TaskReturnsDict[str]:
+        roi.update(self.use_vars)
         wld: WindowLocationDict = self.__capture(roi)
         mat = cv2.cvtColor(np.array(wld["mat"]), cv2.COLOR_RGB2BGR)
 
@@ -218,8 +222,10 @@ class ROIExecutor(Executor):
         offset_y: int = wld["top"]
 
         # 读取模板图
-        template_path: str = roi["image"]["path"]
-        confidence: float = roi["image"].get("confidence", 1.0)
+        image: ROI_Image = roi.get("image", {})
+        image.update(self.use_vars)
+        template_path: str = image["path"]
+        confidence: float = image.get("confidence", 1.0)
         template = cv2.imread(template_path)
         if template is None:  # type: ignore[union-attr]
             raise TemplateError(
@@ -261,8 +267,26 @@ class ROIExecutor(Executor):
         )
 
         # action Factory
+        var_s: Dict[str, Any] = {
+            "center_x": matched_center[0],
+            "center_y": matched_center[1],
+            "confidence": max_val,
+            "left": matched_left_top[0],
+            "top": matched_left_top[1],
+            "right": matched_left_top[0] + template_gray.shape[1],
+            "bottom": matched_left_top[1] + template_gray.shape[0],
+            "width": template_gray.shape[1],
+            "height": template_gray.shape[0],
+            "template_height": template_gray.shape[0],
+            "template_width": template_gray.shape[1],
+        }
+
         if roi.get("type") == "DetectOnly":
-            return f"Detected at {matched_center} with confidence {max_val}"
+            return TaskReturnsDict(
+                returns=roi.get("returns", {}),
+                variables=var_s,
+                result=f"Detected at {matched_center} with confidence {max_val}",
+            )
 
         elif roi.get("type") == "MoveMouse":
             # 移动鼠标
@@ -275,14 +299,19 @@ class ROIExecutor(Executor):
                 ignore=self.globals.get("ignore", False),
             )
 
-            return f"Matched at {matched_center}" f", confidence: {max_val}"
+            return TaskReturnsDict(
+                returns=roi.get("returns", {}),
+                variables=var_s,
+                result=f"Matched at {matched_center}" f", confidence: {max_val}",
+            )
         else:
             raise ActionTypeError(
                 job=self.job,
                 message=f"Unsupported ROI type: {roi.get('type')}",
             )
 
-    def execute(self, *args: Any, **kwargs: Any) -> str:
+    def execute(self, *args: Any, **kwargs: Any) -> TaskReturnsDict[str]:
+        self.use_vars.update(kwargs)
         roi: Optional[ROI] = self.job.get("roi", None)
         if roi is None:
             raise MissingRequiredError("No ROI found in the job to execute.", self.job)
