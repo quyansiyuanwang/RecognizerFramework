@@ -122,7 +122,9 @@ class WorkflowManager:
                     pkw[key] = self._merge_cpx_obj(pk, value)  # type: ignore[assignment]
                 else:
                     pkw[key] = value
-        return Job(**pkw)
+        overloaded_job = Job(**pkw)
+        overloaded_job.name = job_name
+        return overloaded_job
 
     def special_case(self, job: Job) -> Optional[Job]:
         if job.type == "Overload":
