@@ -17,33 +17,32 @@ class Input_Mouse(BaseModel):
             "Move(移动),  Drag(拖动)"
         ),
     )
-    button: Optional[Literal["LEFT", "RIGHT", "MIDDLE"]] = Field(
-        None, description="鼠标按钮类型, 可选: LEFT(左键), RIGHT(右键), MIDDLE(中键)"
+    button: Literal["LEFT", "RIGHT", "MIDDLE"] = Field(
+        default="LEFT",
+        description="鼠标按钮类型, 可选: LEFT(左键), RIGHT(右键), MIDDLE(中键)",
     )
-    x: Optional[int] = Field(None, description="X坐标, 像素值")
-    y: Optional[int] = Field(None, description="Y坐标, 像素值")
-    duration: Optional[int] = Field(0, ge=0, description="延时(ms), 鼠标操作时间")
-    relative: Optional[bool] = Field(
-        False,
+    x: int = Field(default=0, description="X坐标, 像素值")
+    y: int = Field(default=0, description="Y坐标, 像素值")
+    duration: int = Field(default=0, ge=0, description="延时(ms), 鼠标操作时间")
+    relative: bool = Field(
+        default=True,
         description=(
-            "是否相对当前位置移动, 默认为False, 如果为True, 则x和y表示相对偏移量"
+            "是否相对当前位置移动, 默认为True, 如果为True, 则x和y表示相对偏移量"
         ),
     )
-    returns: Optional[
-        Dict[
-            str,
-            Literal[
-                "origin_x",
-                "origin_y",
-                "x",
-                "y",
-                "duration",
-                "button",
-                "type",
-            ],
-        ]
+    returns: Dict[
+        str,
+        Literal[
+            "origin_x",
+            "origin_y",
+            "x",
+            "y",
+            "duration",
+            "button",
+            "type",
+        ],
     ] = Field(
-        None,
+        default_factory=dict,
         description=(
             "返回值变量字典, 包含['origin_x', 'origin_y', 'x', 'y', 'duration', 'button', 'type'], "
             "以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数"
@@ -53,20 +52,19 @@ class Input_Mouse(BaseModel):
 
 class Input_Keyboard(BaseModel):
     type: Literal["Press", "Release", "Type"] = Field(
-        ..., description="键盘输入类型, 可选: Press(按下), Release(释放), Type(输入)"
+        ...,
+        description="键盘输入类型, 可选: Press(按下), Release(释放), Type(输入)",
     )
     keys: List[str] = Field(
-        ...,
+        default_factory=list,
         description="键盘输入的按键列表, 如['ctrl', 'v'], 支持组合键",
     )
-    duration: Optional[int] = Field(
-        0, ge=0, description="延时(ms), 完全按下到释放的时间"
+    duration: int = Field(default=0, ge=0, description="延时(ms), 完全按下到释放的时间")
+    sep_time: int = Field(
+        default=0, ge=0, description="按键间隔时间(ms), 用于按键间的延时"
     )
-    sep_time: Optional[int] = Field(
-        0, ge=0, description="按键间隔时间(ms), 用于按键间的延时"
-    )
-    returns: Optional[Dict[str, Literal["keys", "type", "duration"]]] = Field(
-        None,
+    returns: Dict[str, Literal["keys", "type", "duration"]] = Field(
+        default_factory=dict,
         description=(
             "返回值变量字典, 包含['keys', 'type', 'duration'],"
             "以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数"
@@ -76,10 +74,10 @@ class Input_Keyboard(BaseModel):
 
 class Input_Text(BaseModel):
     message: str = Field(..., description="要输入的文本内容")
-    duration: Optional[int] = Field(0, ge=0, description="延时(ms), 文本输入时间")
+    duration: int = Field(default=0, ge=0, description="延时(ms), 文本输入时间")
 
-    returns: Optional[Dict[str, Literal["type", "message", "duration"]]] = Field(
-        None,
+    returns: Dict[str, Literal["type", "message", "duration"]] = Field(
+        default_factory=dict,
         description=(
             "返回值变量字典, 包含['type', 'message', 'duration']"
             "以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数"

@@ -17,15 +17,9 @@ from typing import (
     Union,
 )
 
-from ..Structure import Delay, Job, Limits, Use
-from ..Typehints import (
-    AfterDict,
-    BeforeDict,
-    GlobalsDict,
-    IdentifiedGlobalsDict,
-    TaskAttemptDict,
-    TaskReturnsDict,
-)
+from src.Typehints.pydantic_pkg.pkg import After, Before, Limits
+
+from ..Typehints import Globals, Job, TaskAttemptDict, TaskReturnsDict
 from ..WorkflowEngine.Exceptions.base import (
     CrashException,
     CriticalException,
@@ -47,7 +41,7 @@ from .Util.executor_works import delay as task_delay
 class Executor(ABC):
 
     @abstractmethod
-    def __init__(self, job: Job, globals: GlobalsDict) -> None:
+    def __init__(self, job: Job, globals: Globals) -> None:
         pass
 
     @abstractmethod
@@ -64,9 +58,9 @@ _EXEC_RT = TypeVar("_EXEC_RT", bound=None, default=None)
 class JobExecutor(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT]):
     executors: Dict[str, Type[Executor]] = {}
 
-    def __init__(self, job: Job, globals: Optional[GlobalsDict] = None) -> None:
+    def __init__(self, job: Job, globals: Globals) -> None:
         self.job: Job = job
-        self.globals: GlobalsDict = globals if globals is not None else {}
+        self.globals: Globals = globals
 
     @staticmethod
     def import_trigger(module_path: str):
@@ -101,13 +95,13 @@ class JobExecutor(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT]):
         return decorator
 
     def execute(self, *args: Any, **kwargs: Any) -> TaskReturnsDict[_EXEC_YT]:
-        if self.job["type"] in self.executors:
-            executor_class = self.executors[self.job["type"]]
+        if self.job.type in self.executors:
+            executor_class = self.executors[self.job.type]
             executor_instance = executor_class(self.job, self.globals)
             ret: TaskReturnsDict[_EXEC_YT] = executor_instance.execute(*args, **kwargs)
 
             returns: Dict[str, str] = ret["returns"]
-            variables: Dict[str, Any] = ret["variables"]
+            variables: Dict[str, Any] = dict(ret["variables"])
             for key, value in returns.items():
                 if value in variables:
                     returns[key] = variables[value]
@@ -121,7 +115,7 @@ class JobExecutor(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT]):
                 result=ret["result"], returns=returns, variables=variables
             )
         else:
-            raise JobTypeError(f"Unknown job type: {self.job['type']}")
+            raise JobTypeError(f"Unknown job type: {self.job.type}")
 
     def __call__(self, *args: Any, **kwargs: Any) -> TaskReturnsDict[_EXEC_YT]:
         return self.execute(*args, **kwargs)
@@ -150,14 +144,14 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
         self.callback: Union[
             Callable[..., Any], Callable[[Union[_EXEC_YT, _CB_SF_V]], _CB_SF_V]
         ] = callback
-        self.globals: IdentifiedGlobalsDict = workflow.get_globals(
-            IdentifiedGlobalsDict()
-        )
+        self.globals: Globals = workflow.get_globals()
 
         # logger setup
         self.global_log_manager: LogController.LogManager = global_log_manager
-        self.global_log_manager.set_level_str(self.globals.get("logLevel", "LOG"))
-        self.global_log_manager.set_debug(self.globals.get("debug", False))
+        self.global_log_manager.set_level_str(
+            getattr(self.globals.logConfig, "level", "LOG")
+        )
+        self.global_log_manager.set_debug(self.globals.debug)
         self.global_log_manager.set_attr(self.globals)
 
         # global flag
@@ -167,7 +161,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
 
         # global job instance & variables init
         self.cur_job_name: str = self.workflow.get_begin()
-        cur_job: Optional[Job] = self.workflow.get_job(self.cur_job_name or "")
+        cur_job: Optional[Job] = self.workflow.get_job(self.cur_job_name)
         if cur_job is None:
             raise JobNotFoundError(f"Job '{self.cur_job_name}' not found in workflow.")
         self.cur_job: Job = cur_job
@@ -181,7 +175,6 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
     def load_params(self):
         self.attempts: TaskAttemptDict = self._get_task_attempts(self.cur_job_name, 0)
         self.limits: Limits = self._get_task_limits(self.cur_job)
-        self.use: Use = self.cur_job.get("use", {})
 
     def set_callback(self, callback: Callable[..., Any]) -> None:
         self.callback = callback
@@ -228,7 +221,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
         Returns:
             Optional[Job]: The exit job if it exists, otherwise None.
         """
-        exit_job_name: Optional[str] = self.cur_job.get("limits", {}).get("exit")
+        exit_job_name: Optional[str] = getattr(self.cur_job.limits, "exit", None)
         exit_job = self.workflow.get_job(self.cur_job_name)
         if exit_job_name is None or exit_job is None:
             self.crashed = True
@@ -251,8 +244,8 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
         return exit_job
 
     def check_needed(self, job: Job) -> Union[NoReturn, None]:
-        needs = job.get("needs", None)
-        if needs is None or all(name in self.results for name in needs):
+        needs: List[str] = job.needs
+        if all(name in self.results for name in needs):
             return None
         missing: List[str] = [name for name in needs if name not in self.results]
         raise NeededError(
@@ -272,11 +265,11 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
             ("maxSuccess", ta.get("success", 0), "successes"),
         ]
         for key, value, label in limits:
-            max_limit: int = tl.get(key, -1)
+            max_limit: int = tl.model_dump().get(key, -1)
             if max_limit != -1 and value >= max_limit:
                 raise RetryError(
                     job=job,
-                    message=f"Task '{job.get('name')}' exceeded {key}: {max_limit} {label}",
+                    message=f"Task '{job.name}' exceeded {key}: {max_limit} {label}",
                 )
         return None
 
@@ -286,9 +279,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
         )
 
     def _get_task_limits(self, job: Job) -> Limits:
-        return job.get("limits") or Limits(
-            kwargs={"maxCount": -1, "maxFailure": -1, "maxSuccess": -1, "exit": None}
-        )
+        return job.limits or Limits(maxCount=-1, maxFailure=-1, maxSuccess=-1, exit="")
 
     def _log_event(self, event: str, **kwargs: Any):
         templates = {
@@ -354,24 +345,20 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
         global_log_manager.log(
             fmt.format(**kwargs),
             levels,
-            debug=self.globals.get("debug", False),
-            log_config=self.globals.get("logConfig"),
+            debug=self.globals.debug,
+            log_config=self.globals.logConfig,
         )
 
     def _before_run(self, job: Job) -> None:
-        before: Optional[BeforeDict] = job.get("before", None)
-        if before is None:
-            return
-        ignore: bool = before.get("ignore_errors", False)
-        tasks: List[str] = before.get("tasks", [])
+        before: Before = job.before
+        ignore: bool = before.ignore_errors
+        tasks: List[str] = before.tasks
         for task in tasks:
             bef_job = self.workflow.get_job(task)
             if bef_job is None:
                 raise JobNotFoundError(f"Job '{task}' not found in workflow.")
 
-            self._log_event(
-                "BeforeJobTip", job_name=job.get("name"), bef_job=bef_job.get("name")
-            )
+            self._log_event("BeforeJobTip", job_name=job.name, bef_job=bef_job.name)
             success = False
             try:
                 self.check_needed(bef_job)
@@ -380,7 +367,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                 self._before_run(job=bef_job)
 
                 self.results[task] = JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT](
-                    bef_job
+                    job=bef_job, globals=self.globals
                 ).execute()
                 success = True
             except IgnorableError as e:
@@ -401,22 +388,16 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                 self.__post_works(job=bef_job)
 
     def _after_run(self, job: Job) -> None:
-        after: Optional[AfterDict] = job.get("after", None)
-        if after is None:
-            return
-        ignore: bool = after.get("ignore_errors", False)
-        always: List[str] = after.get("always", [])
-        tasks: List[str] = always + (
-            after.get("success", []) if self.success else after.get("failure", [])
-        )
+        after: After = job.after
+        ignore: bool = after.ignore_errors
+        always: List[str] = after.always
+        tasks: List[str] = always + (after.success if self.success else after.failure)
         for task in tasks:
             aft_job = self.workflow.get_job(task)
             if aft_job is None:
                 raise JobNotFoundError(f"Job '{task}' not found in workflow.")
 
-            self._log_event(
-                "AfterJobTip", job_name=job.get("name"), aft_job=aft_job.get("name")
-            )
+            self._log_event("AfterJobTip", job_name=job.name, aft_job=aft_job.name)
             success = False
             try:
                 self.check_needed(aft_job)
@@ -425,7 +406,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                 self._before_run(job=aft_job)
 
                 self.results[task] = JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT](
-                    aft_job
+                    job=aft_job, globals=self.globals
                 ).execute()
                 success = True
             except IgnorableError as e:
@@ -445,25 +426,21 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                 self.__post_works(job=aft_job)
 
     def __pre_works(self, *_: Any, job: Job) -> None:
-        jn = job.get("name", None)
+        jn = job.name
         self.work_chain.append(jn)
 
         # delay
-        delay: Optional[Delay] = job.get("delay", None)
-        if delay is not None:
-            task_delay(delay, mode="pre", globals=self.globals, prefix=job["type"])
+        task_delay(job.delay, mode="pre", globals=self.globals, prefix=job.type)
 
     def __post_works(self, *_: Any, job: Job) -> None:
         # delay
-        delay: Optional[Delay] = job.get("delay", None)
-        if delay is not None:
-            task_delay(delay, mode="post", globals=self.globals, prefix=job["type"])
+        task_delay(job.delay, mode="post", globals=self.globals, prefix=job.type)
 
     def run(self) -> Generator[_EXEC_YT, _EXEC_ST, List[_CB_SF_V]]:
         self.run_status = True
         while self.run_status:
             self.success = False
-            use_vars: Dict[str, Any] = self.task_vars.get(self.cur_job.get("use"), {})
+            use_vars: Dict[str, Any] = self.task_vars.get(self.cur_job.use, {})
 
             try:
                 # legal check
@@ -476,7 +453,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
 
                 result: TaskReturnsDict[_EXEC_YT] = JobExecutor[
                     _EXEC_YT, _EXEC_ST, _EXEC_RT
-                ](job=self.cur_job, globals=self.workflow.get_globals({})).execute(
+                ](job=self.cur_job, globals=self.workflow.get_globals()).execute(
                     **use_vars
                 )
                 # record results

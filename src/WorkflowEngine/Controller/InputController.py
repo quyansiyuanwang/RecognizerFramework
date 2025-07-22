@@ -8,6 +8,7 @@ from .Runner import SafeRunner
 from .SystemController import SystemController
 
 pyautogui.PAUSE = 0  # Disable default pause between actions
+pyautogui.FAILSAFE = False  # Disable fail-safe to prevent mouse movement issues
 
 
 class InputController:

@@ -3,7 +3,6 @@
     "After": {
       "properties": {
         "success": {
-          "default": [],
           "description": "成功时的任务名列表, 任务完成后逐个执行",
           "items": {
             "type": "string"
@@ -12,7 +11,6 @@
           "type": "array"
         },
         "failure": {
-          "default": [],
           "description": "失败时的任务名列表, 任务完成后逐个执行",
           "items": {
             "type": "string"
@@ -21,7 +19,6 @@
           "type": "array"
         },
         "always": {
-          "default": [],
           "description": "无论成功或失败都执行的任务名列表, 任务完成后逐个执行",
           "items": {
             "type": "string"
@@ -42,7 +39,6 @@
     "Before": {
       "properties": {
         "tasks": {
-          "default": [],
           "description": "使用的任务名列表, 任务开始前逐个执行",
           "items": {
             "type": "string"
@@ -63,112 +59,50 @@
     "Delay": {
       "properties": {
         "pre": {
-          "anyOf": [
-            {
-              "minimum": 0,
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": 0,
           "description": "前置延时(ms), 任务执行前等待时间",
-          "title": "Pre"
+          "minimum": 0,
+          "title": "Pre",
+          "type": "integer"
         },
         "post": {
-          "anyOf": [
-            {
-              "minimum": 0,
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": 0,
           "description": "后置延时(ms), 任务执行后等待时间",
-          "title": "Post"
+          "minimum": 0,
+          "title": "Post",
+          "type": "integer"
         }
       },
       "title": "Delay",
       "type": "object"
     },
-    "IdentifiedGlobals": {
+    "Globals": {
+      "additionalProperties": true,
       "properties": {
         "debug": {
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": false,
           "description": "调试模式, 开启后输出详细日志",
-          "title": "Debug"
+          "title": "Debug",
+          "type": "boolean"
         },
         "colorful": {
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": true,
           "description": "彩色日志输出",
-          "title": "Colorful"
+          "title": "Colorful",
+          "type": "boolean"
         },
         "ignore": {
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": false,
           "description": "忽略错误",
-          "title": "Ignore"
+          "title": "Ignore",
+          "type": "boolean"
         },
         "logConfig": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/LogConfig"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "$ref": "#/$defs/LogConfig",
           "description": "日志配置"
         }
       },
-      "title": "IdentifiedGlobals",
-      "type": "object"
-    },
-    "Image": {
-      "properties": {
-        "path": {
-          "description": "图像文件路径",
-          "title": "Path",
-          "type": "string"
-        },
-        "confidence": {
-          "description": "图像识别置信度",
-          "title": "Confidence",
-          "type": "number"
-        }
-      },
-      "required": [
-        "path",
-        "confidence"
-      ],
-      "title": "Image",
+      "title": "Globals",
       "type": "object"
     },
     "Input": {
@@ -247,58 +181,35 @@
           "type": "array"
         },
         "duration": {
-          "anyOf": [
-            {
-              "minimum": 0,
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": 0,
           "description": "延时(ms), 完全按下到释放的时间",
-          "title": "Duration"
+          "minimum": 0,
+          "title": "Duration",
+          "type": "integer"
         },
         "sep_time": {
-          "anyOf": [
-            {
-              "minimum": 0,
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": 0,
           "description": "按键间隔时间(ms), 用于按键间的延时",
-          "title": "Sep Time"
+          "minimum": 0,
+          "title": "Sep Time",
+          "type": "integer"
         },
         "returns": {
-          "anyOf": [
-            {
-              "additionalProperties": {
-                "enum": [
-                  "keys",
-                  "type",
-                  "duration"
-                ],
-                "type": "string"
-              },
-              "type": "object"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "additionalProperties": {
+            "enum": [
+              "keys",
+              "type",
+              "duration"
+            ],
+            "type": "string"
+          },
           "description": "返回值变量字典, 包含['keys', 'type', 'duration'],以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数",
-          "title": "Returns"
+          "title": "Returns",
+          "type": "object"
         }
       },
       "required": [
-        "type",
-        "keys"
+        "type"
       ],
       "title": "Input_Keyboard",
       "type": "object"
@@ -318,100 +229,57 @@
           "type": "string"
         },
         "button": {
-          "anyOf": [
-            {
-              "enum": [
-                "LEFT",
-                "RIGHT",
-                "MIDDLE"
-              ],
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "default": "LEFT",
           "description": "鼠标按钮类型, 可选: LEFT(左键), RIGHT(右键), MIDDLE(中键)",
-          "title": "Button"
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "MIDDLE"
+          ],
+          "title": "Button",
+          "type": "string"
         },
         "x": {
-          "anyOf": [
-            {
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "default": 0,
           "description": "X坐标, 像素值",
-          "title": "X"
+          "title": "X",
+          "type": "integer"
         },
         "y": {
-          "anyOf": [
-            {
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "default": 0,
           "description": "Y坐标, 像素值",
-          "title": "Y"
+          "title": "Y",
+          "type": "integer"
         },
         "duration": {
-          "anyOf": [
-            {
-              "minimum": 0,
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": 0,
           "description": "延时(ms), 鼠标操作时间",
-          "title": "Duration"
+          "minimum": 0,
+          "title": "Duration",
+          "type": "integer"
         },
         "relative": {
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": false,
-          "description": "是否相对当前位置移动, 默认为False, 如果为True, 则x和y表示相对偏移量",
-          "title": "Relative"
+          "default": true,
+          "description": "是否相对当前位置移动, 默认为True, 如果为True, 则x和y表示相对偏移量",
+          "title": "Relative",
+          "type": "boolean"
         },
         "returns": {
-          "anyOf": [
-            {
-              "additionalProperties": {
-                "enum": [
-                  "origin_x",
-                  "origin_y",
-                  "x",
-                  "y",
-                  "duration",
-                  "button",
-                  "type"
-                ],
-                "type": "string"
-              },
-              "type": "object"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "additionalProperties": {
+            "enum": [
+              "origin_x",
+              "origin_y",
+              "x",
+              "y",
+              "duration",
+              "button",
+              "type"
+            ],
+            "type": "string"
+          },
           "description": "返回值变量字典, 包含['origin_x', 'origin_y', 'x', 'y', 'duration', 'button', 'type'], 以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数",
-          "title": "Returns"
+          "title": "Returns",
+          "type": "object"
         }
       },
       "required": [
@@ -428,39 +296,24 @@
           "type": "string"
         },
         "duration": {
-          "anyOf": [
-            {
-              "minimum": 0,
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": 0,
           "description": "延时(ms), 文本输入时间",
-          "title": "Duration"
+          "minimum": 0,
+          "title": "Duration",
+          "type": "integer"
         },
         "returns": {
-          "anyOf": [
-            {
-              "additionalProperties": {
-                "enum": [
-                  "type",
-                  "message",
-                  "duration"
-                ],
-                "type": "string"
-              },
-              "type": "object"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "additionalProperties": {
+            "enum": [
+              "type",
+              "message",
+              "duration"
+            ],
+            "type": "string"
+          },
           "description": "返回值变量字典, 包含['type', 'message', 'duration']以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数",
-          "title": "Returns"
+          "title": "Returns",
+          "type": "object"
         }
       },
       "required": [
@@ -471,6 +324,12 @@
     },
     "Job": {
       "properties": {
+        "name": {
+          "default": "",
+          "description": "任务名称，仅用于编程记录，不会出现在 schema 中",
+          "title": "Name",
+          "type": "string"
+        },
         "type": {
           "description": "任务类型, 可选: ROI(区域识别), OCR(文字识别), Input(输入操作), System(系统操作), Overload(继承)",
           "enum": [
@@ -520,53 +379,23 @@
           "description": "系统操作定义, 仅在type为System时有效"
         },
         "overload": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "default": "",
           "description": "继承的任务名, 仅在type为Overload时有效, 允许继承其他任务的定义",
-          "title": "Overload"
+          "title": "Overload",
+          "type": "string"
         },
         "description": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": "",
           "description": "任务描述, 便于理解用途",
-          "title": "Description"
+          "title": "Description",
+          "type": "string"
         },
         "before": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/Before"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "$ref": "#/$defs/Before",
           "description": "使用的前置任务名列表, 任务开始前逐个执行"
         },
         "after": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/After"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "$ref": "#/$defs/After",
           "description": "使用的任务名列表, 任务完成后逐个执行"
         },
         "next": {
@@ -576,67 +405,33 @@
             },
             {
               "$ref": "#/$defs/Next"
-            },
-            {
-              "type": "null"
             }
           ],
-          "default": null,
+          "default": "",
           "description": "下一个任务名或分支, 支持 success/failure 分支",
           "title": "Next"
         },
         "delay": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/Delay"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "$ref": "#/$defs/Delay",
           "description": "延时设置, 控制任务前中后等待时间"
         },
         "limits": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/Limits"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "$ref": "#/$defs/Limits",
           "description": "任务执行限制, 包含最大执行次数、失败次数等"
         },
         "needs": {
-          "anyOf": [
-            {
-              "items": {
-                "type": "string"
-              },
-              "type": "array"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": [],
           "description": "依赖的前置任务名, 只有全部完成后才会执行本任务",
-          "title": "Needs"
+          "items": {
+            "type": "string"
+          },
+          "title": "Needs",
+          "type": "array"
         },
         "use": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "default": "",
           "description": "指定一个Job, 可使用=该job返回的参数",
-          "title": "Use"
+          "title": "Use",
+          "type": "string"
         }
       },
       "required": [
@@ -648,59 +443,31 @@
     "Limits": {
       "properties": {
         "maxCount": {
-          "anyOf": [
-            {
-              "minimum": 1,
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": -1,
           "description": "最大执行次数, 默认不限制",
-          "title": "Maxcount"
+          "minimum": -1,
+          "title": "Maxcount",
+          "type": "integer"
         },
         "maxFailure": {
-          "anyOf": [
-            {
-              "minimum": 0,
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": -1,
           "description": "最大失败次数, 默认不限制",
-          "title": "Maxfailure"
+          "minimum": -1,
+          "title": "Maxfailure",
+          "type": "integer"
         },
         "maxSuccess": {
-          "anyOf": [
-            {
-              "minimum": 0,
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": -1,
           "description": "最大成功次数, 默认不限制",
-          "title": "Maxsuccess"
+          "minimum": -1,
+          "title": "Maxsuccess",
+          "type": "integer"
         },
         "exit": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "default": "",
           "description": "达到最大次数后退出的任务名, 如果为空(null)则退出, 否则切换到指定任务",
-          "title": "Exit"
+          "title": "Exit",
+          "type": "string"
         }
       },
       "title": "Limits",
@@ -709,77 +476,42 @@
     "LogConfig": {
       "properties": {
         "level": {
-          "anyOf": [
-            {
-              "enum": [
-                "LOG",
-                "DEBUG",
-                "INFO",
-                "WARNING",
-                "ERROR",
-                "CRITICAL"
-              ],
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "default": "LOG",
           "description": "日志级别, 可选: LOG, DEBUG, INFO, WARNING, ERROR, CRITICAL",
-          "title": "Level"
+          "enum": [
+            "LOG",
+            "DEBUG",
+            "INFO",
+            "WARNING",
+            "ERROR",
+            "CRITICAL"
+          ],
+          "title": "Level",
+          "type": "string"
         },
         "file": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": "",
           "description": "日志文件路径, 如果为None则不写入文件",
-          "title": "File"
+          "title": "File",
+          "type": "string"
         },
         "format": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": "%(levelname)s - %(asctime)s - %(message)s",
           "description": "日志格式化字符串",
-          "title": "Format"
+          "title": "Format",
+          "type": "string"
         },
         "datefmt": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": "%Y-%m-%d %H:%M:%S.%f",
           "description": "日期时间格式化字符串",
-          "title": "Datefmt"
+          "title": "Datefmt",
+          "type": "string"
         },
         "clear": {
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": false,
           "description": "是否清空日志",
-          "title": "Clear"
+          "title": "Clear",
+          "type": "boolean"
         }
       },
       "title": "LogConfig",
@@ -788,30 +520,16 @@
     "Next": {
       "properties": {
         "success": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": "",
           "description": "成功时的下一个任务名",
-          "title": "Success"
+          "title": "Success",
+          "type": "string"
         },
         "failure": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": "",
           "description": "失败时的下一个任务名",
-          "title": "Failure"
+          "title": "Failure",
+          "type": "string"
         }
       },
       "title": "Next",
@@ -829,13 +547,13 @@
           "type": "string"
         },
         "image": {
-          "$ref": "#/$defs/Image",
+          "$ref": "#/$defs/ROI_Image",
           "description": "ROI图像定义, 包含路径和置信度"
         },
         "window": {
           "anyOf": [
             {
-              "$ref": "#/$defs/Window"
+              "$ref": "#/$defs/ROI_Window"
             },
             {
               "type": "null"
@@ -847,7 +565,7 @@
         "region": {
           "anyOf": [
             {
-              "$ref": "#/$defs/Region"
+              "$ref": "#/$defs/ROI_Region"
             },
             {
               "type": "null"
@@ -857,58 +575,35 @@
           "description": "ROI区域定义, 包含x, y, width, height"
         },
         "duration": {
-          "anyOf": [
-            {
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "default": 0,
           "description": "鼠标移动时间, 单位为毫秒",
-          "title": "Duration"
+          "title": "Duration",
+          "type": "integer"
         },
         "debug": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/ROI_Debug"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "$ref": "#/$defs/ROI_Debug",
           "description": "调试参数"
         },
         "returns": {
-          "anyOf": [
-            {
-              "additionalProperties": {
-                "enum": [
-                  "center_x",
-                  "center_y",
-                  "confidence",
-                  "left",
-                  "top",
-                  "right",
-                  "bottom",
-                  "width",
-                  "height",
-                  "template_height",
-                  "template_width"
-                ],
-                "type": "string"
-              },
-              "type": "object"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "additionalProperties": {
+            "enum": [
+              "center_x",
+              "center_y",
+              "confidence",
+              "left",
+              "top",
+              "right",
+              "bottom",
+              "width",
+              "height",
+              "template_height",
+              "template_width"
+            ],
+            "type": "string"
+          },
           "description": "返回值变量字典, 包含['center_x', 'center_y', 'confidence', 'left', 'top', 'right', 'bottom', 'width', 'height', 'template_height', 'template_width'], 以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数",
-          "title": "Returns"
+          "title": "Returns",
+          "type": "object"
         }
       },
       "required": [
@@ -921,23 +616,36 @@
     "ROI_Debug": {
       "properties": {
         "display_screenshot": {
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": false,
           "description": "是否显示截图, 默认为False",
-          "title": "Display Screenshot"
+          "title": "Display Screenshot",
+          "type": "boolean"
         }
       },
       "title": "ROI_Debug",
       "type": "object"
     },
-    "Region": {
+    "ROI_Image": {
+      "properties": {
+        "path": {
+          "description": "图像文件路径",
+          "title": "Path",
+          "type": "string"
+        },
+        "confidence": {
+          "description": "图像识别置信度",
+          "title": "Confidence",
+          "type": "number"
+        }
+      },
+      "required": [
+        "path",
+        "confidence"
+      ],
+      "title": "ROI_Image",
+      "type": "object"
+    },
+    "ROI_Region": {
       "properties": {
         "x": {
           "description": "识别区域的X坐标",
@@ -966,7 +674,43 @@
         "width",
         "height"
       ],
-      "title": "Region",
+      "title": "ROI_Region",
+      "type": "object"
+    },
+    "ROI_Window": {
+      "properties": {
+        "title": {
+          "default": "",
+          "description": "窗口标题, 可选",
+          "title": "Title",
+          "type": "string"
+        },
+        "class_name": {
+          "default": "",
+          "description": "窗口类名, 可选",
+          "title": "Class Name",
+          "type": "string"
+        },
+        "process": {
+          "default": "",
+          "description": "进程名称, 可选",
+          "title": "Process",
+          "type": "string"
+        },
+        "allow_overlay": {
+          "default": true,
+          "description": "是否允许其他窗口覆盖, 可选",
+          "title": "Allow Overlay",
+          "type": "boolean"
+        },
+        "allow_out_of_screen": {
+          "default": false,
+          "description": "是否允许截屏区域超出屏幕, 可选",
+          "title": "Allow Out Of Screen",
+          "type": "boolean"
+        }
+      },
+      "title": "ROI_Window",
       "type": "object"
     },
     "System": {
@@ -983,17 +727,10 @@
           "type": "string"
         },
         "duration": {
-          "anyOf": [
-            {
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": 0,
           "description": "延时操作定义, 仅在type为Delay时有效",
-          "title": "Duration"
+          "title": "Duration",
+          "type": "integer"
         },
         "log": {
           "anyOf": [
@@ -1020,25 +757,17 @@
           "description": "命令执行定义, 仅在type为Command时有效, 包含命令、参数、环境变量等"
         },
         "returns": {
-          "anyOf": [
-            {
-              "additionalProperties": {
-                "enum": [
-                  "type",
-                  "duration",
-                  "content"
-                ],
-                "type": "string"
-              },
-              "type": "object"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "additionalProperties": {
+            "enum": [
+              "type",
+              "duration",
+              "content"
+            ],
+            "type": "string"
+          },
           "description": "返回值变量字典, 包含['type', 'duration', 'content'], 以键为变量, 值指定返回参数可在其他Job中使用use指定该job返回的参数",
-          "title": "Returns"
+          "title": "Returns",
+          "type": "object"
         }
       },
       "required": [
@@ -1055,114 +784,63 @@
           "type": "string"
         },
         "args": {
-          "anyOf": [
-            {
-              "items": {
-                "type": "string"
-              },
-              "type": "array"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": [],
           "description": "命令参数列表, 可选",
-          "title": "Args"
+          "items": {
+            "type": "string"
+          },
+          "title": "Args",
+          "type": "array"
         },
         "shell": {
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": true,
           "description": "是否在shell中执行命令, 可选",
-          "title": "Shell"
+          "title": "Shell",
+          "type": "boolean"
         },
         "wait": {
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": true,
           "description": "是否等待命令执行完成, 可选",
-          "title": "Wait"
+          "title": "Wait",
+          "type": "boolean"
         },
         "cwd": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "default": "",
           "description": "命令执行时的工作目录, 可选",
-          "title": "Cwd"
+          "title": "Cwd",
+          "type": "string"
         },
         "env": {
-          "anyOf": [
-            {
-              "additionalProperties": {
-                "type": "string"
-              },
-              "type": "object"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "additionalProperties": {
+            "type": "string"
+          },
           "description": "环境变量字典, 可选, 用于设置命令执行时的环境变量",
-          "title": "Env"
+          "title": "Env",
+          "type": "object"
         },
         "ignore": {
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "null"
-            }
-          ],
           "default": false,
           "description": "是否忽略命令执行错误, 可选, 默认为False表示不忽略",
-          "title": "Ignore"
+          "title": "Ignore",
+          "type": "boolean"
         },
         "returns": {
-          "anyOf": [
-            {
-              "additionalProperties": {
-                "enum": [
-                  "command",
-                  "args",
-                  "env",
-                  "shell",
-                  "cwd",
-                  "wait",
-                  "full_command",
-                  "type"
-                ],
-                "type": "string"
-              },
-              "type": "object"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "additionalProperties": {
+            "enum": [
+              "command",
+              "args",
+              "env",
+              "shell",
+              "cwd",
+              "wait",
+              "full_command",
+              "type"
+            ],
+            "type": "string"
+          },
           "description": "返回值变量字典, 包含['command', 'args', 'env', 'shell', 'cwd', 'wait', 'full_command', 'type'], 以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数",
-          "title": "Returns"
+          "title": "Returns",
+          "type": "object"
         }
       },
       "required": [
@@ -1195,25 +873,17 @@
           "type": "array"
         },
         "returns": {
-          "anyOf": [
-            {
-              "additionalProperties": {
-                "enum": [
-                  "type",
-                  "message",
-                  "levels"
-                ],
-                "type": "string"
-              },
-              "type": "object"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "additionalProperties": {
+            "enum": [
+              "type",
+              "message",
+              "levels"
+            ],
+            "type": "string"
+          },
           "description": "返回值变量字典, 包含['type', 'message', 'levels'], 以键为变量, 值指定返回参数以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数",
-          "title": "Returns"
+          "title": "Returns",
+          "type": "object"
         }
       },
       "required": [
@@ -1221,77 +891,6 @@
         "levels"
       ],
       "title": "System_Log",
-      "type": "object"
-    },
-    "Window": {
-      "properties": {
-        "title": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "窗口标题, 可选",
-          "title": "Title"
-        },
-        "class_name": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "窗口类名, 可选",
-          "title": "Class Name"
-        },
-        "process": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "进程名称, 可选",
-          "title": "Process"
-        },
-        "allow_overlay": {
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": true,
-          "description": "是否允许其他窗口覆盖, 可选",
-          "title": "Allow Overlay"
-        },
-        "allow_out_of_screen": {
-          "anyOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": false,
-          "description": "是否允许截屏区域超出屏幕, 可选",
-          "title": "Allow Out Of Screen"
-        }
-      },
-      "title": "Window",
       "type": "object"
     }
   },
@@ -1302,21 +901,8 @@
       "type": "string"
     },
     "globals": {
-      "anyOf": [
-        {
-          "$ref": "#/$defs/IdentifiedGlobals"
-        },
-        {
-          "additionalProperties": true,
-          "type": "object"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
-      "description": "全局配置, 影响所有任务",
-      "title": "Globals"
+      "$ref": "#/$defs/Globals",
+      "description": "全局配置, 影响所有任务"
     },
     "jobs": {
       "additionalProperties": {

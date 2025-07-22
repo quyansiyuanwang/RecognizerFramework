@@ -2,8 +2,7 @@ from datetime import datetime
 from enum import IntFlag
 from typing import Dict, Iterable, List, Literal, Optional, Union
 
-from ...Typehints import LogConfigDict, LogLevelLiteral
-from ...Typehints.framework.frame import IdentifiedGlobalsDict
+from ...Typehints import Globals, LogConfig, LogLevelLiteral
 from ..Util import Color
 
 
@@ -65,9 +64,9 @@ class LogLevel(IntFlag):
 
 
 class Logger:
-    DEFAULT_LOG_CONFIG = LogConfigDict(
-        level=LogLevel.LOG,
-        file=None,
+    DEFAULT_LOG_CONFIG = LogConfig(
+        level="LOG",
+        file="",
         format="%(levelname)s - %(asctime)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S.%f",
         clear=False,
@@ -93,7 +92,7 @@ class Logger:
     def log(
         message: str,
         level: Iterable[LogLevel],
-        log_config: Optional[LogConfigDict] = None,
+        log_config: Optional[LogConfig] = None,
         colorful: bool = True,
     ) -> None:
         if log_config is None:
@@ -106,20 +105,15 @@ class Logger:
             color = Color.RESET if colorful else ""
 
         msg_type = "][".join(Logger.ABBREVIATIONS.get(l, "UNK") for l in levels)
-        date_formatted = datetime.now().strftime(
-            log_config.get("datefmt", "%Y-%m-%d %H:%M:%S.%f")
-        )
+        date_formatted = datetime.now().strftime(log_config.datefmt)
         params = {
             "asctime": date_formatted,
             "levelname": f"[{msg_type}]",
             "message": message,
         }
-        final = (
-            log_config.get("format", "%(levelname)s - %(asctime)s - %(message)s")
-            % params
-        )
-        file = log_config.get("file")
-        if file is not None:
+        final = log_config.format % params
+        file = log_config.file
+        if file:
             with open(file, "a", encoding="utf-8") as f:
                 f.write(final + "\n")
         print(f"{color}{final}{Color.RESET}")
@@ -150,7 +144,7 @@ class LogManager:
     ):
         self.debug: bool = debug
         self.level: LogLevel = level
-        self.log_config: LogConfigDict = Logger.DEFAULT_LOG_CONFIG
+        self.log_config: LogConfig = Logger.DEFAULT_LOG_CONFIG
         self.colorful: bool = True
         self.__cleared: bool = False
 
@@ -159,15 +153,15 @@ class LogManager:
         msg: str,
         levels: Iterable[LogLevel],
         debug: bool = False,
-        log_config: Optional[LogConfigDict] = None,
+        log_config: Optional[LogConfig] = None,
         colorful: Optional[bool] = None,
     ):
         if log_config is None:
             log_config = Logger.DEFAULT_LOG_CONFIG
 
-        if not self.__cleared and log_config.get("clear", False):
+        if not self.__cleared and log_config.clear:
             # 清空日志文件
-            file = log_config.get("file")
+            file = log_config.file
             if file:
                 with open(file, "w", encoding="utf-8") as f:
                     f.write("")
@@ -188,8 +182,8 @@ class LogManager:
     def set_debug(self, debug: bool):
         self.debug = debug
 
-    def set_attr(self, globals_: IdentifiedGlobalsDict):
-        for key, value in globals_.items():
+    def set_attr(self, globals_: Globals):
+        for key, value in globals_.model_dump().items():
             setattr(self, key, value)
 
     def set_level(self, level: LogLevel):

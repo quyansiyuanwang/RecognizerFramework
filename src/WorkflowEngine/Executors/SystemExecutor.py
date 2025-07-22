@@ -1,7 +1,15 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
-from ...Structure import System, System_Command, System_Log
-from ...Typehints import GlobalsDict, LogLevelLiteral, TaskReturnsDict
+from src.WorkflowEngine.Util.executor_works import update
+
+from ...Typehints import (
+    Globals,
+    LogLevelLiteral,
+    System,
+    System_Command,
+    System_Log,
+    TaskReturnsDict,
+)
 from ..Controller import Logger, LogLevel, SystemController
 from ..Exceptions.crash import (
     ActionTypeError,
@@ -14,19 +22,19 @@ from ..executor import Executor, Job, JobExecutor
 
 @JobExecutor.register("System")
 class SystemExecutor(Executor):
-    def __init__(self, job: Job, globals: GlobalsDict) -> None:
+    def __init__(self, job: Job, globals: Globals) -> None:
         self.job: Job = job
-        self.globals: GlobalsDict = globals
+        self.globals: Globals = globals
         self.use_vars: Dict[str, Any] = {}
 
     def execute_Command(self, command_pkg: System_Command) -> TaskReturnsDict[str]:
-        command_pkg.update(self.use_vars)
-        command = command_pkg.get("command", "")
-        args = command_pkg.get("args", [])
-        env = command_pkg.get("env", None)
-        cwd = command_pkg.get("cwd", None)
-        shell = command_pkg.get("shell", True)
-        wait = command_pkg.get("wait", True)
+        update(command_pkg, self.use_vars)
+        command = command_pkg.command
+        args = command_pkg.args
+        env = command_pkg.env
+        cwd = command_pkg.cwd
+        shell = command_pkg.shell
+        wait = command_pkg.wait
         full = f"{command} {' '.join(args)}"
         var_s: Dict[str, Any] = {
             "command": command,
@@ -45,17 +53,17 @@ class SystemExecutor(Executor):
                 cwd=cwd,
                 shell=shell,
                 wait=wait,
-                debug=self.globals.get("debug", False),
+                debug=self.globals.debug,
             )
             return TaskReturnsDict(
-                returns=command_pkg.get("returns", {}),
+                returns=cast(Dict[str, str], command_pkg.returns),
                 variables=var_s,
                 result=f"Executed command: {full}",
             )
         except Exception as e:
-            if command_pkg.get("ignore", False):
+            if command_pkg.ignore:
                 return TaskReturnsDict(
-                    returns=command_pkg.get("returns", {}),
+                    returns=cast(Dict[str, str], command_pkg.returns),
                     variables=var_s,
                     result=f"Failed to execute command: {full}, but ignored.",
                 )
@@ -64,37 +72,37 @@ class SystemExecutor(Executor):
             )
 
     def execute_Paste(self, system: System) -> TaskReturnsDict[str]:
-        system.update(self.use_vars)
+        update(system, self.use_vars)
         content = SystemController.paste()
         return TaskReturnsDict(
-            returns=system.get("returns", {}),
-            variables={"type": system.get("type"), "content": content},
+            returns=cast(Dict[str, str], system.returns),
+            variables={"type": system.type, "content": content},
             result=f"Executed paste: {content}",
         )
 
     def execute_Delay(self, system: System) -> TaskReturnsDict[str]:
-        system.update(self.use_vars)
-        duration: int = system.get("duration", 0)
+        update(system, self.use_vars)
+        duration: int = system.duration
         SystemController.sleep(
             duration,
-            debug=self.globals.get("debug", False),
+            debug=self.globals.debug,
             prefix="SystemExecutorDelay",
         )
         return TaskReturnsDict(
-            returns=system.get("returns", {}),
-            variables={"type": system.get("type"), "duration": duration},
+            returns=cast(Dict[str, str], system.returns),
+            variables={"type": system.type, "duration": duration},
             result=f"Executed delay: {duration} ms",
         )
 
     def execute_Log(self, log_dict: System_Log) -> TaskReturnsDict[str]:
-        log_dict.update(self.use_vars)
-        message: str = log_dict.get("message", "")
-        levels: List[LogLevelLiteral] = log_dict.get("levels", ["LOG"])
+        update(log_dict, self.use_vars)
+        message: str = log_dict.message
+        levels: List[LogLevelLiteral] = log_dict.levels
         if not LogLevel.is_all_available(levels=levels):
             raise LogLevelError(f"Invalid log levels: {levels}", self.job)
         Logger.log(message, level=map(LogLevel.from_str, levels))
         return TaskReturnsDict(
-            returns=log_dict.get("returns", {}),
+            returns=cast(Dict[str, str], log_dict.returns),
             variables={
                 "message": message,
                 "levels": levels,
@@ -104,18 +112,21 @@ class SystemExecutor(Executor):
 
     def execute(self, *args: Any, **kwargs: Any) -> TaskReturnsDict[str]:
         self.use_vars.update(kwargs)
-        system: Optional[System] = self.job.get("system", None)
+        system: Optional[System] = self.job.system
         if system is None:
             raise MissingRequiredError(
                 "No system action found in the job to execute.", self.job
             )
 
-        if system.get("type") == "Delay":
+        if system.type == "Delay" and system:
             return self.execute_Delay(system)
-        elif system.get("type") == "Log":
-            return self.execute_Log(system.get("log", {}))
-        elif system.get("type") == "Paste":
+        elif system.type == "Log" and system.log:
+            return self.execute_Log(system.log)
+        elif system.type == "Paste" and system:
             return self.execute_Paste(system)
-        elif system.get("type") == "Command":
-            return self.execute_Command(system.get("command", {}))
-        raise ActionTypeError(f"Unsupported action: {system.get('type')}", self.job)
+        elif system.type == "Command" and system.command:
+            return self.execute_Command(system.command)
+        raise ActionTypeError(
+            f"Unsupported type({system.type}) or missing field({system.type.lower()})",
+            self.job,
+        )

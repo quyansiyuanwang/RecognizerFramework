@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, TypeAlias
+from typing import Any, Dict, List, Optional, TypeAlias, cast
 
 import cv2
 import numpy as np
@@ -10,12 +10,16 @@ import win32process
 import win32ui
 from PIL import Image
 
-from ...Structure import ROI, ROI_Image, ROI_Region
+from src.Typehints.pydantic_pkg.roi import ROI
+from src.WorkflowEngine.Util.executor_works import get, update
+
 from ...Typehints import (
-    GlobalsDict,
-    ROI_DebugDict,
+    ROI,
+    Globals,
+    ROI_Image,
+    ROI_Region,
+    ROI_Window,
     TaskReturnsDict,
-    WindowDict,
     WindowLocationDict,
 )
 from ..Controller import InputController, LogLevel, global_log_manager
@@ -37,24 +41,25 @@ PILImage: TypeAlias = Image.Image
 
 @JobExecutor.register("ROI")
 class ROIExecutor(Executor):
-    def __init__(self, job: Job, globals: GlobalsDict) -> None:
+    def __init__(self, job: Job, globals: Globals) -> None:
         self.job: Job = job
-        self.globals: GlobalsDict = globals
+        self.globals: Globals = globals
         self.use_vars: Dict[str, Any] = {}
 
     def __capture_screen(self, roi: ROI) -> WindowLocationDict:
-        region: ROI_Region = roi.get("region", {})
-        region.update(self.use_vars)
+        region: Optional[ROI_Region] = roi.region
+        if region:
+            update(region, self.use_vars)
         if not region:
             return WindowLocationDict(
                 left=0,
                 top=0,
                 mat=pyautogui.screenshot(),
             )
-        cap_x: int = int(region.get("x", 0))
-        cap_y: int = int(region.get("y", 0))
-        cap_width: int = int(region.get("width", pyautogui.size().width))
-        cap_height: int = int(region.get("height", pyautogui.size().height))
+        cap_x: int = int(region.x)
+        cap_y: int = int(region.y)
+        cap_width: int = int(region.width)
+        cap_height: int = int(region.height)
 
         return WindowLocationDict(
             left=cap_x,
@@ -62,12 +67,11 @@ class ROIExecutor(Executor):
             mat=pyautogui.screenshot(region=(cap_x, cap_y, cap_width, cap_height)),
         )
 
-    def __capture_window(self, roi: ROI) -> WindowLocationDict:
-        window: WindowDict = roi.get("window", {})
+    def __capture_window(self, roi: ROI, window: ROI_Window) -> WindowLocationDict:
         # 匹配条件
-        target_title = window.get("title", "")
-        target_class_name = window.get("class_name", "")
-        target_process = window.get("process", "")
+        target_title = window.title
+        target_class_name = window.class_name
+        target_process = window.process
         if not (target_title or target_class_name or target_process):
             raise MissingRequiredError(
                 "At least one of title, class_name or process must be specified."
@@ -125,18 +129,24 @@ class ROIExecutor(Executor):
         win_left, win_top, win_right, win_bottom = rect
 
         # region
-        inf = float("inf")
-        region: ROI_Region = roi.get("region", {})
-        region.update(self.use_vars)
-        region_x: int = int(max(region.get("x", -inf), 0))
-        region_y: int = int(max(region.get("y", -inf), 0))
+        region: Optional[ROI_Region] = roi.region
+        if region is None:
+            region = ROI_Region(
+                x=0,
+                y=0,
+                width=win_right - win_left,
+                height=win_bottom - win_top,
+            )
+        update(region, self.use_vars)
+        region_x: int = int(max(region.x, 0))
+        region_y: int = int(max(region.y, 0))
         cap_x = win_left + region_x
         cap_y = win_top + region_y
-        cap_width: int = int(min(region.get("width", inf), win_right - cap_x))
-        cap_height: int = int(min(region.get("height", inf), win_bottom - cap_y))
+        cap_width: int = int(min(region.width, win_right - cap_x))
+        cap_height: int = int(min(region.height, win_bottom - cap_y))
         cap = (cap_x, cap_y, cap_width, cap_height)
 
-        allow_out_of_screen: bool = window.get("allow_out_of_screen", False)
+        allow_out_of_screen: bool = get(window, "allow_out_of_screen", False)
         screen_size = pyautogui.size()
         if (
             cap_x + cap_width < 0
@@ -154,10 +164,10 @@ class ROIExecutor(Executor):
             global_log_manager.log(
                 f"窗口区域无效: {cap}, 允许超出屏幕: {allow_out_of_screen}",
                 [LogLevel.WARNING],
-                debug=self.globals.get("debug", False),
+                debug=self.globals.debug,
             )
 
-        if window.get("allow_overlay", False):
+        if get(window, "allow_overlay", True):
             screenshot: Image.Image = pyautogui.screenshot(region=cap)
         else:
             hWndDC = win32gui.GetWindowDC(matched)
@@ -193,24 +203,21 @@ class ROIExecutor(Executor):
 
     def __capture(self, roi: ROI) -> WindowLocationDict:
         # 读取对象窗口参数
-        window: Optional[WindowDict] = roi.get("window", None)
+        window: Optional[ROI_Window] = roi.window
         if window is None:
             return self.__capture_screen(roi)
         else:
-            return self.__capture_window(roi)
+            return self.__capture_window(roi, window)
 
     def __execute_debug(self, roi: ROI, *, mat: PILImage) -> None:
-        debug: Optional[ROI_DebugDict] = roi.get("debug", {})
-        if debug and not self.globals.get("debug", False):
+        if roi.debug and not self.globals.debug:
             raise DebugError(job=self.job, message="Debugging is disabled in globals.")
-        elif debug is None:
-            return
 
-        if debug.get("display_screenshot", False):
+        if roi.debug.display_screenshot:
             mat.show()
 
     def main(self, roi: ROI) -> TaskReturnsDict[str]:
-        roi.update(self.use_vars)
+        update(roi, self.use_vars)
         wld: WindowLocationDict = self.__capture(roi)
         mat = cv2.cvtColor(np.array(wld["mat"]), cv2.COLOR_RGB2BGR)
 
@@ -222,10 +229,10 @@ class ROIExecutor(Executor):
         offset_y: int = wld["top"]
 
         # 读取模板图
-        image: ROI_Image = roi.get("image", {})
-        image.update(self.use_vars)
-        template_path: str = image["path"]
-        confidence: float = image.get("confidence", 1.0)
+        image: ROI_Image = roi.image
+        update(image, self.use_vars)
+        template_path: str = image.path
+        confidence: float = image.confidence
         template = cv2.imread(template_path)
         if template is None:  # type: ignore[union-attr]
             raise TemplateError(
@@ -263,7 +270,7 @@ class ROIExecutor(Executor):
         global_log_manager.log(
             f"ROI detected at {matched_center} with confidence {max_val}",
             [LogLevel.DEBUG],
-            debug=self.globals.get("debug", False),
+            debug=self.globals.debug,
         )
 
         # action Factory
@@ -281,38 +288,38 @@ class ROIExecutor(Executor):
             "template_width": template_gray.shape[1],
         }
 
-        if roi.get("type") == "DetectOnly":
+        if roi.type == "DetectOnly":
             return TaskReturnsDict(
-                returns=roi.get("returns", {}),
+                returns=cast(Dict[str, str], roi.returns),
                 variables=var_s,
                 result=f"Detected at {matched_center} with confidence {max_val}",
             )
 
-        elif roi.get("type") == "MoveMouse":
+        elif roi.type == "MoveMouse":
             # 移动鼠标
-            duration: int = roi.get("duration", 0)
+            duration: int = roi.duration
             InputController.mouse_move_to(
                 x=matched_center[0],
                 y=matched_center[1],
                 duration=duration,
-                debug=self.globals.get("debug", False),
-                ignore=self.globals.get("ignore", False),
+                debug=self.globals.debug,
+                ignore=self.globals.ignore,
             )
 
             return TaskReturnsDict(
-                returns=roi.get("returns", {}),
+                returns=cast(Dict[str, str], roi.returns),
                 variables=var_s,
                 result=f"Matched at {matched_center}" f", confidence: {max_val}",
             )
         else:
             raise ActionTypeError(
                 job=self.job,
-                message=f"Unsupported ROI type: {roi.get('type')}",
+                message=f"Unsupported ROI type: {roi.type}",
             )
 
     def execute(self, *args: Any, **kwargs: Any) -> TaskReturnsDict[str]:
         self.use_vars.update(kwargs)
-        roi: Optional[ROI] = self.job.get("roi", None)
+        roi: Optional[ROI] = self.job.roi
         if roi is None:
             raise MissingRequiredError("No ROI found in the job to execute.", self.job)
         return self.main(roi)

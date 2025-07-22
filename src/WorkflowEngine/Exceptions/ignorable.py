@@ -1,6 +1,6 @@
 from typing import Optional
 
-from ...Structure import Job
+from ...Typehints import Job
 from .base import IgnorableError
 from .execs.input import *
 from .execs.roi import *

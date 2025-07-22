@@ -1,6 +1,6 @@
 from typing import Any, Callable, Dict, Iterable, Optional, Tuple, TypeVar
 
-from ...Typehints import LogConfigDict
+from ...Typehints import LogConfig
 from .LogController import LogLevel, global_log_manager
 
 T = TypeVar("T")
@@ -21,7 +21,7 @@ class SafeRunner:
         err_msg: str = "",
         on_error: Optional[Callable[[Exception], None]] = None,
         context: Optional[Dict[str, Any]] = None,
-        log_config: Optional[LogConfigDict] = None,
+        log_config: Optional[LogConfig] = None,
     ) -> Optional[T]:
         ctx = context or {}
         if debug_msg and debug:

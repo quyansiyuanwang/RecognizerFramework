@@ -1,15 +1,15 @@
 from typing import Any, Dict
 
-from ...Typehints import GlobalsDict, TaskReturnsDict
+from ...Typehints import Globals, TaskReturnsDict
 from ..executor import Executor, Job, JobExecutor
 
 
 @JobExecutor.register("OCR")
 class OCRExecutor(Executor):
 
-    def __init__(self, job: Job, globals: GlobalsDict) -> None:
+    def __init__(self, job: Job, globals: Globals) -> None:
         self.job: Job = job
-        self.globals: GlobalsDict = globals
+        self.globals: Globals = globals
         self.use_vars: Dict[str, Any] = {}
 
     def execute(self, *args: Any, **kwargs: Any) -> TaskReturnsDict[str]:

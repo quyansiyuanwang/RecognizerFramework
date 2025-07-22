@@ -1,58 +1,52 @@
-from .framework.frame import (
-    GlobalsDict,
-    IdentifiedGlobalsDict,
-    JobDict,
-    LogConfigDict,
-    WorkflowDict,
+# XXX:
+
+from .pydantic_pkg.input import Input, Input_Keyboard, Input_Mouse, Input_Text
+from .pydantic_pkg.pkg import (
+    After,
+    Before,
+    Delay,
+    Globals,
+    Job,
+    Limits,
+    LogConfig,
+    Next,
+    Workflow,
 )
-from .framework.input import InputDict, KeyboardDict, MouseDict, TextDict
-from .framework.job_params import (
-    AfterDict,
-    BeforeDict,
-    DelayDict,
-    LimitsDict,
-    NextDict,
-    UseDict,
-)
-from .framework.roi import ImageDict, RegionDict, ROI_DebugDict, ROIDict, WindowDict
-from .framework.system import CommandDict, LogDict, LogLevelLiteral, SystemDict
-from .pydantic_pkg.pkg import Workflow
-from .structure import TaskAttemptDict, TaskReturnsDict, WindowLocationDict
+from .pydantic_pkg.roi import ROI, ROI_Debug, ROI_Image, ROI_Region, ROI_Window
+from .pydantic_pkg.system import LogLevelLiteral, System, System_Command, System_Log
+from .structure import BaseObject, TaskAttemptDict, TaskReturnsDict, WindowLocationDict
 
 __all__ = [
     # structure
     "WindowLocationDict",
     "TaskAttemptDict",
     "TaskReturnsDict",
-    # pydantic
-    "Workflow",
+    "BaseObject",
     # frameworks
-    "JobDict",
-    "LogConfigDict",
-    "IdentifiedGlobalsDict",
-    "GlobalsDict",
-    "WorkflowDict",
-    "UseDict",
+    "Job",
+    "LogConfig",
+    "Globals",
+    "Workflow",
     # framework roi
-    "ROIDict",
-    "ImageDict",
-    "WindowDict",
-    "RegionDict",
-    "ROI_DebugDict",
+    "ROI",
+    "ROI_Image",
+    "ROI_Window",
+    "ROI_Region",
+    "ROI_Debug",
     # framework input
-    "KeyboardDict",
-    "TextDict",
-    "InputDict",
-    "MouseDict",
+    "Input",
+    "Input_Keyboard",
+    "Input_Mouse",
+    "Input_Text",
     # framework system
-    "CommandDict",
-    "LogDict",
-    "SystemDict",
+    "System",
+    "System_Command",
+    "System_Log",
     "LogLevelLiteral",
     # framework job params
-    "DelayDict",
-    "LimitsDict",
-    "NextDict",
-    "AfterDict",
-    "BeforeDict",
+    "Delay",
+    "Limits",
+    "Next",
+    "After",
+    "Before",
 ]

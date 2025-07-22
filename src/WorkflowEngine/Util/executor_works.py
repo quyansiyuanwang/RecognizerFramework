@@ -1,14 +1,15 @@
-from typing import Any, Literal, Optional
+from typing import Any, Dict, Literal, Mapping, Optional, TypeVar, Union
 
-from ...Structure import Delay
-from ...Typehints.framework.frame import IdentifiedGlobalsDict
+from pydantic import BaseModel
+
+from ...Typehints import Delay, Globals
 from ..Controller import SystemController
 
 
 def delay(
     delay: Delay,
     mode: Literal["pre", "post"],
-    globals: IdentifiedGlobalsDict,
+    globals: Globals,
     prefix: str = "",
     **_: Any,
 ) -> None:
@@ -16,22 +17,40 @@ def delay(
         assert False, f"Invalid delay mode: {mode}"
 
     if mode == "pre":
-        pre: int = delay.get("pre", 0)
+        pre: int = delay.pre
         if pre < 0:
             raise ValueError(f"Invalid delay duration: {pre} ms")
         SystemController.sleep(
             pre,
-            debug=globals.get("debug", False),
+            debug=globals.debug,
             prefix=f"{prefix}ExecutorPreDelay",
         )
     else:
-        post: Optional[int] = delay.get("post", None)
-        if post is None:
-            return
+        post: int = delay.post
         if post < 0:
             raise ValueError(f"Invalid delay duration: {post} ms")
         SystemController.sleep(
             post,
-            debug=globals.get("debug", False),
+            debug=globals.debug,
             prefix=f"{prefix}ExecutorPostDelay",
         )
+
+
+def update(
+    model: Union[Mapping[str, Any], BaseModel], kwargs: Dict[str, Any], **aft_kws: Any
+) -> None:
+    kwargs.update(aft_kws)
+    for key, value in kwargs.items():
+        if hasattr(model, key):
+            setattr(model, key, value)
+        else:
+            raise AttributeError(
+                f"Model {model.__class__.__name__} has no attribute '{key}'"
+            )
+
+
+_T = TypeVar("_T")
+
+
+def get(model: Optional[BaseModel], key: str, default: _T) -> _T:
+    return getattr(model, key, default) if model else default
