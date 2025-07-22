@@ -1,0 +1,100 @@
+WorkflowManager(path=tests/workflow/2025-07-23T06.47/test_read.json, jobs={
+System-Command: {
+  type: 'System',
+  system: {
+    type: 'Command',
+    command: {
+      command: "echo 'Hello, World!'"
+    }
+  }
+},
+System-Delay: {
+  type: 'System',
+  system: {
+    type: 'Delay',
+    duration: 1000
+  }
+},
+System-Log: {
+  type: 'System',
+  system: {
+    type: 'Log',
+    log: {
+      message: 'This is a log message from the System job.',
+      levels: ['WARNING']
+    }
+  }
+},
+System-Paste: {
+  type: 'System',
+  system: {
+    type: 'Paste'
+  }
+},
+ROI-DetectOnly: {
+  type: 'ROI',
+  roi: {
+    type: 'DetectOnly',
+    image: {
+      path: '<image_path>',
+      confidence: 1.0
+    }
+  }
+},
+ROI-MoveMouse: {
+  type: 'ROI',
+  roi: {
+    type: 'MoveMouse',
+    image: {
+      path: '<image_path>',
+      confidence: 1.0
+    }
+  }
+},
+Overload: {
+  type: 'OCR'
+},
+OCR: {
+  type: 'OCR'
+},
+Input-Keyboard-Type: {
+  type: 'Input',
+  input: {
+    type: 'Keyboard',
+    keyboard: {
+      type: 'Type',
+      keys: ['win', 'r']
+    }
+  }
+},
+Input-Mouse-Release: {
+  type: 'Input',
+  input: {
+    type: 'Mouse',
+    mouse: {
+      type: 'Release',
+      button: 'RIGHT'
+    }
+  }
+},
+Input-Mouse-Click: {
+  type: 'Input',
+  input: {
+    type: 'Mouse',
+    mouse: {
+      type: 'Click',
+      button: 'RIGHT',
+      duration: 5
+    }
+  }
+},
+Input-Text: {
+  type: 'Input',
+  input: {
+    type: 'Text',
+    text: {
+      message: '<text_message>'
+    }
+  }
+}
+})
