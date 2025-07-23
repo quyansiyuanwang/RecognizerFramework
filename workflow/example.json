@@ -17,6 +17,7 @@
       "input": {
         "type": "Keyboard",
         "keyboard": {
+          "type": "Type",
           "keys": ["win", "i"]
         }
       },
@@ -47,6 +48,7 @@
       "input": {
         "type": "Keyboard",
         "keyboard": {
+          "type": "Type",
           "keys": ["win", "i"]
         }
       },
