@@ -12,6 +12,7 @@
   - [任务定义(Job)](#任务定义job)
     - [通用字段-Job](#通用字段-job)
       - [type 可选值](#type-可选值)
+    - [before 字段](#before-字段)
     - [ROI 任务](#roi-任务)
     - [Input 任务](#input-任务)
     - [System 任务](#system-任务)
@@ -71,6 +72,7 @@
 | ----------- | ------------- | -------------------------------------------------------------------- |
 | type        | string        | 任务类型，见下表。                                                   |
 | description | string        | 任务描述，便于理解用途。                                             |
+| before      | object        | 任务开始前的前置任务，包含 tasks 和 ignore_errors。                  |
 | after       | object        | 任务完成后的后续任务，包含 success、failure、always、ignore_errors。 |
 | next        | string/object | 下一个任务名或分支，支持 success/failure 分支。                      |
 | delay       | object        | 延时设置，包含 pre、post。                                           |
@@ -84,6 +86,15 @@
 - `Input`：输入操作
 - `System`：系统操作
 - `Overload`：继承其他任务
+
+---
+
+### before 字段
+
+| 字段名        | 类型    | 说明                 |
+| ------------- | ------- | -------------------- |
+| tasks         | array   | 前置任务名列表       |
+| ignore_errors | boolean | 是否忽略错误         |
 
 ---
 
@@ -268,4 +279,4 @@
 
 ---
 
-如需详细字段说明，请查阅 `src/Typehints/pydantic_pkg` 目录下各模型定义，或以 `workflow/schema/generated.schema.json` 为准。若有疑问请联系开发者。
+如需详细字段说明，请查阅 `src/Models` 目录下各模型定义，或以 `workflow/schema/generated.schema.json` 为准。若有疑问请联系开发者。
