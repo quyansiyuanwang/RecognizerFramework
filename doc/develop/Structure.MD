@@ -27,36 +27,19 @@
 
 ## src/ 核心代码
 
-- **Structure/**：核心结构体定义。
-
-  - **action.py**：动作结构体，描述单步操作。
-  - **after.py**：后置任务结构体。
-  - **Base.py**：结构体基类。
-  - **delay.py**：延时结构体，定义任务前后延时。
-  - **input.py**：输入结构体。
-  - **input_keyboard.py**：键盘输入结构体。
-  - **input_mouse.py**：鼠标输入结构体。
-  - **input_text.py**：文本输入结构体。
-  - **job.py**：任务结构体，描述单个任务的所有属性。
-  - **limits.py**：限制结构体，控制任务执行次数等。
-  - **next.py**：任务流结构体，描述任务流转逻辑。
-  - **region.py**：区域结构体，描述屏幕区域。
-  - **roi.py**：区域识别结构体。
-  - **roi_image.py**：区域识别图片结构体。
-  - **roi_region.py**：区域识别区域结构体。
-  - **roi_debug.py**：区域调试结构体，用于调试和可视化 ROI。
-  - **roi_window.py**：窗口捕获结构体，支持窗口级区域识别。
-  - **system.py**：系统操作结构体。
-  - **TypeMap.py/Util.py**：类型映射与结构体工具。
+- **Models/**：数据模型模块，基于 Pydantic 的类型定义和 JSON 解析。
+  - **globals.py**：全局配置模型。
+  - **input.py**：输入任务模型。
+  - **main.py**：工作流模型，包括 `Workflow`、`Job` 等核心定义。
+  - **roi.py**：区域识别任务模型。
+  - **system.py**：系统任务模型。
 
 - **Typehints/**：类型提示与 Pydantic 类型定义。
-
+  - **basic.py**：基础类型定义。
+  - **roi.py**：ROI 类型定义。
   - **structure.py**：结构相关类型定义。
-  - **pydantic_pkg/**：各功能领域的 Pydantic 类型包（如 input、roi、system 等，含 ROI 相关类型定义）。
-  - **framework/**：框架相关类型定义（含 ROI 相关类型定义）。
 
 - **Util/**：通用工具函数。
-
   - **util.py**：常用工具函数集合。
 
 - **WorkflowEngine/**：工作流引擎。
@@ -67,18 +50,26 @@
     - **LogController.py**：日志管理，统一日志输出。
     - **Runner.py**：工作流运行器，调度任务。
     - **SystemController.py**：系统控制器，处理系统级任务。
+  - **Exceptions/**：自定义异常定义。
+    - **base.py**：基础异常类型。
+    - **crash.py**：通用崩溃异常。
+    - **critical.py**：关键异常类型。
+    - **ignorable.py**：可忽略异常类型。
+    - **execs/**：细分的执行异常。
+      - **input.py**：输入相关异常。
+      - **roi.py**：ROI 相关异常。
+      - **roi_crash.py**：ROI 崩溃异常。
+      - **system.py**：系统相关异常。
+      - **system_crash.py**：系统崩溃异常。
   - **Executors/**：执行器模块。
     - **InputExecutor.py**：输入任务执行器。
     - **OCRExecutor.py**：OCR 任务执行器。
     - **ROIExecutor.py**：区域识别任务执行器（支持窗口捕获与调试）。
     - **SystemExecutor.py**：系统任务执行器。
-  - **Exceptions/**：自定义异常定义。
-    - **base/**：基础异常类型，所有自定义异常的父类，便于统一捕获和扩展。
-    - **crash/**：通用异常类型（如 ActionTypeError、ROI 相关崩溃异常等），用于处理执行时的类型错误、参数错误等。
-    - **critical/**：关键异常类型，表示必须中断流程的严重错误。
-    - **execs/**：细分的执行异常（如 roi.py、roi_crash.py、input.py、system.py），分别对应 ROI、输入、系统等模块的专属异常类型。
-    - **ignorable/**：可忽略异常类型，遇到时可选择跳过而不中断主流程。
   - **Util/**：引擎相关工具。
+    - **executor_works.py**：执行器工作流工具。
+    - **style.py**：样式工具。
+    - **util.py**：引擎通用工具。
 
 ## workflow/ 工作流配置
 

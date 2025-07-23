@@ -61,6 +61,7 @@ RecognizerFramework 是一个模块化的工作流引擎框架，支持通过 JS
 
 - **type**：任务类型（如 ROI、OCR、Input、System、Overload 等）。
 - **description**：任务描述。
+- **before**：前置任务配置，支持 tasks、ignore_errors。
 - **after**：后置任务配置，支持 success、failure、always、ignore_errors。
 - **next**：下一个任务名或分支（支持 success/failure 分支）。
 - **delay**：延时设置（pre、post）。
@@ -93,6 +94,7 @@ RecognizerFramework 是一个模块化的工作流引擎框架，支持通过 JS
       "input": {
         "type": "Keyboard",
         "keyboard": {
+          "type": "Type",
           "keys": ["win", "r"],
           "duration": 0,
           "sep_time": 0
@@ -150,6 +152,7 @@ RecognizerFramework 是一个模块化的工作流引擎框架，支持通过 JS
 
 ### src/
 
+- Models/：数据模型模块。
 - Structure/：核心结构体定义。
 - Typehints/：类型提示与 Pydantic 类型定义。
 - Util/：通用工具函数。
