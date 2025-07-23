@@ -14,7 +14,7 @@ class TestWorkflowManager(unittest.TestCase):
 
         self.manager = WorkflowManager(self.target_file)
 
-        self.__write_mode = True
+        self.__write_mode = False
         if self.__write_mode:
             self.write_answer()
             assert True, "Write mode is enabled"
