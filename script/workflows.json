@@ -1,4 +1,5 @@
 {
-  "all": ["schema", "import_sort", "format", "check_type"],
-  "pre-commit": ["schema", "import_sort", "format", "check_type"]
+  "all": ["schema", "import_sort", "format", "check_type", "clean"],
+  "pre-commit": ["schema", "import_sort", "format", "check_type"],
+  "commit": ["schema", "import_sort", "format", "check_type", "all_commit", "clean"]
 }
