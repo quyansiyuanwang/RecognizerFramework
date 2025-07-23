@@ -79,3 +79,12 @@ class ROI(BaseModel):
             "以键为变量, 值指定返回参数, 可在其他Job中使用use指定该job返回的参数"
         ),
     )
+
+
+__all__ = [
+    "ROI",
+    "ROI_Image",
+    "ROI_Region",
+    "ROI_Window",
+    "ROI_Debug",
+]

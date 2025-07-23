@@ -10,18 +10,10 @@ import win32process
 import win32ui
 from PIL import Image
 
-from src.Typehints.pydantic_pkg.roi import ROI
-from src.WorkflowEngine.Util.executor_works import get, update
-
-from ...Typehints import (
-    ROI,
-    Globals,
-    ROI_Image,
-    ROI_Region,
-    ROI_Window,
-    TaskReturnsDict,
-    WindowLocationDict,
-)
+from ...Models.globals import Globals
+from ...Models.roi import ROI, ROI_Image, ROI_Region, ROI_Window
+from ...Typehints.roi import WindowLocationDict
+from ...Typehints.structure import TaskReturnsDict
 from ..Controller import InputController, LogLevel, global_log_manager
 from ..Exceptions.crash import (
     ActionTypeError,
@@ -35,6 +27,7 @@ from ..Exceptions.crash import (
 )
 from ..Exceptions.ignorable import MatchingError
 from ..executor import Executor, Job, JobExecutor
+from ..Util.executor_works import get, update
 
 PILImage: TypeAlias = Image.Image
 

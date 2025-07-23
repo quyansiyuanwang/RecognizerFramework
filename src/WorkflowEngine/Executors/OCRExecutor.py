@@ -1,6 +1,7 @@
 from typing import Any, Dict
 
-from ...Typehints import Globals, TaskReturnsDict
+from ...Models.globals import Globals
+from ...Typehints.structure import TaskReturnsDict
 from ..executor import Executor, Job, JobExecutor
 
 

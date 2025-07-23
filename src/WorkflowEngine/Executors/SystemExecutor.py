@@ -1,15 +1,8 @@
 from typing import Any, Dict, List, Optional, cast
 
-from src.WorkflowEngine.Util.executor_works import update
-
-from ...Typehints import (
-    Globals,
-    LogLevelLiteral,
-    System,
-    System_Command,
-    System_Log,
-    TaskReturnsDict,
-)
+from ...Models.globals import Globals
+from ...Models.system import LogLevelLiteral, System, System_Command, System_Log
+from ...Typehints.structure import TaskReturnsDict
 from ..Controller import Logger, LogLevel, SystemController
 from ..Exceptions.crash import (
     ActionTypeError,
@@ -18,6 +11,7 @@ from ..Exceptions.crash import (
     MissingRequiredError,
 )
 from ..executor import Executor, Job, JobExecutor
+from ..Util.executor_works import update
 
 
 @JobExecutor.register("System")

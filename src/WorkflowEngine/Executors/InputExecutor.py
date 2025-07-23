@@ -1,18 +1,13 @@
 from typing import Any, Dict, Final, Literal, Set, cast
 
-from src.WorkflowEngine.Util.executor_works import update
-
-from ...Typehints import (
-    Globals,
-    Input_Keyboard,
-    Input_Mouse,
-    Input_Text,
-    TaskReturnsDict,
-)
+from ...Models.globals import Globals
+from ...Models.input import Input_Keyboard, Input_Mouse, Input_Text
+from ...Typehints.structure import TaskReturnsDict
 from ..Controller import InputController
 from ..Exceptions.crash import ActionTypeError, MissingRequiredError
 from ..Exceptions.ignorable import MouseMovePositionError
 from ..executor import Executor, Job, JobExecutor
+from ..Util.executor_works import update
 
 AVAILABLE_MOUSE_BUTTONS: Final[Set[str]] = {
     "LEFT",

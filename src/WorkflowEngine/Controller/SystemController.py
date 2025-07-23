@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 import pyautogui
 import pyperclip  # type: ignore[import-untyped]
 
-from ...WorkflowEngine.Controller.LogController import LogLevel
+from .LogController import LogLevel
 from .Runner import SafeRunner
 
 

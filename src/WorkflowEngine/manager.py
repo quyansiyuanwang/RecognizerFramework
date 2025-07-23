@@ -3,14 +3,10 @@ from collections.abc import Generator
 from functools import cached_property
 from typing import Any, Dict, Iterable, List, Optional, Self, Set, Tuple, TypeVar, Union
 
-from src.Typehints.structure import BaseObject
-
-from ..Typehints import Globals, Job, Next, Workflow
-from ..WorkflowEngine.Exceptions.crash import (
-    OverloadError,
-    RecursiveError,
-    WorkflowBeginError,
-)
+from ..Models.globals import Globals
+from ..Models.main import Job, Next, Workflow
+from ..Typehints.basic import BaseObject
+from .Exceptions.crash import OverloadError, RecursiveError, WorkflowBeginError
 
 _DEFAULT_T = TypeVar("_DEFAULT_T", bound=Any)
 

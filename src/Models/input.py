@@ -99,3 +99,11 @@ class Input(BaseModel):
     text: Optional[Input_Text] = Field(
         None, description="文本输入定义, 仅在type为Text时有效"
     )
+
+
+__all__ = [
+    "Input",
+    "Input_Mouse",
+    "Input_Keyboard",
+    "Input_Text",
+]

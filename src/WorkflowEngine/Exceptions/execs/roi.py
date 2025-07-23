@@ -1,6 +1,6 @@
 from typing import Optional
 
-from ....Typehints import Job
+from ....Models.main import Job
 from ..base import IgnorableError
 
 

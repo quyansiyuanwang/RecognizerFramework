@@ -2,7 +2,8 @@ from typing import Any, Dict, Literal, Mapping, Optional, TypeVar, Union
 
 from pydantic import BaseModel
 
-from ...Typehints import Delay, Globals
+from ...Models.globals import Globals
+from ...Models.main import Delay
 from ..Controller import SystemController
 
 

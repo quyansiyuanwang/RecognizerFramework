@@ -1,6 +1,6 @@
 from typing import Any, Callable, Dict, Iterable, Optional, Tuple, TypeVar
 
-from ...Typehints import LogConfig
+from ...Models.globals import LogConfig
 from .LogController import LogLevel, global_log_manager
 
 T = TypeVar("T")
