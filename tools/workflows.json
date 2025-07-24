@@ -1,0 +1,4 @@
+{
+  "all": ["import_sort", "format", "check_type", "clean"],
+  "commit": ["import_sort", "format", "check_type", "all_commit", "clean"]
+}

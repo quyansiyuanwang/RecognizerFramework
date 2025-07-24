@@ -6,20 +6,20 @@ from typing import Dict, List, Optional, Tuple
 
 from .util import Color
 
-scripts: Dict[str, str] = {}
+tools: Dict[str, str] = {}
 workflows: Dict[str, List[str]] = {}
 
 
 def load_workflows():
     global workflows
-    with open("script/workflows.json", "r", encoding="utf-8") as f:
+    with open("tools/workflows.json", "r", encoding="utf-8") as f:
         json_workflows = json.load(f)
         for name, workflow in json_workflows.items():
             workflows[name] = workflow
 
 
-def load_scripts():
-    global scripts
+def load_tools():
+    global tools
     current_dir: str = os.path.dirname(os.path.abspath(__file__))
 
     python_files: List[str] = [
@@ -33,21 +33,19 @@ def load_scripts():
     for py_file in python_files:
         file_path: str = os.path.join(current_dir, py_file)
         name: str = os.path.splitext(py_file)[0]
-        scripts[name] = file_path
+        tools[name] = file_path
 
 
-def run_script(script_name: str, extra_args: Optional[List[str]] = None):
-    global scripts
-    if script_name not in scripts:
-        raise ValueError(
-            f"{Color.RED}[ERR]Script '{script_name}' not found.{Color.RESET}"
-        )
+def run_tool(tool_name: str, extra_args: Optional[List[str]] = None):
+    global tools
+    if tool_name not in tools:
+        raise ValueError(f"{Color.RED}[ERR]Tool '{tool_name}' not found.{Color.RESET}")
     if extra_args is None:
         extra_args = []
-    script_path: str = scripts[script_name]
-    print(f"{Color.YELLOW}[WRN]Running {script_name}...{Color.RESET}")
-    subprocess.run(["python", script_path, *extra_args], check=True)
-    print(f"{Color.GREEN}[INF]Finished running {script_name}.{Color.RESET}")
+    tool_path: str = tools[tool_name]
+    print(f"{Color.YELLOW}[WRN]Running {tool_name}...{Color.RESET}")
+    subprocess.run(["python", tool_path, *extra_args], check=True)
+    print(f"{Color.GREEN}[INF]Finished running {tool_name}.{Color.RESET}")
 
 
 def run_workflow(workflow_name: str, extra_args: Optional[List[str]] = None):
@@ -57,36 +55,36 @@ def run_workflow(workflow_name: str, extra_args: Optional[List[str]] = None):
     if extra_args is None:
         extra_args = []
     workflow = workflows[workflow_name]
-    for script_name in workflow:
-        if script_name not in scripts:
-            print(f"Script '{script_name}' not found.")
+    for tool_name in workflow:
+        if tool_name not in tools:
+            print(f"Tool '{tool_name}' not found.")
             raise ValueError(
-                f"Script '{script_name}' not found in workflow '{workflow_name}'."
+                f"Tool '{tool_name}' not found in workflow '{workflow_name}'."
             )
-        run_script(script_name, extra_args=extra_args)
+        run_tool(tool_name, extra_args=extra_args)
 
 
 def display_help():
     print(f"{Color.CYAN}Available commands:")
     print(
-        "\t<name> - Run a specific script or workflow.\n"
+        "\t<name> - Run a specific tool or workflow.\n"
         "\t\tNOTE: This is case-sensitive and will prioritize workflows if names overlap."
     )
-    print("\tscript:<script_name> - Run a specific script.")
+    print("\ttool:<tool_name> - Run a specific tool.")
     print("\tworkflow:<workflow_name> - Run a specific workflow.")
     print(
-        f"{Color.YELLOW}Note: Use 'script:' or 'workflow:' prefix to specify the type explicitly.{Color.RESET}"
+        f"{Color.YELLOW}Note: Use 'tool:' or 'workflow:' prefix to specify the type explicitly.{Color.RESET}"
     )
 
 
 def arg_parser() -> Tuple[argparse.Namespace, List[str]]:
     parser = argparse.ArgumentParser(
-        description="Run scripts or workflows from the script directory."
+        description="Run tools or workflows from the tool directory."
     )
     parser.add_argument(
         "name",
         nargs="?",
-        help="Name of the script or workflow to run. Use 'script:<name>' or 'workflow:<name>' for explicit selection.",
+        help="Name of the tool or workflow to run. Use 'tool:<name>' or 'workflow:<name>' for explicit selection.",
         default=None,
     )
     return parser.parse_known_args()
@@ -95,8 +93,8 @@ def arg_parser() -> Tuple[argparse.Namespace, List[str]]:
 def display_found_items():
     print(end=f"{Color.CYAN}")
     print("--" * 20)
-    print(f"Scripts found:{Color.WHITE}")
-    for name, path in scripts.items():
+    print(f"Tools found:{Color.WHITE}")
+    for name, path in tools.items():
         print(f"{Color.MAGENTA}{name}{Color.RESET}: {Color.GREEN}{path}{Color.RESET}")
 
     print(end=f"{Color.CYAN}")
@@ -116,7 +114,7 @@ def operate() -> str:
     display_found_items()
 
     name = input(
-        f"{Color.YELLOW}Enter the workflow or script name to run: {Color.RESET}"
+        f"{Color.YELLOW}Enter the workflow or tool name to run: {Color.RESET}"
     ).strip()
     return name
 
@@ -133,21 +131,21 @@ def main():
     if name.startswith("workflow:"):
         run_workflow(name.split("workflow:")[1].strip())
         return
-    elif name.startswith("script:"):
-        run_script(name.split("script:")[1].strip())
+    elif name.startswith("tool:"):
+        run_tool(name.split("tool:")[1].strip())
         return
 
     if name in workflows:
         run_workflow(name, extra_args=unknown)
-    elif name in scripts:
-        run_script(name, extra_args=unknown)
+    elif name in tools:
+        run_tool(name, extra_args=unknown)
     else:
         raise ValueError(
-            f"{Color.RED}[ERR]'{name}' is neither a script nor a workflow.{Color.RESET}"
+            f"{Color.RED}[ERR]'{name}' is neither a tool nor a workflow.{Color.RESET}"
         )
 
 
 if __name__ == "__main__":
-    load_scripts()
+    load_tools()
     load_workflows()
     main()

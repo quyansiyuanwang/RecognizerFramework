@@ -1,5 +1,5 @@
-from .main import run
 from .CLI import cli
+from .main import run
 
 __all__ = [
     # modules

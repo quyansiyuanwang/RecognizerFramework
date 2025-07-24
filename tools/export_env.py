@@ -1,13 +1,12 @@
-import subprocess
 import re
-
+import subprocess
 
 # conda export
 subprocess.run(
-    ["conda", "env", "export", "--file", "./environment.yml"],
+    ["conda", "env", "export", "--file", "deps/environment.yml"],
     check=True,
 )
-with open("./environment.yml", "r+") as f:
+with open("deps/environment.yml", "r+") as f:
     content = f.read()
     # remove the prefix line
     pattern = r"^prefix: .*\n?"
@@ -20,6 +19,6 @@ with open("./environment.yml", "r+") as f:
 # pip freeze
 subprocess.run(
     ["pip", "freeze"],
-    stdout=open("requirements.txt", "w"),
+    stdout=open("deps/requirements.txt", "w"),
     check=True,
 )
