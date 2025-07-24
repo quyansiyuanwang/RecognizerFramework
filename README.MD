@@ -1,5 +1,13 @@
 # RecognizerFramework
 
+![main language](https://img.shields.io/badge/python-3.13-blue?logo=python)
+![license](https://img.shields.io/github/license/quyansiyuanwang/RecognizerFramework.svg)
+![main drive](https://img.shields.io/badge/drive-json-brightgreen.svg)
+![doc last](https://img.shields.io/badge/docs%20last-2025--07--24-blue.svg)
+![platform](https://img.shields.io/badge/platform-windows-blueviolet.svg)
+![repo size](https://img.shields.io/github/repo-size/quyansiyuanwang/RecognizerFramework)
+![last commit](https://img.shields.io/github/last-commit/quyansiyuanwang/RecognizerFramework)
+
 RecognizerFramework 是一个模块化的工作流引擎框架，支持通过 JSON 配置文件定义自动化任务流，涵盖区域识别、输入操作、系统操作等多种任务类型，并具备良好的扩展性和可维护性。
 
 ---
@@ -29,7 +37,7 @@ RecognizerFramework 是一个模块化的工作流引擎框架，支持通过 JS
 2. 或使用 pip 安装：
 
    ```bash
-   pip install -r requirement.txt
+   pip install -r requirements.txt
    ```
 
 ### 运行示例工作流
@@ -185,6 +193,10 @@ RecognizerFramework 是一个模块化的工作流引擎框架，支持通过 JS
    ```
 
 3. 提交 Pull Request 并描述您的更改。
+
+---
+
+[![Contributors](https://contrib.rocks/image?repo=quyansiyuanwang/RecognizerFramework)](https://github.com/quyansiyuanwang/RecognizerFramework/graphs/contributors)
 
 ---
 
