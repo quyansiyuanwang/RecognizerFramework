@@ -37,7 +37,7 @@ RecognizerFramework 是一个模块化的工作流引擎框架，支持通过 JS
 2. 或使用 pip 安装：
 
    ```bash
-   pip install -r requirement.txt
+   pip install -r requirements.txt
    ```
 
 ### 运行示例工作流
