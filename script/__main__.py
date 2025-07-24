@@ -2,7 +2,7 @@ import argparse
 import json
 import os
 import subprocess
-from typing import Dict, List
+from typing import Dict, List, Optional, Tuple
 
 from .util import Color
 
@@ -36,30 +36,32 @@ def load_scripts():
         scripts[name] = file_path
 
 
-def run_script(script_name: str):
+def run_script(script_name: str, extra_args: Optional[List[str]] = None):
     global scripts
     if script_name not in scripts:
         print(f"{Color.RED}[ERR]Script '{script_name}' not found.{Color.RESET}")
         return
-
+    if extra_args is None:
+        extra_args = []
     script_path: str = scripts[script_name]
     print(f"{Color.YELLOW}[WRN]Running {script_name}...{Color.RESET}")
-    subprocess.run(["python", script_path], check=True)
+    subprocess.run(["python", script_path, *extra_args], check=True)
     print(f"{Color.GREEN}[INF]Finished running {script_name}.{Color.RESET}")
 
 
-def run_workflow(workflow_name: str):
+def run_workflow(workflow_name: str, extra_args: Optional[List[str]] = None):
     global workflows
     if workflow_name not in workflows:
         print(f"Workflow '{workflow_name}' not found.")
         return
-
+    if extra_args is None:
+        extra_args = []
     workflow = workflows[workflow_name]
     for script_name in workflow:
         if script_name not in scripts:
             print(f"Script '{script_name}' not found.")
             continue
-        run_script(script_name)
+        run_script(script_name, extra_args=extra_args)
 
 
 def display_help():
@@ -75,7 +77,7 @@ def display_help():
     )
 
 
-def arg_parser():
+def arg_parser() -> Tuple[argparse.Namespace, List[str]]:
     parser = argparse.ArgumentParser(
         description="Run scripts or workflows from the script directory."
     )
@@ -85,7 +87,7 @@ def arg_parser():
         help="Name of the script or workflow to run. Use 'script:<name>' or 'workflow:<name>' for explicit selection.",
         default=None,
     )
-    return parser.parse_args()
+    return parser.parse_known_args()
 
 
 def display_found_items():
@@ -118,7 +120,7 @@ def operate() -> str:
 
 
 def main():
-    args = arg_parser()
+    args, unknown = arg_parser()
     name: str = args.name
     if not name:
         name = operate()
@@ -134,9 +136,9 @@ def main():
         return
 
     if name in workflows:
-        run_workflow(name)
+        run_workflow(name, extra_args=unknown)
     elif name in scripts:
-        run_script(name)
+        run_script(name, extra_args=unknown)
     else:
         print(
             f"{Color.RED}[ERR]'{name}' is neither a script nor a workflow.{Color.RESET}"
