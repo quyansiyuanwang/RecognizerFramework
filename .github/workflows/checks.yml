@@ -2,9 +2,11 @@ on:
   push:
     paths-ignore:
       - "docs/**"
+      - "README.MD"
   pull_request:
     paths-ignore:
       - "docs/**"
+      - "README.MD"
 
 jobs:
   check-type-and-style:
