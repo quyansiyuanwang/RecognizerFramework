@@ -1,3 +1,4 @@
 import subprocess
+import sys
 
-subprocess.run(["black", "**/*.py"], check=True, shell=True)
+subprocess.run(["black", "**/*.py", *sys.argv[1:]], check=True, shell=True)
