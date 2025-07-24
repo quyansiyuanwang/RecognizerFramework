@@ -11,6 +11,7 @@ def execute_workflow(
             print(result)
     elif not await_all:
         tuple(result for result in results)  # Ensure results are processed
+        i: str = 1
 
 
 def run(path: str, await_all: bool = False, verbose: bool = True) -> None:
