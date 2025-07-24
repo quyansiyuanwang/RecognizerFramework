@@ -7,7 +7,7 @@ on:
       - "docs/**"
 
 jobs:
-  python-type-check:
+  check-type-and-style:
     runs-on: windows-latest
     steps:
       - name: Checkout code
@@ -35,6 +35,29 @@ jobs:
       - name: Check code format
         run: |
           python -m tools format --check
+
+      - name: Clean caches
+        run: |
+          python -m tools clean
+
+  run-tests:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.13
+
+      - name: Pre-Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Install dependencies
+        run: |
+          python deps\install_deps.py
 
       - name: Run tests
         run: |
