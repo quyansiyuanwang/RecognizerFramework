@@ -18,22 +18,23 @@ jobs:
         with:
           python-version: 3.13
 
-      - name: Install dependencies
+      - name: Pre-Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Install pre-dependencies
-        run: |
           pip install mypy black isort
+
+      - name: Install dependencies
+        run: |
+          python deps\install_deps.py
+          python deps\install_mypy_types.py
 
       - name: Run type check
         run: |
-          python -m script check_type
+          python -m tools check_type
 
       - name: Check code format
         run: |
-          python -m script format --check
+          python -m tools format --check
 
       - name: Run tests
         run: |
@@ -41,4 +42,4 @@ jobs:
 
       - name: Clean caches
         run: |
-          python -m script clean
+          python -m tools clean
