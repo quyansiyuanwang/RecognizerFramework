@@ -1,5 +1,5 @@
 {
-    "$schema": "../../workflow/schema/generated.schema.json",
+    "$schema": "../../../workflow/schema/generated.schema.json",
     "begin": "",
     "jobs": {
         "System-Command": {
