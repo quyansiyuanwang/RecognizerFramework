@@ -50,9 +50,11 @@ _EXEC_YT = TypeVar("_EXEC_YT")
 _EXEC_ST = TypeVar("_EXEC_ST", bound=None, default=None)
 _EXEC_RT = TypeVar("_EXEC_RT", bound=None, default=None)
 
+_EXEC_TYPE = TypeVar("_EXEC_TYPE", bound=Type[Executor], default=Type[Executor])
 
-class JobExecutor(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT]):
-    executors: Dict[str, Type[Executor]] = {}
+
+class JobExecutor(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _EXEC_TYPE]):
+    executors: Dict[str, _EXEC_TYPE] = {}
 
     def __init__(self, job: Job, globals: Globals) -> None:
         self.job: Job = job
@@ -81,10 +83,11 @@ class JobExecutor(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT]):
                 ) from e
 
     @classmethod
-    def register(cls, name: str) -> Callable[..., type[Executor]]:
-        def decorator(executor: Union[Type[Executor], Any]) -> type[Executor]:
+    def register(cls, name: str) -> Callable[[_EXEC_TYPE], _EXEC_TYPE]:
+        def decorator(executor: _EXEC_TYPE) -> _EXEC_TYPE:
             if not issubclass(executor, Executor):
                 raise TypeError(f"{name} must be a subclass of Executor")
+
             cls.executors[name] = executor
             return executor
 

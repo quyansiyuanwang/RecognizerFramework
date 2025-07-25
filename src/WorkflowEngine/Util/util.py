@@ -1,4 +1,4 @@
-from typing import Callable, Mapping, Tuple, TypeVar
+from typing import Any, Callable, Mapping, Optional, Tuple, TypeVar
 
 _DF_K = TypeVar("_DF_K")
 _DF_V = TypeVar("_DF_V")
@@ -31,3 +31,14 @@ def dict_filter_values(
         d,
         lambda item: (item[1] == v if not reverse else item[1] != v),
     )
+
+
+def convert_float(value: Any) -> Optional[float]:
+    if isinstance(value, (float, int)):
+        return float(value)
+    if isinstance(value, str):
+        try:
+            return float(value)
+        except ValueError:
+            pass
+    return None
