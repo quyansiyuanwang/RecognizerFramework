@@ -3,6 +3,9 @@ on:
     paths-ignore:
       - "docs/**"
       - "README.MD"
+    branches-ignore:
+      - "main"
+
   pull_request:
     paths-ignore:
       - "docs/**"
