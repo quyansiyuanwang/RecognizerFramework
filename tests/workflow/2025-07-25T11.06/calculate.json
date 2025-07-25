@@ -1,0 +1,37 @@
+{
+  "$schema": "../../../workflow/schema/generated.schema.json",
+  "begin": "GET-POS",
+  "jobs": {
+    "GET-POS": {
+      "type": "Calculate",
+      "calculate": {
+        "expressions": {
+          "a": 114,
+          "b": 514
+        },
+        "returns": { "l": "a", "r": "b" }
+      },
+      "next": "TEST"
+    },
+    "TEST": {
+      "type": "Calculate",
+      "calculate": {
+        "expressions": {
+          "center_x": "(l + r) / 2"
+        },
+        "returns": { "cc": "center_x" }
+      },
+      "use": "GET-POS",
+      "next": "END"
+    },
+    "END": {
+      "type": "Calculate",
+      "calculate": {
+        "expressions": {
+          "result": "cc * 2"
+        }
+      },
+      "use": "TEST"
+    }
+  }
+}
