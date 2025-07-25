@@ -3,9 +3,10 @@ from collections.abc import Generator
 from functools import cached_property
 from typing import Any, Dict, Iterable, List, Optional, Self, Set, Tuple, TypeVar, Union
 
+from ..Util.util import to_indent_str
+
 from ..Models.globals import Globals
 from ..Models.main import Job, Next, Workflow
-from ..Typehints.basic import BaseObject
 from .Exceptions.crash import OverloadError, RecursiveError, WorkflowBeginError
 
 _DEFAULT_T = TypeVar("_DEFAULT_T", bound=Any)
@@ -178,18 +179,8 @@ class WorkflowManager:
         raise StopIteration
 
     def __repr__(self) -> str:
-        def to_str(obj: Union[Dict[str, Any], BaseObject], level: int = 0) -> str:
-            pad = "  " * level
-            if isinstance(obj, dict):
-                items: List[str] = []
-                for k, v in obj.items():
-                    if v:
-                        items.append(f"{pad}  {k}: {to_str(v, level + 1)}")
-                return "{\n" + ",\n".join(items) + f"\n{pad}}}"
-            return repr(obj)
-
         jobs_repr = ",\n".join(
-            f"{job.name}: {to_str(job.model_dump(exclude_unset=True))}"
+            f"{job.name}: {to_indent_str(job.model_dump(exclude_unset=True))}"
             for job in self.jobs
         )
         return f"WorkflowManager(path={self.path}, jobs={{\n{jobs_repr}\n}})"
