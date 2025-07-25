@@ -75,8 +75,4 @@ def cli():
         args = args_parse()
     else:
         args = input_args()
-    try:
-        run(args.path, await_all=args.await_all, verbose=args.verbose)
-    except Exception as e:
-        print(f"Error: {e}", file=sys.stderr)
-        sys.exit(1)
+    run(args.path, await_all=args.await_all, verbose=args.verbose)
