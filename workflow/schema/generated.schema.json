@@ -56,6 +56,56 @@
       "title": "Before",
       "type": "object"
     },
+    "Calculate": {
+      "properties": {
+        "expressions": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          },
+          "description": "计算表达式字典, 键为变量名, 值为表达式字符串或直接的数值, 表达式可以包含其他变量名变量直接用字母组合表示, 例如: {'a': 'b * b - c', 'b': 'a ** 0.5 + 1'}可用表达式: 加法'+', 减法'-', 乘法'*', 真除'/', 次方'**', 整除'//', 取模'%'函数调用: 以$开头, 例如: {'c': '$sqrt(a)'}",
+          "title": "Expressions",
+          "type": "object"
+        },
+        "variables": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "description": "计算中使用的变量及其值",
+          "title": "Variables",
+          "type": "object"
+        },
+        "returns": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "计算结果返回的变量名, 键为新变量名, 值为表达式变量名",
+          "title": "Returns",
+          "type": "object"
+        }
+      },
+      "required": [
+        "expressions"
+      ],
+      "title": "Calculate",
+      "type": "object"
+    },
     "Delay": {
       "properties": {
         "pre": {
@@ -331,13 +381,14 @@
           "type": "string"
         },
         "type": {
-          "description": "任务类型, 可选: ROI(区域识别), OCR(文字识别), Input(输入操作), System(系统操作), Overload(继承)",
+          "description": "任务类型, 可选: ROI(区域识别), OCR(文字识别), Input(输入操作), System(系统操作), Overload(继承), Calculate(计算)",
           "enum": [
             "ROI",
             "OCR",
             "Input",
             "System",
-            "Overload"
+            "Overload",
+            "Calculate"
           ],
           "title": "Type",
           "type": "string"
@@ -377,6 +428,18 @@
           ],
           "default": null,
           "description": "系统操作定义, 仅在type为System时有效"
+        },
+        "calculate": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Calculate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "计算任务定义, 仅在type为Calculate时有效"
         },
         "overload": {
           "default": "",

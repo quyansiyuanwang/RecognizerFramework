@@ -2,6 +2,7 @@ from typing import Dict, List, Literal, Optional, Union
 
 from pydantic import BaseModel, Field
 
+from .calculate import Calculate
 from .globals import Globals
 from .input import Input
 from .roi import ROI
@@ -56,9 +57,9 @@ class Job(BaseModel):
     )
 
     # include
-    type: Literal["ROI", "OCR", "Input", "System", "Overload"] = Field(
+    type: Literal["ROI", "OCR", "Input", "System", "Overload", "Calculate"] = Field(
         ...,
-        description="任务类型, 可选: ROI(区域识别), OCR(文字识别), Input(输入操作), System(系统操作), Overload(继承)",
+        description="任务类型, 可选: ROI(区域识别), OCR(文字识别), Input(输入操作), System(系统操作), Overload(继承), Calculate(计算)",
     )
 
     roi: Optional[ROI] = Field(
@@ -71,6 +72,9 @@ class Job(BaseModel):
     )
     system: Optional[System] = Field(
         default=None, description="系统操作定义, 仅在type为System时有效"
+    )
+    calculate: Optional[Calculate] = Field(
+        default=None, description="计算任务定义, 仅在type为Calculate时有效"
     )
 
     overload: str = Field(
