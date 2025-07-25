@@ -2,6 +2,8 @@ from typing import Dict, List, Literal, Optional, Union
 
 from pydantic import BaseModel, Field
 
+from ..Util.util import to_indent_str
+
 from .calculate import Calculate
 from .globals import Globals
 from .input import Input
@@ -107,6 +109,12 @@ class Job(BaseModel):
         default=str(),
         description=("指定一个Job, 可使用=该job返回的参数"),
     )
+
+    def __repr__(self) -> str:
+        return f"Job({self.name}): {to_indent_str(self.model_dump(exclude_unset=True))}"
+
+    def __str__(self) -> str:
+        return self.__repr__()
 
 
 class Workflow(BaseModel):
