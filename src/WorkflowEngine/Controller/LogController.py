@@ -105,6 +105,7 @@ class Logger:
         else:
             color = Color.RESET if colorful else ""
 
+        tail = "" if not colorful else Color.RESET
         msg_type = "][".join(Logger.ABBREVIATIONS.get(l, "UNK") for l in levels)
         date_formatted = datetime.now().strftime(log_config.datefmt)
         params = {
@@ -117,7 +118,7 @@ class Logger:
         if file:
             with open(file, "a", encoding="utf-8") as f:
                 f.write(final + "\n")
-        print(f"{color}{final}{Color.RESET}")
+        print(f"{color}{final}{tail}")
 
     @staticmethod
     def error(message: str, colorful: bool = True) -> None:
