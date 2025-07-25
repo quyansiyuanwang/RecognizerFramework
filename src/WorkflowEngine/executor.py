@@ -494,6 +494,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
             if self.switch_next_job() is None:
                 break
 
+        self._log_event("JobsCompletion", jobs_chain=" -> ".join(self.work_chain))
         return [self.callback(result["result"]) for result in self.results.values()]
 
     def await_run_all(self) -> List[_CB_SF_V]:
