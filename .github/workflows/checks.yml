@@ -1,15 +1,10 @@
 on:
-  push:
-    paths-ignore:
-      - "docs/**"
-      - "README.MD"
-    branches-ignore:
-      - "main"
-
   pull_request:
     paths-ignore:
       - "docs/**"
       - "README.MD"
+
+  workflow_dispatch:
 
 jobs:
   check-type-and-style:
