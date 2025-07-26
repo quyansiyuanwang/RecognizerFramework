@@ -1,14 +1,41 @@
 on:
   pull_request:
-    paths-ignore:
-      - "docs/**"
-      - "README.MD"
-
   workflow_dispatch:
 
 jobs:
+  check-md-files:
+    runs-on: windows-latest
+    outputs:
+      only_md: ${{ steps.check.outputs.only_md }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch base branch
+        run: git fetch origin $env:GITHUB_BASE_REF
+        shell: pwsh
+
+      - name: Check if only .md files changed
+        id: check
+        shell: pwsh
+        run: |
+          $base = $env:GITHUB_BASE_REF
+          $head = $env:GITHUB_SHA
+          $result = python "tools/GitCheckDiff/diff_only_docs.py" origin/$base $head
+          if ($result -eq 'only-md') {
+            echo "only_md=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          } else {
+            echo "only_md=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          }
+          exit 0
+
   check-type-and-style:
     runs-on: windows-latest
+    if: |
+      github.event_name != 'pull_request' || needs.check-md-files.outputs.only_md != 'true'
+    needs: [check-md-files]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -42,6 +69,9 @@ jobs:
 
   run-tests:
     runs-on: windows-latest
+    if: |
+      github.event_name != 'pull_request' || needs.check-md-files.outputs.only_md != 'true'
+    needs: [check-md-files]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
