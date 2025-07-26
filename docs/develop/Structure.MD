@@ -86,15 +86,18 @@
 
 ## tools/ 工具目录
 
-- **all_commit.py**：提交历史相关工具。
-- **check_type.py**：类型检查脚本。
-- **clean.py**：清理缓存、临时文件等。
-- **export_env.py**：导出环境依赖。
-- **format.py**：代码格式化脚本。
-- **import_sort.py**：导入排序脚本。
-- **workflows.json**：工具工作流配置。
 - **\_\_init\_\_.py**、**\_\_main\_\_.py**：包初始化与主入口。
-- **util/**：工具通用函数模块。
+- **GitCheckDiff/**
+  - **diff_only_docs.py**：仅检测 .md 文件变更的工具脚本。
+- **SingleScripts/**
+  - **all_commit.py**：提交历史相关工具。
+  - **check_type.py**：类型检查脚本。
+  - **clean.py**：清理缓存、临时文件等。
+  - **export_env.py**：导出环境依赖。
+  - **format.py**：代码格式化脚本。
+  - **import_sort.py**：导入排序脚本。
+  - **workflows.json**：工具工作流配置。
+- **util/**
   - **util.py**：工具函数实现。
   - **\_\_init\_\_.py**：util 包初始化。
 
