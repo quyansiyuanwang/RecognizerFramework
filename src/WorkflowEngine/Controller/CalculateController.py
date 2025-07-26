@@ -116,7 +116,7 @@ class CalculateController:
             return known[sentence]
         exp_res = expressions.get(sentence)
         if isinstance(exp_res, (float, int)) or (
-            exp_res is not None and convert_float(exp_res)
+            exp_res is not None and convert_float(exp_res) is not None
         ):
             return float(exp_res)
         return exp_res
@@ -177,7 +177,7 @@ class CalculateController:
                     for arg in args:
                         v = cls._get_expression(
                             sentence=arg, known=known, expressions=expressions
-                        ) or convert_float(arg)
+                        )
                         if v is None:
                             raise ValueError(
                                 f"Unknown variable '{arg}' in function call '{func_name}'"
@@ -236,8 +236,8 @@ class CalculateController:
         for key, expression in expressions.items():
             if isinstance(expression, (float, int)):
                 calculated_values[key] = float(expression)
-            else:
-                calculated_values[key] = cls._calculate_expression(
-                    expression, calculated_values, expressions
-                )
+                continue
+            calculated_values[key] = cls._calculate_expression(
+                expression, calculated_values, expressions
+            )
         return calculated_values
