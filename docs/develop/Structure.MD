@@ -9,7 +9,7 @@
 - **requirement.txt**：pip 依赖包列表，适用于 pip 环境。
 - **test.py**：测试脚本，快速验证主要功能。
 
-## doc/ 文档目录
+## docs/ 文档目录
 
 - **develop/Structure.MD**：项目结构说明（本文件）。
 - **manual/JsonField.MD**：JSON 配置字段详细说明，包含所有可用字段、类型、示例。
@@ -28,6 +28,7 @@
 ## src/ 核心代码
 
 - **Models/**：数据模型模块，基于 Pydantic 的类型定义和 JSON 解析。
+
   - **globals.py**：全局配置模型。
   - **input.py**：输入任务模型。
   - **main.py**：工作流模型，包括 `Workflow`、`Job` 等核心定义。
@@ -35,11 +36,13 @@
   - **system.py**：系统任务模型。
 
 - **Typehints/**：类型提示与 Pydantic 类型定义。
+
   - **basic.py**：基础类型定义。
   - **roi.py**：ROI 类型定义。
   - **structure.py**：结构相关类型定义。
 
 - **Util/**：通用工具函数。
+
   - **util.py**：常用工具函数集合。
 
 - **WorkflowEngine/**：工作流引擎。
@@ -71,21 +74,38 @@
     - **style.py**：样式工具。
     - **util.py**：引擎通用工具。
 
+## tests/ 测试目录
+
+- **test_manager.py**：主测试脚本。
+- **\_\_init\_\_.py**：包初始化。
+- **executor/**：预留执行器相关测试（当前为空）。
+- **workflow/**：工作流相关测试用例。
+  - **`year`-`month`-`day`T`hour`.`minute`/**：按时间分组的测试集。
+    - **\*.json**：测试输入。
+    - **\*.answer**：期望输出。
+
+## tools/ 工具目录
+
+- **all_commit.py**：提交历史相关工具。
+- **check_type.py**：类型检查脚本。
+- **clean.py**：清理缓存、临时文件等。
+- **export_env.py**：导出环境依赖。
+- **format.py**：代码格式化脚本。
+- **import_sort.py**：导入排序脚本。
+- **workflows.json**：工具工作流配置。
+- **\_\_init\_\_.py**、**\_\_main\_\_.py**：包初始化与主入口。
+- **util/**：工具通用函数模块。
+  - **util.py**：工具函数实现。
+  - **\_\_init\_\_.py**：util 包初始化。
+
+> 存放各类开发辅助工具，如脚本、插件等。
+
 ## workflow/ 工作流配置
 
 - 各类工作流配置文件（\*.json），定义自动化流程。
 - **schema/**：JSON Schema 文件夹。
   - **generated.schema.json**：根据 Pydantic 类型自动生成的 schema 文件。
 - **tests/**：工作流相关测试用例。
-
-## images/ 资源目录
-
-- 项目用到的图片资源，按业务/模块分类存放。
-- 如 `wechat.png`、`win.png` 等。
-
-## log/ 日志目录
-
-- 运行日志文件输出目录，如 `example.log`、`test.log`。
 
 ---
 

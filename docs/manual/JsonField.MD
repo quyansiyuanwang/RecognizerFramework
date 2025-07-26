@@ -16,6 +16,7 @@
     - [ROI 任务](#roi-任务)
     - [Input 任务](#input-任务)
     - [System 任务](#system-任务)
+    - [Calculate 任务](#calculate-任务)
   - [通用字段](#通用字段)
     - [delay](#delay)
     - [after](#after)
@@ -78,6 +79,7 @@
 | delay       | object        | 延时设置，包含 pre、post。                                           |
 | limits      | object        | 执行限制，包含 maxCount、maxFailure、maxSuccess、exit。              |
 | needs       | array         | 依赖的前置任务名，全部完成后才会执行本任务。                         |
+| calculate   | object/null   | 计算任务定义，仅 type 为 Calculate 时有效。                          |
 
 #### type 可选值
 
@@ -86,15 +88,16 @@
 - `Input`：输入操作
 - `System`：系统操作
 - `Overload`：继承其他任务
+- `Calculate`：表达式计算任务
 
 ---
 
 ### before 字段
 
-| 字段名        | 类型    | 说明                 |
-| ------------- | ------- | -------------------- |
-| tasks         | array   | 前置任务名列表       |
-| ignore_errors | boolean | 是否忽略错误         |
+| 字段名        | 类型    | 说明           |
+| ------------- | ------- | -------------- |
+| tasks         | array   | 前置任务名列表 |
+| ignore_errors | boolean | 是否忽略错误   |
 
 ---
 
@@ -177,6 +180,42 @@
 ---
 
 ### System 任务
+
+### Calculate 任务
+
+| 字段名      | 类型   | 说明                                                                       |
+| ----------- | ------ | -------------------------------------------------------------------------- |
+| expressions | object | 计算表达式字典，键为变量名，值为表达式字符串或数值。表达式可引用其他变量。 |
+| variables   | object | 计算中使用的变量及其初始值（可选）。                                       |
+| returns     | object | 计算结果返回的变量名映射，键为新变量名，值为表达式变量名（可选）。         |
+
+**表达式支持：**
+
+- 支持加法`+`、减法`-`、乘法`*`、除法`/`、次方`**`、整除`//`、取模`%`。
+- 支持以`$`开头的数学函数，如`$sqrt(a)`、`$pow(b,2)`。
+- 表达式可嵌套引用其他变量。
+
+**示例：**
+
+```json
+{
+  "type": "Calculate",
+  "calculate": {
+    "expressions": {
+      "a": "b * b - c",
+      "b": "$sqrt(x) + 1",
+      "c": 2
+    },
+    "variables": {
+      "x": 9
+    },
+    "returns": {
+      "result": "a"
+    }
+  },
+  "description": "计算表达式任务"
+}
+```
 
 | 字段名   | 类型   | 说明                                                  |
 | -------- | ------ | ----------------------------------------------------- |

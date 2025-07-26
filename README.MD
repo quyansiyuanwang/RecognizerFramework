@@ -16,7 +16,7 @@ RecognizerFramework 是一个模块化的工作流引擎框架，支持通过 JS
 ## 功能特性
 
 - **模块化设计**：核心结构体、控制器、执行器分层，便于扩展和维护。
-- **多任务类型支持**：支持区域识别（ROI）、OCR、输入（键盘/鼠标）、系统操作等。
+- **多任务类型支持**：支持区域识别（ROI）、OCR、输入（键盘/鼠标）、系统操作、表达式计算（Calculate）等。
 - **JSON 配置驱动**：通过 JSON 文件灵活定义任务流，支持分支、依赖、延时、限制等高级特性。
 - **日志管理**：多级别日志输出（DEBUG/INFO/WARNING/ERROR/CRITICAL），支持彩色和文件日志。
 - **类型安全**：基于 Pydantic 类型校验，保障配置和运行安全。
@@ -68,7 +68,7 @@ RecognizerFramework 是一个模块化的工作流引擎框架，支持通过 JS
 
 ### Job 字段
 
-- **type**：任务类型（如 ROI、OCR、Input、System、Overload 等）。
+- **type**：任务类型（如 ROI、OCR、Input、System、Overload、Calculate 等）。
 - **description**：任务描述。
 - **before**：前置任务配置，支持 tasks、ignore_errors。
 - **after**：后置任务配置，支持 success、failure、always、ignore_errors。
@@ -76,7 +76,7 @@ RecognizerFramework 是一个模块化的工作流引擎框架，支持通过 JS
 - **delay**：延时设置（pre、post）。
 - **limits**：执行限制（maxCount、maxFailure、maxSuccess、exit）。
 - **needs**：依赖的前置任务名。
-- 任务类型相关字段（如 roi、input、system 等）详见 [JSON 字段使用文档](doc/manual/JsonField.MD)。
+- 任务类型相关字段（如 roi、input、system、calculate 等）详见 [JSON 字段使用文档](doc/manual/JsonField.MD)。
 
 ---
 
