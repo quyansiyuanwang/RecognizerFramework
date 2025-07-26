@@ -16,7 +16,7 @@ RecognizerFramework 是一个模块化的工作流引擎框架，支持通过 JS
 ## 功能特性
 
 - **模块化设计**：核心结构体、控制器、执行器分层，便于扩展和维护。
-- **多任务类型支持**：支持区域识别（ROI）、OCR、输入（键盘/鼠标）、系统操作等。
+- **多任务类型支持**：支持区域识别（ROI）、OCR、输入（键盘/鼠标）、系统操作、表达式计算（Calculate）等。
 - **JSON 配置驱动**：通过 JSON 文件灵活定义任务流，支持分支、依赖、延时、限制等高级特性。
 - **日志管理**：多级别日志输出（DEBUG/INFO/WARNING/ERROR/CRITICAL），支持彩色和文件日志。
 - **类型安全**：基于 Pydantic 类型校验，保障配置和运行安全。
@@ -68,7 +68,7 @@ RecognizerFramework 是一个模块化的工作流引擎框架，支持通过 JS
 
 ### Job 字段
 
-- **type**：任务类型（如 ROI、OCR、Input、System、Overload 等）。
+- **type**：任务类型（如 ROI、OCR、Input、System、Overload、Calculate 等）。
 - **description**：任务描述。
 - **before**：前置任务配置，支持 tasks、ignore_errors。
 - **after**：后置任务配置，支持 success、failure、always、ignore_errors。
@@ -76,7 +76,7 @@ RecognizerFramework 是一个模块化的工作流引擎框架，支持通过 JS
 - **delay**：延时设置（pre、post）。
 - **limits**：执行限制（maxCount、maxFailure、maxSuccess、exit）。
 - **needs**：依赖的前置任务名。
-- 任务类型相关字段（如 roi、input、system 等）详见 [JSON 字段使用文档](doc/manual/JsonField.MD)。
+- 任务类型相关字段（如 roi、input、system、calculate 等）详见 [JSON 字段使用文档](doc/manual/JsonField.MD)。
 
 ---
 
@@ -139,46 +139,51 @@ RecognizerFramework 是一个模块化的工作流引擎框架，支持通过 JS
 
 ## 项目结构
 
-详细结构请见 [项目结构文档](doc/develop/Structure.MD)。主要目录如下：
+本项目采用模块化设计，分为核心代码、脚本工具、文档、配置等部分，便于维护和扩展。以下为主要目录和文件说明：
 
 ### 根目录
 
-- main.py：项目主入口。
-- environment.yml：conda 环境依赖配置。
-- requirement.txt：pip 依赖包列表。
+- **main.py**：项目主入口，启动整体流程。
+- **environment.yml**：conda 环境依赖配置，便于一键创建开发环境。
+- **requirement.txt**：pip 依赖包列表，适用于 pip 环境。
+- **test.py**：测试脚本，快速验证主要功能。
 
-### doc/
+### docs/ 文档目录
 
-- develop/Structure.MD：项目结构说明。
-- manual/JsonField.MD：JSON 字段详细说明。
+- **develop/Structure.MD**：项目结构说明。
+- **manual/JsonField.MD**：JSON 配置字段详细说明。
 
-### script/
+### script/ 脚本与工具
 
-- **main.py**：脚本主入口。
-- check_type.py、format.py、import_sort.py、schema.py：开发辅助工具。
-- workflows.json：脚本工作流配置。
-- util/：通用工具函数。
+- **\_\_main\_\_.py**：脚本主入口，支持 `python -m script` 执行批量工具。
+- **check_type.py**、**format.py**、**import_sort.py**、**schema.py**：开发辅助工具。
+- **workflows.json**：脚本工作流配置示例。
+- **util/**：通用工具函数模块（含 util.py）。
 
-### src/
+### src/ 核心代码
 
-- Models/：数据模型模块。
-- Structure/：核心结构体定义。
-- Typehints/：类型提示与 Pydantic 类型定义。
-- Util/：通用工具函数。
-- WorkflowEngine/：工作流引擎（控制器、执行器、异常等）。
+- **Models/**：数据模型模块，基于 Pydantic 的类型定义和 JSON 解析。
+- **Typehints/**：类型提示与 Pydantic 类型定义。
+- **Util/**：通用工具函数。
+- **WorkflowEngine/**：工作流引擎（含控制器、执行器、异常等子模块）。
 
-### workflow/
+### tests/ 测试目录
 
-- 各类工作流配置文件（\*.json）。
-- schema/：JSON Schema 文件夹。
+- **test_manager.py**、**\_\_init\_\_.py**、**executor/**、**workflow/**：主测试脚本及用例。
 
-### images/
+### tools/ 工具目录
 
-- 项目用到的图片资源。
+- **\_\_init\_\_.py**、**\_\_main\_\_.py**：包初始化与主入口。
+- **GitCheckDiff/**：diff_only_docs.py 等工具脚本。
+- **SingleScripts/**：all_commit.py、check_type.py、clean.py、export_env.py、format.py、import_sort.py、workflows.json。
+- **util/**：util.py、\_\_init\_\_.py。
 
-### log/
+> 存放各类开发辅助工具，如脚本、插件等。
 
-- 日志输出目录。
+### workflow/ 工作流配置
+
+- 各类工作流配置文件（\*.json），定义自动化流程。
+- **schema/**：JSON Schema 文件夹。
 
 ---
 
