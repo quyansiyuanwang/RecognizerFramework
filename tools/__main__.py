@@ -12,7 +12,7 @@ workflows: Dict[str, List[str]] = {}
 
 def load_workflows():
     global workflows
-    with open("tools/workflows.json", "r", encoding="utf-8") as f:
+    with open("tools/SingleScripts/workflows.json", "r", encoding="utf-8") as f:
         json_workflows = json.load(f)
         for name, workflow in json_workflows.items():
             workflows[name] = workflow
@@ -20,7 +20,7 @@ def load_workflows():
 
 def load_tools():
     global tools
-    current_dir: str = os.path.dirname(os.path.abspath(__file__))
+    current_dir: str = os.path.dirname(os.path.abspath(__file__)) + "/SingleScripts"
 
     python_files: List[str] = [
         f
