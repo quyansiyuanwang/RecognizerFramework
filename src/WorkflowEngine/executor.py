@@ -151,7 +151,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
             getattr(self.globals.logConfig, "level", "LOG")
         )
         self.global_log_manager.set_debug(self.globals.debug)
-        self.global_log_manager.set_attr(self.globals)
+        self.global_log_manager.set_globals(self.globals)
 
         # global flag
         self.crashed: bool = False
