@@ -3,10 +3,9 @@ from collections.abc import Generator
 from functools import cached_property
 from typing import Any, Dict, Iterable, List, Optional, Self, Set, Tuple, TypeVar, Union
 
-from ..Util.util import to_indent_str
-
 from ..Models.globals import Globals
 from ..Models.main import Job, Next, Workflow
+from ..Util.util import to_indent_str
 from .Exceptions.crash import OverloadError, RecursiveError, WorkflowBeginError
 
 _DEFAULT_T = TypeVar("_DEFAULT_T", bound=Any)
@@ -46,7 +45,7 @@ class WorkflowManager:
     def get_globals(
         self, default: Optional[_DEFAULT_T] = None
     ) -> Union[_DEFAULT_T, Globals, Any]:
-        return self.workflow.globals
+        return self.workflow.globals or default
 
     def __contains__(self, name: Any) -> bool:
         return name in self.workflow.jobs

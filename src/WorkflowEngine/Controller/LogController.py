@@ -146,9 +146,9 @@ class LogManager:
     ):
         self.debug: bool = debug
         self.level: LogLevel = level
-        self.log_config: LogConfig = Logger.DEFAULT_LOG_CONFIG
         self.colorful: bool = True
         self.__cleared: bool = False
+        self.globals_: Globals = Globals()
 
     def log(
         self,
@@ -159,7 +159,7 @@ class LogManager:
         colorful: Optional[bool] = None,
     ):
         if log_config is None:
-            log_config = Logger.DEFAULT_LOG_CONFIG
+            log_config = self.globals_.logConfig
 
         if not self.__cleared and log_config.clear:
             # 清空日志文件
@@ -184,9 +184,8 @@ class LogManager:
     def set_debug(self, debug: bool):
         self.debug = debug
 
-    def set_attr(self, globals_: Globals):
-        for key, value in globals_.model_dump().items():
-            setattr(self, key, value)
+    def set_globals(self, globals_: Globals):
+        self.globals_ = globals_
 
     def set_level(self, level: LogLevel):
         self.level = level
