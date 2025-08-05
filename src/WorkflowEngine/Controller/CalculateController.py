@@ -3,10 +3,9 @@ import math
 import string
 from typing import Any, Callable, Dict, List, LiteralString, Optional, Tuple, Union
 
-from src.WorkflowEngine.Util.util import convert_float
-
 from ...Models.calculate import ExpressionUnionType
 from ...Typehints.basic import Digit
+from ..Util.util import convert_float
 
 
 class _ExpressionType(enum.Enum):
