@@ -3,12 +3,12 @@ from typing import Any, Dict, List, Optional, TypeAlias, cast
 import cv2
 import numpy as np
 import pyautogui
-import win32api
 import win32con
 import win32gui
-import win32process
 import win32ui
 from PIL import Image
+
+from src.WorkflowEngine.Util.window_util import WindowUtil
 
 from ...Models.globals import Globals
 from ...Models.roi import ROI, ROI_Image, ROI_Region, ROI_Window
@@ -62,61 +62,26 @@ class ROIExecutor(Executor):
 
     def __capture_window(self, roi: ROI, window: ROI_Window) -> WindowLocationDict:
         # 匹配条件
-        target_title = window.title
-        target_class_name = window.class_name
-        target_process = window.process
-        if not (target_title or target_class_name or target_process):
-            raise MissingRequiredError(
-                "At least one of title, class_name or process must be specified."
-            )
-
-        # 获取所有窗口的句柄
-        def hwnd_callback(hWnd: int, param: List[int]) -> None:
-            param.append(hWnd)
-
-        hWnd_list: List[int] = []
-        matched: int = -1
-        win32gui.EnumWindows(hwnd_callback, hWnd_list)
-
-        for hWnd in hWnd_list:
-            # 窗口过滤
-            if not win32gui.IsWindowVisible(hWnd):
-                continue
-            ## title
-            title: str = win32gui.GetWindowText(hWnd)
-            if not title:
-                continue
-
-            ## class_name
-            class_name: Optional[str] = win32gui.GetClassName(hWnd)
-
-            ## process
-            process_id = win32process.GetWindowThreadProcessId(hWnd)[1]
-            h_process = win32api.OpenProcess(
-                win32con.PROCESS_QUERY_INFORMATION | win32con.PROCESS_VM_READ,
-                False,
-                process_id,
-            )
-            path: str = str(win32process.GetModuleFileNameEx(h_process, 0))  # type: ignore[union-attr]
-            process: str = path.split("\\")[-1] if path else ""
-            win32api.CloseHandle(h_process)
-
-            if (
-                (not target_title or title == target_title)
-                and (not target_class_name or class_name == target_class_name)
-                and (not target_process or process == target_process)
-            ):
-                if matched != -1:
-                    raise MultipleMatchedError(
-                        job=self.job,
-                        message=f"匹配到多个窗口, 请指定更精确的窗口参数.",
-                    )
-                matched = hWnd
-        if matched == -1:
+        all_matched: List[int] = WindowUtil.find_window(
+            title=window.title,
+            class_name=window.class_name,
+            process=window.process,
+        )
+        if not all_matched:
             raise WindowNotFoundError(
                 job=self.job,
-                message=f"未找到匹配的窗口: title={target_title}, class_name={target_class_name}, process={target_process}",
+                message=f"Window not found with title: {window.title}, "
+                f"class_name: {window.class_name}, "
+                f"process: {window.process}",
             )
+        if len(all_matched) > 1:
+            raise MultipleMatchedError(
+                job=self.job,
+                message=f"Multiple windows found with title: {window.title}, "
+                f"class_name: {window.class_name}, "
+                f"process: {window.process}",
+            )
+        matched: int = all_matched[0]
         # 获取窗口坐标
         rect = win32gui.GetWindowRect(matched)
         win_left, win_top, win_right, win_bottom = rect

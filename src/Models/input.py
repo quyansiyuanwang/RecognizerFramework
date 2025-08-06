@@ -100,6 +100,31 @@ class Input(BaseModel):
         None, description="文本输入定义, 仅在type为Text时有效"
     )
 
+    background: bool = Field(
+        default=False,
+        description=("是否在后台执行, 默认为False, 如果为True, 则尝试后台输入"),
+    )
+    focus: bool = Field(
+        default=True,
+        description=(
+            "是否在执行输入前将窗口置于前台, 默认为True, "
+            "如果为False, 则不改变当前焦点窗口"
+        ),
+    )
+    title: str = Field(default="", description="窗口标题, 仅在后台操作时有效")
+    class_name: str = Field(default="", description="窗口类名, 仅在后台操作时有效")
+    process: str = Field(default="", description="进程名称, 仅在后台操作时有效")
+    visible_only: bool = Field(
+        default=True,
+        description=("是否只查找可见窗口, 默认为True, 如果为False, 则查找所有窗口"),
+    )
+    exact_match: bool = Field(
+        default=False,
+        description=(
+            "是否精确匹配窗口, 默认为False, 如果为True, 则只查找完全匹配的窗口"
+        ),
+    )
+
 
 __all__ = [
     "Input",
