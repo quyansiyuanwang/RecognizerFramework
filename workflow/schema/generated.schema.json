@@ -210,8 +210,8 @@
           "type": "boolean"
         },
         "focus": {
-          "default": true,
-          "description": "是否在执行输入前将窗口置于前台, 默认为True, 如果为False, 则不改变当前焦点窗口",
+          "default": false,
+          "description": "是否在执行输入前将窗口置于前台, 默认为False, 如果为True, 则不改变当前焦点窗口",
           "title": "Focus",
           "type": "boolean"
         },

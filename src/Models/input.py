@@ -105,10 +105,10 @@ class Input(BaseModel):
         description=("是否在后台执行, 默认为False, 如果为True, 则尝试后台输入"),
     )
     focus: bool = Field(
-        default=True,
+        default=False,
         description=(
-            "是否在执行输入前将窗口置于前台, 默认为True, "
-            "如果为False, 则不改变当前焦点窗口"
+            "是否在执行输入前将窗口置于前台, 默认为False, "
+            "如果为True, 则不改变当前焦点窗口"
         ),
     )
     title: str = Field(default="", description="窗口标题, 仅在后台操作时有效")
