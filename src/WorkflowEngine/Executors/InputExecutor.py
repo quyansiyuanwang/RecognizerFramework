@@ -1,4 +1,9 @@
-from typing import Any, Dict, Final, Literal, Set, cast
+from typing import Any, Dict, Final, Literal, Optional, Set, cast
+
+from src.WorkflowEngine.Exceptions.execs.roi_crash import (
+    MultipleMatchedError,
+    WindowNotFoundError,
+)
 
 from ...Models.globals import Globals
 from ...Models.input import Input_Keyboard, Input_Mouse, Input_Text
@@ -8,6 +13,7 @@ from ..Exceptions.crash import ActionTypeError, MissingRequiredError
 from ..Exceptions.ignorable import MouseMovePositionError
 from ..executor import Executor, Job, JobExecutor
 from ..Util.executor_works import update
+from ..Util.window_util import WindowUtil
 
 AVAILABLE_MOUSE_BUTTONS: Final[Set[str]] = {
     "LEFT",
@@ -23,7 +29,11 @@ class InputExecutor(Executor):
         self.globals: Globals = globals
         self.use_vars: Dict[str, Any] = {}
 
-    def execute_TextInput(self, text: Input_Text) -> TaskReturnsDict[str]:
+    def execute_TextInput(
+        self,
+        text: Input_Text,
+        hWnd: Optional[int] = None,
+    ) -> TaskReturnsDict[str]:
         update(text, self.use_vars)
         message = text.message
         duration = text.duration
@@ -32,6 +42,8 @@ class InputExecutor(Executor):
             message,
             duration=duration,
             debug=self.globals.model_dump().get("debug", False),
+            ignore=self.globals.ignore,
+            hWnd=hWnd,
         )
         return TaskReturnsDict(
             returns=cast(Dict[str, str], text.returns),
@@ -39,10 +51,15 @@ class InputExecutor(Executor):
             result=f"Typed input: {message} with duration {duration} ms",
         )
 
-    def __dissolve_event(self, mouse: Input_Mouse) -> TaskReturnsDict[str]:
+    def __dissolve_event(
+        self,
+        mouse: Input_Mouse,
+        hWnd: Optional[int] = None,
+    ) -> TaskReturnsDict[str]:
         update(mouse, self.use_vars)
         button = mouse.button
         duration = mouse.duration
+
         if button not in AVAILABLE_MOUSE_BUTTONS:
             raise ActionTypeError(
                 f"Unsupported mouse button: {button}. Available: {AVAILABLE_MOUSE_BUTTONS}",
@@ -53,6 +70,7 @@ class InputExecutor(Executor):
             cast(Literal["Press", "Release"], mt),
             button=button,
             duration=duration,
+            hWnd=hWnd,
             debug=self.globals.debug,
         )
         return TaskReturnsDict(
@@ -61,7 +79,9 @@ class InputExecutor(Executor):
             result=f"{button} mouse button {mt.lower()}ed",
         )
 
-    def __dissolve_move(self, mouse: Input_Mouse) -> TaskReturnsDict[str]:
+    def __dissolve_move(
+        self, mouse: Input_Mouse, hWnd: Optional[int]
+    ) -> TaskReturnsDict[str]:
         update(mouse, self.use_vars)
         if not (mouse.x or mouse.y):
             raise MouseMovePositionError("Missing required any of keys: x, y", self.job)
@@ -85,6 +105,7 @@ class InputExecutor(Executor):
             x,
             y,
             duration=duration,
+            hWnd=hWnd,
             debug=self.globals.debug,
             ignore=self.globals.ignore,
         )
@@ -101,7 +122,9 @@ class InputExecutor(Executor):
             result=f"Mouse moved to ({x}, {y}) with duration {duration} ms",
         )
 
-    def __dissolve_drag(self, mouse: Input_Mouse) -> TaskReturnsDict[str]:
+    def __dissolve_drag(
+        self, mouse: Input_Mouse, hWnd: Optional[int]
+    ) -> TaskReturnsDict[str]:
         update(mouse, self.use_vars)
         if not (mouse.x or mouse.y):
             raise MouseMovePositionError("Missing required any of keys: x, y", self.job)
@@ -126,6 +149,7 @@ class InputExecutor(Executor):
             x=x,
             y=y,
             duration=duration,
+            hWnd=hWnd,
             debug=self.globals.debug,
             ignore=self.globals.ignore,
         )
@@ -141,7 +165,9 @@ class InputExecutor(Executor):
             result=f"Mouse from {cur_pos} dragged to ({x}, {y}) with duration {duration} ms",
         )
 
-    def __dissolve_click(self, mouse: Input_Mouse) -> TaskReturnsDict[str]:
+    def __dissolve_click(
+        self, mouse: Input_Mouse, hWnd: Optional[int]
+    ) -> TaskReturnsDict[str]:
         update(mouse, self.use_vars)
         cur_x, cur_y = InputController.get_mouse_position()
         x: int = mouse.x
@@ -168,6 +194,7 @@ class InputExecutor(Executor):
             x=x,
             y=y,
             duration=duration,
+            hWnd=hWnd,
             debug=self.globals.debug,
             ignore=self.globals.ignore,
         )
@@ -183,20 +210,25 @@ class InputExecutor(Executor):
             result=f"Mouse clicked at ({x}, {y}) with duration {duration} ms",
         )
 
-    def execute_MouseInput(self, mouse: Input_Mouse) -> TaskReturnsDict[str]:
+    def execute_MouseInput(
+        self, mouse: Input_Mouse, hWnd: Optional[int]
+    ) -> TaskReturnsDict[str]:
         mt = mouse.type
+
         if mt in {"Press", "Release"}:
-            return self.__dissolve_event(mouse)
+            return self.__dissolve_event(mouse, hWnd)
         elif mt == "Move":
-            return self.__dissolve_move(mouse)
+            return self.__dissolve_move(mouse, hWnd)
         elif mt == "Drag":
-            return self.__dissolve_drag(mouse)
+            return self.__dissolve_drag(mouse, hWnd)
         elif mt == "Click":
-            return self.__dissolve_click(mouse)
+            return self.__dissolve_click(mouse, hWnd)
         else:
             raise ActionTypeError(f"Unsupported mouse action type: {mt}", self.job)
 
-    def execute_KeyboardInput(self, keyboard: Input_Keyboard) -> TaskReturnsDict[str]:
+    def execute_KeyboardInput(
+        self, keyboard: Input_Keyboard, hWnd: Optional[int]
+    ) -> TaskReturnsDict[str]:
         update(keyboard, self.use_vars)
         tp = keyboard.type
         if tp not in {"Press", "Release", "Type"}:
@@ -206,6 +238,7 @@ class InputExecutor(Executor):
         if tp == "Press":
             InputController.keyboard_press(
                 keys,
+                hWnd=hWnd,
                 debug=self.globals.debug,
             )
             return TaskReturnsDict(
@@ -216,6 +249,7 @@ class InputExecutor(Executor):
         elif tp == "Release":
             InputController.keyboard_release(
                 keys,
+                hWnd=hWnd,
                 debug=self.globals.debug,
             )
             return TaskReturnsDict(
@@ -231,6 +265,7 @@ class InputExecutor(Executor):
             keys,
             duration=duration,
             sep_time=sep_time,
+            hWnd=hWnd,
             debug=self.globals.debug,
         )
         return TaskReturnsDict(
@@ -247,12 +282,45 @@ class InputExecutor(Executor):
                 "No input found in the job to execute.", self.job
             )
 
+        background: bool = inp.background
+        focus: bool = inp.focus
+        hWnd: Optional[int] = None
+        if background or focus:
+            hWnds = WindowUtil.find_window(
+                title=inp.title,
+                class_name=inp.class_name,
+                process=inp.process,
+                exact=inp.exact_match,
+                visible_only=inp.visible_only,
+            )
+            if not hWnds:
+                raise WindowNotFoundError(
+                    f"Window not found with title: {inp.title}, "
+                    f"class_name: {inp.class_name}, process: {inp.process}"
+                )
+            if len(hWnds) > 1:
+                raise MultipleMatchedError(
+                    f"Multiple windows found with title: {inp.title}, "
+                    f"class_name: {inp.class_name}, process: {inp.process}"
+                )
+            hWnd = hWnds[0]
+
+        if focus:
+            if not hWnd:
+                raise MissingRequiredError(
+                    "Window handle is required when focus is True.", self.job
+                )
+
+            WindowUtil.focus_window_by_handle(hWnd)
+
+        hWnd = hWnd if background else None
+
         if inp.type == "Text" and inp.text:
-            return self.execute_TextInput(inp.text)
+            return self.execute_TextInput(inp.text, hWnd=hWnd)
         elif inp.type == "Mouse" and inp.mouse:
-            return self.execute_MouseInput(inp.mouse)
+            return self.execute_MouseInput(inp.mouse, hWnd=hWnd)
         elif inp.type == "Keyboard" and inp.keyboard:
-            return self.execute_KeyboardInput(inp.keyboard)
+            return self.execute_KeyboardInput(inp.keyboard, hWnd=hWnd)
         else:
             raise ActionTypeError(
                 f"Unsupported input type({inp.type}) or missing field({inp.type.lower()})",
