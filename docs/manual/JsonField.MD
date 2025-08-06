@@ -153,7 +153,7 @@
 | keyboard     | object  | 可选，键盘输入定义，仅 type 为 Keyboard 时有效 |
 | text         | object  | 可选，文本输入定义，仅 type 为 Text 时有效     |
 | background   | boolean | 可选，是否在后台执行，默认 false               |
-| focus        | boolean | 可选，是否在执行前切换窗口焦点，默认 true      |
+| focus        | boolean | 可选，是否在执行前切换窗口焦点，默认 false     |
 | title        | string  | 可选，目标窗口标题，用于窗口查找               |
 | class_name   | string  | 可选，目标窗口类名，用于窗口查找               |
 | process      | string  | 可选，目标进程名称，用于窗口查找               |
