@@ -82,7 +82,7 @@ class InputController:
                 key_code = InputController._key_to_vk_code(key)
                 if key_code:
                     InputController._virtual_key_to_window(
-                        hWnd, key_code, "keypress", debug, ignore
+                        hWnd, key_code, "keydown", debug, ignore
                     )
                 SystemController.sleep(sep_time, debug=debug, ignore=ignore)
         else:
@@ -521,7 +521,7 @@ class InputController:
     def _virtual_key_to_window(
         hWnd: int,
         key_code: int,
-        event_type: Literal["keydown", "keyup", "keypress"] = "keypress",
+        event_type: Literal["keydown", "keyup"],
         debug: bool = True,
         ignore: bool = False,
     ) -> None:
@@ -529,12 +529,12 @@ class InputController:
         向指定窗口发送虚拟按键消息
         """
         try:
-            if event_type == "keydown" or event_type == "keypress":
+            if event_type == "keydown":
                 InputController._send_message_to_window(
                     hWnd, win32con.WM_KEYDOWN, key_code, 0, debug, ignore
                 )
 
-            if event_type == "keyup" or event_type == "keypress":
+            if event_type == "keyup":
                 InputController._send_message_to_window(
                     hWnd, win32con.WM_KEYUP, key_code, 0, debug, ignore
                 )
