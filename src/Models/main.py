@@ -3,7 +3,6 @@ from typing import Dict, List, Literal, Optional, Union
 from pydantic import BaseModel, Field
 
 from ..Util.util import to_indent_str
-
 from .calculate import Calculate
 from .globals import Globals
 from .input import Input
