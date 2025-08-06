@@ -18,6 +18,8 @@ RecognizerFramework 是一个模块化的工作流引擎框架，支持通过 JS
 - **模块化设计**：核心结构体、控制器、执行器分层，便于扩展和维护。
 - **多任务类型支持**：支持区域识别（ROI）、OCR、输入（键盘/鼠标）、系统操作、表达式计算（Calculate）等。
 - **JSON 配置驱动**：通过 JSON 文件灵活定义任务流，支持分支、依赖、延时、限制等高级特性。
+- **后台输入支持**：支持在不改变当前焦点的情况下向指定窗口发送输入（文本、键盘、鼠标）。
+- **智能窗口查找**：支持按标题、类名、进程名查找窗口，支持精确匹配和模糊匹配。
 - **日志管理**：多级别日志输出（DEBUG/INFO/WARNING/ERROR/CRITICAL），支持彩色和文件日志。
 - **类型安全**：基于 Pydantic 类型校验，保障配置和运行安全。
 - **可扩展性**：支持自定义执行器、控制器和异常类型。
@@ -110,14 +112,27 @@ RecognizerFramework 是一个模块化的工作流引擎框架，支持通过 JS
         }
       },
       "next": {
-        "success": "EndTask"
+        "success": "BackgroundInputTask"
       },
       "delay": {
         "pre": 500,
         "post": 500
+      }
+    },
+    "BackgroundInputTask": {
+      "type": "Input",
+      "description": "后台输入示例",
+      "input": {
+        "type": "Text",
+        "background": true,
+        "title": "记事本",
+        "text": {
+          "message": "这是后台输入的文本，不会改变当前焦点",
+          "duration": 1000
+        }
       },
-      "limits": {
-        "maxCount": 3
+      "next": {
+        "success": "EndTask"
       }
     },
     "EndTask": {
@@ -199,6 +214,15 @@ RecognizerFramework 是一个模块化的工作流引擎框架，支持通过 JS
    ```
 
 3. 提交 Pull Request 并描述您的更改。
+
+---
+
+## 文档
+
+- **[JSON 字段说明文档](docs/manual/JsonField.MD)** - 详细的配置字段说明
+- **[后台输入功能使用指南](docs/manual/BackgroundInput.MD)** - 后台输入功能的完整使用指南
+- **[项目结构文档](docs/develop/Structure.MD)** - 项目代码结构说明
+- **[更新日志](docs/CHANGELOG.MD)** - 版本更新记录和新功能说明
 
 ---
 

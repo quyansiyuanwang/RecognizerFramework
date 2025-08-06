@@ -146,12 +146,27 @@
 
 ### Input 任务
 
-| 字段名   | 类型   | 说明                                           |
-| -------- | ------ | ---------------------------------------------- |
-| type     | string | 必填，`Mouse`、`Keyboard`、`Text`              |
-| mouse    | object | 可选，鼠标输入定义，仅 type 为 Mouse 时有效    |
-| keyboard | object | 可选，键盘输入定义，仅 type 为 Keyboard 时有效 |
-| text     | object | 可选，文本输入定义，仅 type 为 Text 时有效     |
+| 字段名       | 类型    | 说明                                           |
+| ------------ | ------- | ---------------------------------------------- |
+| type         | string  | 必填，`Mouse`、`Keyboard`、`Text`              |
+| mouse        | object  | 可选，鼠标输入定义，仅 type 为 Mouse 时有效    |
+| keyboard     | object  | 可选，键盘输入定义，仅 type 为 Keyboard 时有效 |
+| text         | object  | 可选，文本输入定义，仅 type 为 Text 时有效     |
+| background   | boolean | 可选，是否在后台执行，默认 false               |
+| focus        | boolean | 可选，是否在执行前切换窗口焦点，默认 true      |
+| title        | string  | 可选，目标窗口标题，用于窗口查找               |
+| class_name   | string  | 可选，目标窗口类名，用于窗口查找               |
+| process      | string  | 可选，目标进程名称，用于窗口查找               |
+| visible_only | boolean | 可选，是否只查找可见窗口，默认 true            |
+| exact_match  | boolean | 可选，是否精确匹配窗口，默认 false             |
+
+**后台输入功能说明：**
+
+- 当 `background` 为 true 时，启用后台输入模式，不改变当前焦点窗口
+- 当 `focus` 为 true 时，在执行输入前将目标窗口置为前台
+- 窗口查找字段（title、class_name、process）至少需要提供一个
+- `exact_match` 控制是否使用精确匹配（true）或包含匹配（false）
+- 详细使用方法请参考 [后台输入功能使用指南](BackgroundInput.MD)
 
 **mouse 子字段：**
 
