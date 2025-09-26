@@ -2,6 +2,8 @@ from datetime import datetime
 from enum import IntFlag
 from typing import Dict, Iterable, List, Literal, Optional, Union
 
+from src.Util.path_util import get_current_dir, is_absolute_path
+
 from ...Models.globals import Globals, LogConfig
 from ...Models.system import LogLevelLiteral
 from ..Util import Color
@@ -115,6 +117,9 @@ class Logger:
         }
         final = log_config.format % params
         file = log_config.file
+        if not is_absolute_path(file) and file:
+            file = get_current_dir(file)
+
         if file:
             with open(file, "a", encoding="utf-8") as f:
                 f.write(final + "\n")
@@ -164,6 +169,9 @@ class LogManager:
         if not self.__cleared and log_config.clear:
             # 清空日志文件
             file = log_config.file
+            if not is_absolute_path(file) and file:
+                file = get_current_dir(file)
+
             if file:
                 with open(file, "w", encoding="utf-8") as f:
                     f.write("")
