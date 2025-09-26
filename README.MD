@@ -7,9 +7,15 @@
 ![main drive](https://img.shields.io/badge/drive-json-brightgreen.svg)
 ![repo size](https://img.shields.io/github/repo-size/quyansiyuanwang/RecognizerFramework)
 ![last commit](https://img.shields.io/github/last-commit/quyansiyuanwang/RecognizerFramework)
-![doc last](https://img.shields.io/badge/docs%20last-2025--07--25-blue.svg)
+![doc last](https://img.shields.io/badge/docs%20last-2025--09--26-blue.svg)
 
 RecognizerFramework 是一个模块化的工作流引擎框架，支持通过 JSON 配置文件定义自动化任务流，涵盖区域识别、输入操作、系统操作等多种任务类型，并具备良好的扩展性和可维护性。
+
+---
+
+## 文档语言
+
+[中文](./README.MD) | [English](./README.EN.MD)
 
 ---
 
@@ -78,7 +84,7 @@ RecognizerFramework 是一个模块化的工作流引擎框架，支持通过 JS
 - **delay**：延时设置（pre、post）。
 - **limits**：执行限制（maxCount、maxFailure、maxSuccess、exit）。
 - **needs**：依赖的前置任务名。
-- 任务类型相关字段（如 roi、input、system、calculate 等）详见 [JSON 字段使用文档](doc/manual/JsonField.MD)。
+- 任务类型相关字段（如 roi、input、system、calculate 等）详见 [JSON 字段使用文档](/docs/zh-cn/manual/JsonField.MD)。
 
 ---
 
@@ -223,8 +229,8 @@ RecognizerFramework 是一个模块化的工作流引擎框架，支持通过 JS
 
 ## 文档
 
-- **[JSON 字段说明文档](docs/manual/JsonField.MD)** - 详细的配置字段说明
-- **[项目结构文档](docs/develop/Structure.MD)** - 项目代码结构说明
+- **[JSON 字段说明文档](/docs/zh-cn/manual/JsonField.MD)** - 详细的配置字段说明
+- **[项目结构文档](/docs/zh-cn/develop/Structure.MD)** - 项目代码结构说明
 
 ---
 
