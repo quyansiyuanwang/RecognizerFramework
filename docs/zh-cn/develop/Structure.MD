@@ -43,6 +43,7 @@
 
 - **Util/**：通用工具函数。
 
+  - **path_util.py**：路径相关工具函数。
   - **util.py**：常用工具函数集合。
 
 - **WorkflowEngine/**：工作流引擎。
