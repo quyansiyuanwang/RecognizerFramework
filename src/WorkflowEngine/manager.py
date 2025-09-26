@@ -25,6 +25,9 @@ class WorkflowManager:
 
     @cached_property
     def workflow(self) -> Workflow:
+        if not self.path or not self.path.endswith(".json"):
+            raise ValueError("Invalid workflow file path. Must be a .json file.")
+
         with open(self.path, "r", encoding="utf-8") as f:
             data = json.load(f)
             return Workflow(**data)
