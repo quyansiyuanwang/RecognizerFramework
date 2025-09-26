@@ -2,11 +2,11 @@ from datetime import datetime
 from enum import IntFlag
 from typing import Dict, Iterable, List, Literal, Optional, Union
 
-from src.Util.path_util import get_current_dir, is_absolute_path
 
 from ...Models.globals import Globals, LogConfig
 from ...Models.system import LogLevelLiteral
-from ..Util import Color
+from ..Util.util import Color
+from ...Util.path_util import get_current_dir, is_absolute_path
 
 
 class LogLevel(IntFlag):
