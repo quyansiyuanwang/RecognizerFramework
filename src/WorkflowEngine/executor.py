@@ -47,10 +47,10 @@ class Executor(ABC):
 
 """Generic TypeVars"""
 _EXEC_YT = TypeVar("_EXEC_YT")
-_EXEC_ST = TypeVar("_EXEC_ST", bound=None, default=None)
-_EXEC_RT = TypeVar("_EXEC_RT", bound=None, default=None)
+_EXEC_ST = TypeVar("_EXEC_ST", bound=None)
+_EXEC_RT = TypeVar("_EXEC_RT", bound=None)
 
-_EXEC_TYPE = TypeVar("_EXEC_TYPE", bound=Type[Executor], default=Type[Executor])
+_EXEC_TYPE = TypeVar("_EXEC_TYPE", bound=Type[Executor])
 
 
 class JobExecutor(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _EXEC_TYPE]):
@@ -120,7 +120,7 @@ class JobExecutor(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _EXEC_TYPE]):
         return self.execute(*args, **kwargs)
 
 
-_CB_SF_V = TypeVar("_CB_SF_V", bound=Any, default=None)
+_CB_SF_V = TypeVar("_CB_SF_V", bound=Any)
 
 
 class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
@@ -365,7 +365,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                 self.__pre_works(job=bef_job)
                 self._before_run(job=bef_job)
 
-                self.results[task] = JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT](
+                self.results[task] = JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT, Any](
                     job=bef_job, globals=self.globals
                 ).execute()
                 success = True
@@ -390,7 +390,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
         after: After = job.after
         ignore: bool = after.ignore_errors
         always: List[str] = after.always
-        tasks: List[str] = always + (after.success if self.success else after.failure)
+        tasks: List[str] = (after.success if self.success else after.failure) + always
         for task in tasks:
             aft_job = self.workflow.get_job(task)
             if aft_job is None:
@@ -404,7 +404,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                 self.__pre_works(job=aft_job)
                 self._before_run(job=aft_job)
 
-                self.results[task] = JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT](
+                self.results[task] = JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT, Any](
                     job=aft_job, globals=self.globals
                 ).execute()
                 success = True
@@ -451,7 +451,7 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                 self._before_run(job=self.cur_job)
 
                 result: TaskReturnsDict[_EXEC_YT] = JobExecutor[
-                    _EXEC_YT, _EXEC_ST, _EXEC_RT
+                    _EXEC_YT, _EXEC_ST, _EXEC_RT, Any
                 ](job=self.cur_job, globals=self.workflow.get_globals()).execute(
                     **use_vars
                 )

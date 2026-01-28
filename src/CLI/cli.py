@@ -61,9 +61,9 @@ def args_parse() -> argparse.Namespace:
     parser.add_argument(
         "-v",
         "--verbose",
-        action="store_false",
-        default=True,
-        help="Enable verbose output (default: True)",
+        action="store_true",
+        default=False,
+        help="Enable verbose output (default: False)",
     )
 
     args = parser.parse_args(sys.argv[1:])

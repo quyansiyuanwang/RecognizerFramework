@@ -4,7 +4,7 @@ from .WorkflowEngine import ExecutorManager, WorkflowManager
 def execute_workflow(
     workflow: WorkflowManager, await_all: bool = False, verbose: bool = True
 ) -> None:
-    exe = ExecutorManager[str](workflow=workflow)
+    exe = ExecutorManager[str, None, None, None](workflow=workflow)
     results = exe.await_run_all() if await_all else exe.run()
     if verbose:
         for result in results:
