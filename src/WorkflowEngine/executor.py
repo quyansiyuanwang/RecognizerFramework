@@ -348,6 +348,43 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
             log_config=self.globals.logConfig,
         )
 
+    def _execute_task(self, job: Job, is_pre_post_task: bool = False) -> bool:
+        """Execute a single task with its pre and post tasks.
+
+        Args:
+            job: The job to execute
+            is_pre_post_task: Whether this is a pre/post task (for error handling)
+
+        Returns:
+            bool: True if execution was successful, False otherwise
+        """
+        success = False
+        task_name = job.name
+
+        # Save the parent task's success state
+        prev_success = self.success
+
+        try:
+            self.check_needed(job)
+
+            self.__pre_works(job=job)
+            self._before_run(job=job)
+
+            self.results[task_name] = JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT, Any](
+                job=job, globals=self.globals
+            ).execute()
+            success = True
+        finally:
+            # Set success state for this task's after tasks
+            self.success = success
+            if not self.crashed:
+                self._after_run(job=job)
+                self.__post_works(job=job)
+            # Restore parent task's success state
+            self.success = prev_success
+
+        return success
+
     def _before_run(self, job: Job) -> None:
         before: Before = job.before
         ignore: bool = before.ignore_errors
@@ -358,21 +395,13 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                 raise JobNotFoundError(f"Job '{task}' not found in workflow.")
 
             self._log_event("BeforeJobTip", job_name=job.name, bef_job=bef_job.name)
-            success = False
+            success: bool = False
             try:
-                self.check_needed(bef_job)
-
-                self.__pre_works(job=bef_job)
-                self._before_run(job=bef_job)
-
-                self.results[task] = JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT, Any](
-                    job=bef_job, globals=self.globals
-                ).execute()
-                success = True
+                success = self._execute_task(bef_job, is_pre_post_task=True)
             except IgnorableError as e:
                 if not ignore:
                     raise BeforeJobRunError(job=bef_job, message=str(e)) from e
-
+                success = False
             except CrashException as e:
                 self._log_event("Error", job_name=task, error=e)
                 raise CrashException("Crash occurred", bef_job) from e
@@ -382,9 +411,6 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                     job_name=task,
                     result=ExecutorManager.__JOB_RESULT_MAP.get(success),
                 )
-            if not self.crashed:
-                self._after_run(job=bef_job)
-                self.__post_works(job=bef_job)
 
     def _after_run(self, job: Job) -> None:
         after: After = job.after
@@ -397,20 +423,13 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                 raise JobNotFoundError(f"Job '{task}' not found in workflow.")
 
             self._log_event("AfterJobTip", job_name=job.name, aft_job=aft_job.name)
-            success = False
+            success: bool = False
             try:
-                self.check_needed(aft_job)
-
-                self.__pre_works(job=aft_job)
-                self._before_run(job=aft_job)
-
-                self.results[task] = JobExecutor[_EXEC_YT, _EXEC_ST, _EXEC_RT, Any](
-                    job=aft_job, globals=self.globals
-                ).execute()
-                success = True
+                success = self._execute_task(aft_job, is_pre_post_task=True)
             except IgnorableError as e:
                 if not ignore:
                     raise AfterJobRunError(job=aft_job, message=str(e)) from e
+                success = False
             except CrashException as e:
                 self._log_event("Error", job_name=task, error=e)
                 raise CrashException("Crash occurred", aft_job) from e
@@ -420,9 +439,6 @@ class ExecutorManager(Generic[_EXEC_YT, _EXEC_ST, _EXEC_RT, _CB_SF_V]):
                     job_name=task,
                     result=ExecutorManager.__JOB_RESULT_MAP.get(success),
                 )
-            if not self.crashed:
-                self._after_run(job=aft_job)
-                self.__post_works(job=aft_job)
 
     def __pre_works(self, *_: Any, job: Job) -> None:
         jn = job.name
