@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from enum import IntFlag
 from typing import Dict, Iterable, List, Literal, Optional, Union
@@ -120,6 +121,7 @@ class Logger:
             file = get_current_dir(file)
 
         if file:
+            os.makedirs(os.path.dirname(file), exist_ok=True)
             with open(file, "a", encoding="utf-8") as f:
                 f.write(final + "\n")
         print(f"{color}{final}{tail}")

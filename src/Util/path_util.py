@@ -8,7 +8,7 @@ def get_current_dir(file: Optional[str] = None) -> str:
     path = (
         os.path.dirname(sys.executable)
         if getattr(sys, "frozen", False)
-        else os.path.dirname(os.path.abspath(__file__))
+        else os.getcwd()
     )
     if file:
         return os.path.join(path, file)
